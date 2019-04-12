@@ -11,6 +11,11 @@ import './styles/index.scss'
 
 Vue.config.productionTip = false
 
+import axios from 'axios'
+Object.defineProperty(Vue.prototype, '$http', {
+    value: axios
+})
+
 new Vue({
     router,
     store,
