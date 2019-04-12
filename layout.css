@@ -1,0 +1,1 @@
+.wrap{position:absolute;top:0;left:0;bottom:0;right:0}header{height:60px;background:red}.main{display:flex;position:absolute;top:60px;bottom:0;width:100%}.main .content{flex:1}.leftNav{width:200px}
