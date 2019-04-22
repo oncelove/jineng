@@ -1,6 +1,20 @@
 <template>
     <div class="wrap">
-        <header class="topNav">
+        <div class="leftNav">
+            <div class="logo">
+                <a href="#">
+                    <img src="./../../assets/logo.png" alt="">
+                </a>
+            </div>
+            <sidebar></sidebar>
+        </div>
+        <div class="main">
+            <topheader></topheader>
+            <div class="content">
+                content
+            </div>
+        </div>
+        <!-- <header class="topNav">
             topNav
         </header>
         <div class="main">
@@ -11,15 +25,16 @@
             <div class="content">
                 content
             </div>
-        </div>
+        </div> -->
         
     </div>
 </template>
 
 <script>
-import sidebar from './sidebar'
+import sidebar from './sidebar/sidebar'
+import topheader from './header/header'
 export default {
-    components: { sidebar },
+    components: { sidebar, topheader },
 }
 </script>
 
