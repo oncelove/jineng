@@ -1,5 +1,8 @@
+
+$maincolor: #35c99c;
 @import './normalize.scss';
 @import './layout.scss';
+@import './iconfont.scss';
 
 body {
   height: 100%;
@@ -81,4 +84,9 @@ a:hover {
 
 .lf{
     float: left;
+}
+
+p{
+    margin: 0;
+    padding: 0;
 }

@@ -83,28 +83,44 @@
         </el-menu> -->
         <ul class="side-bar-box" ref="sideBarItemBox">
             <li>
+                <i class="iconshouye1-copy iconfont"></i>
                 <span>平台首页</span>
+                <i class="iconfont iconrightArrows"></i>
             </li>
             <li class="active">
+                <i class="iconfont iconleida"></i>
                 <span>能源监测</span>
+                <i class="iconfont iconrightArrows"></i>
             </li>
             <li>
+                <i class="iconfont iconshuju2"></i>
                 <span>能源分析</span>
+                <i class="iconfont iconrightArrows"></i>
             </li>
             <li>
+                <i class="iconfont iconshuju2"></i>
                 <span>设备状态</span>
+                <i class="iconfont iconrightArrows"></i>
             </li>
             <li>
+                <i class="iconfont iconbaojingxiaoxi"></i>
                 <span>报警管理</span>
+                <i class="iconfont iconrightArrows"></i>
             </li>
             <li>
+                <i class="iconfont iconyunweizhongxin"></i>
                 <span>运维管理</span>
+                <i class="iconfont iconrightArrows"></i>
             </li>
             <li>
+                <i class="iconfont icondangan"></i>
                 <span>档案管理</span>
+                <i class="iconfont iconrightArrows"></i>
             </li>
             <li>
+                <i class="iconfont iconpeizhi"></i>
                 <span>配置管理</span>
+                <i class="iconfont iconrightArrows"></i>
             </li>
         </ul>
         <navigation v-if="showNavigation" class="leave"></navigation>
@@ -113,6 +129,7 @@
 
 <script>
 import navigation from './navigation'
+// import './../../../assets/icon/iconfont.css'
 export default {
     components:{
         navigation,
@@ -147,5 +164,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+.iconfont{
+    font-size: 20px;
+}
 </style>

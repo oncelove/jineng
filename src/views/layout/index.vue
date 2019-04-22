@@ -10,31 +10,19 @@
         </div>
         <div class="main">
             <topheader></topheader>
-            <div class="content">
-                content
-            </div>
+            <!-- <div class="content"> -->
+            <mainContent class="content"></mainContent>
+            <!-- </div> -->
         </div>
-        <!-- <header class="topNav">
-            topNav
-        </header>
-        <div class="main">
-            <div class="leftNav">
-                leftNav
-                <sidebar></sidebar>
-            </div>
-            <div class="content">
-                content
-            </div>
-        </div> -->
-        
     </div>
 </template>
 
 <script>
 import sidebar from './sidebar/sidebar'
 import topheader from './header/header'
+import mainContent from './content/main'
 export default {
-    components: { sidebar, topheader },
+    components: { sidebar, topheader, mainContent },
 }
 </script>
 

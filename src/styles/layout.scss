@@ -1,5 +1,14 @@
 @charset "utf-8";
 
+$colorc8: #c8ccc8;
+$maincolor: #35c99c;
+$fff: #fff;
+@mixin boxshadow() {
+    box-shadow: 0 0 5px rgba(50, 51, 50, 0.1);
+}
+@mixin borderRadius($n:4) {
+    border-radius: $n+px;
+}
 .wrap{
     position: absolute;
     top: 0;
@@ -13,7 +22,7 @@
     position: relative;
     z-index: 200;
     width: 200px;
-    background: #fff;
+    background: $fff;
     .logo{
         position: absolute;
         display: flex;
@@ -41,16 +50,18 @@
         width: 200px;
         top: 60px;
         bottom: 0;
-        background: #fff;
+        background: $fff;
     }
     li{
         display: flex;
-        justify-content: center;
+        justify-content: space-around;
         align-items: center;
         height: 56px;
+        overflow: hidden;
         color: #969996;
+        font-size: 18px;
         &:hover,&.active{
-            color: #35c99c;
+            color: $maincolor;
             background-color: #e6e6e6;
         }
     }
@@ -68,7 +79,7 @@
         justify-content: space-between;
         // align-items: center;
         height: 60px;
-        background: #fff;
+        background: $fff;
         .left-show,.right-show{
             display: flex;
             justify-content: center;
@@ -88,6 +99,205 @@
         right: 0;
         bottom: 0;
         padding: 30px;
+    }
+}
+
+.topNav{
+    .iconfont{
+        font-size: 18px;
+        cursor: pointer;
+        &:hover{
+            color: $maincolor;
+        }
+    }
+    .left-show{
+        font-size: 18px;
+        color: $colorc8;
+        .flexBlock{
+            display: flex;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+            i{
+                height: 24px;
+                font-size: 12px;
+                em,b{
+                    display: block;
+                }
+            }
+            .iconfont{
+                font-size: 22px;
+            }
+        }
+        .temperature{
+            padding: 0 8px;
+            margin: 0 8px;
+            border-left: 1px solid $colorc8;
+            border-right: 1px solid $colorc8;
+        }
+    }
+    i,em{
+        font-style: normal;
+    }
+    .right-show{
+        font-size: 14px;
+        color: $colorc8;
+        .iconfont{
+            margin: 0 12px;
+        }
+        .iconlingdang,.iconxitong{
+            font-size: 22px;
+        }
+        .iconjiankongshebei{
+            font-size: 26px;
+        }
+        .iconerweima1{
+            padding: 0 10px;
+            border-left: 1px solid $colorc8;
+            border-right: 1px solid $colorc8;
+        }
+    }
+
+    .user-box{
+        display: flex;
+        // justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        height: 100%;
+        img{
+            width: 20px;
+            height: 20px;
+            @include borderRadius(10);
+        }
+        .username{
+            margin: 0 12px 0 8px;
+        }
+    }
+    
+    .search-box{
+        position: relative;
+        width: 240px;
+        height: 28px;
+        font-size: 14px;
+        input{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding-left: 8px;
+            border: none;
+            background: #f2f2f2;
+            @include borderRadius();
+            &:focus{
+                border-color: $maincolor;
+                border: 1px solid $maincolor;
+            }
+        }
+        .iconsearch{
+            position: absolute;
+            right: 6px;
+            top: 6px;
+            margin: 0;
+            height: 16px;
+            font-size: 16px;
+            padding-left: 6px;
+            border-left: 1px solid #d4d9d4;
+        }
+    }
+}
+
+.left-content{
+    margin-right: 36px;
+    .top-search-box{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 14px;
+        li{
+            height: 30px;
+            @include boxshadow();
+            &.active{
+                code{
+                    color: $maincolor;
+                }
+            }
+            em{
+                display: block;
+                float: left;
+                font-style: normal;
+                height: 30px;
+                line-height: 30px;
+                padding: 0 6px;
+                color: $fff;
+                background: #c8ccc8;
+                border-top-left-radius: 4px;
+                border-bottom-left-radius: 4px;
+            }
+            a{
+                display: flex;
+                width: 80px;
+                height: 30px;
+                align-items: center;
+                justify-content: center;
+                color: $fff;
+                font-size: 14px;
+                letter-spacing: 6px;
+                background: $maincolor;
+                @include borderRadius(6);
+                @include boxshadow();
+            }
+        }
+        .list-boxs{
+            position: relative;
+            float: left;
+            height: 30px;
+            width: 110px;
+            cursor: pointer;
+            text-align: center;
+            line-height: 30px;
+            color: #c8ccc8;
+            font-size: 12px;
+            background: $fff;
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+            code{
+                font-style: normal;
+                letter-spacing: 4px;
+            }
+            .el-icon--right{
+                position: absolute;
+                right: 4px;
+                top: 8px;
+            }
+        }
+        .item-box{
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 30px;
+            background: $fff;
+            @include borderRadius();
+            @include boxshadow();
+            .item{
+                display: block;
+                border-bottom: 1px solid #f5f6fa;
+                &:hover,&.active{
+                    color: $maincolor;
+                }
+            }
+        }
+    }
+    .table-box{
+        margin: 30px 0 10px;
+        @include boxshadow();
+        @include borderRadius(8);
+    }
+    .el-pagination.is-background .btn-next, .el-pagination.is-background .btn-prev, .el-pagination.is-background .el-pager li{
+        background-color: #fff;
+    }
+    .el-pagination.is-background .el-pager li:not(.disabled).active{
+        background: $maincolor;
     }
 }
 
