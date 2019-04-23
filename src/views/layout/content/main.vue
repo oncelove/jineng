@@ -1,6 +1,6 @@
 <template>
     <el-row>
-        <el-col :span="18">
+        <el-col :span="20">
             <div class="left-content">
                 <ul class="top-search-box">
                     <li class="active" v-for="(serchItem, index) in searchTextItem" :key="index">
@@ -17,10 +17,8 @@
                 <page></page>
             </div>
         </el-col>
-        <el-col :span="6">
-            <div class="right-content">
-                4564564
-            </div>
+        <el-col :span="4">
+            <realdata class="right-content"></realdata>
         </el-col>
     </el-row>    
 </template>
@@ -29,8 +27,9 @@
 import searItemsBox from './searItemsBox'
 import tableBox from './tableBox'
 import page from './page'
+import realdata from './realdata'
 export default {
-    components: { searItemsBox, tableBox, page },
+    components: { searItemsBox, tableBox, page, realdata },
     data() {
         return {
             searItemShow: false,

@@ -2,12 +2,23 @@
 
 $colorc8: #c8ccc8;
 $maincolor: #35c99c;
+$errcolor: #ec494c;
 $fff: #fff;
+$color96: #969996;
 @mixin boxshadow() {
-    box-shadow: 0 0 5px rgba(50, 51, 50, 0.1);
+    box-shadow: 0 0 10px rgba(50,51,50,.1);
 }
+
 @mixin borderRadius($n:4) {
     border-radius: $n+px;
+}
+
+@mixin borderTop ($w:2, $color:#f5f6fa) {
+    border-top: $w+px solid $color;
+}
+
+@mixin borderBottom ($w:2, $color:#f5f6fa) {
+    border-bottom: $w+px solid $color;
 }
 .wrap{
     position: absolute;
@@ -15,14 +26,17 @@ $fff: #fff;
     left: 0;
     bottom: 0;
     right: 0;
-    display: flex;
 }
 
 .leftNav{
-    position: relative;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
     z-index: 200;
     width: 200px;
     background: $fff;
+    @include boxshadow();
     .logo{
         position: absolute;
         display: flex;
@@ -34,6 +48,12 @@ $fff: #fff;
         justify-content: center;
         img{
             max-width: 100%;
+        }
+        .logo-close{
+            display: none;
+        }
+        .logo-open{
+            display: block;
         }
     }
     .side-bar-box{
@@ -58,7 +78,7 @@ $fff: #fff;
         align-items: center;
         height: 56px;
         overflow: hidden;
-        color: #969996;
+        color: $color96;
         font-size: 18px;
         &:hover,&.active{
             color: $maincolor;
@@ -67,9 +87,45 @@ $fff: #fff;
     }
 }
 
+.wrap-close{
+    .nav-close{
+        width: 70px;
+        .logo-close{
+            display: block;
+        }
+        .logo-open{
+            display: none;
+        }
+        .side-close{
+            span,.iconrightArrows{
+                display: none;
+            }
+            .iconfont{
+                font-size: 30px;
+            }
+            li.active{
+                @include borderRadius(8);
+                background-color: $maincolor;
+                box-shadow: 0 3px 5px rgba(0,0,0,.2);
+                background-image: linear-gradient(to bottom, #00f3a3, #01b466);
+                .iconfont{
+                    color: $fff;
+                }
+            }
+        }
+    }
+    .main{
+        left: 70px;
+    }
+}
+
+
 .main{
-    position: relative;
-    flex: 1;
+    position: absolute;
+    left: 200px;
+    top: 0;
+    min-height: 100%;
+    right: 0;
     .topNav{
         position: absolute;
         top: 0;
@@ -103,6 +159,7 @@ $fff: #fff;
 }
 
 .topNav{
+    @include boxshadow();
     .iconfont{
         font-size: 18px;
         cursor: pointer;
@@ -289,9 +346,9 @@ $fff: #fff;
         }
     }
     .table-box{
-        margin: 30px 0 10px;
+        margin: 30px 0 20px;
         @include boxshadow();
-        @include borderRadius(8);
+        @include borderRadius(12);
     }
     .el-pagination.is-background .btn-next, .el-pagination.is-background .btn-prev, .el-pagination.is-background .el-pager li{
         background-color: #fff;
@@ -299,6 +356,51 @@ $fff: #fff;
     .el-pagination.is-background .el-pager li:not(.disabled).active{
         background: $maincolor;
     }
+}
+
+.right-content{
+    margin-top: 60px;
+    height: 618px;
+    padding: 20px 10px;
+    background: $fff;
+    @include borderRadius(12);
+    @include boxshadow();
+    .title{
+        padding-left: 30px;
+        font-size: 14px;
+        color: #4b4c4b;
+    }
+    .real-box{
+        li{
+            display: flex;
+            height: 140px;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            p{
+                color: $color96;
+                font-size: 14px;
+            }
+            h4{
+                margin-bottom: 18px;
+                font-size: 35px;
+                color: $maincolor;
+                font-weight: normal;
+                &.errorColor{
+                    color: $errcolor;
+                }
+            }
+        }
+    }
+}
+
+.errorColor{color: $errcolor;}
+
+.border-bottom{
+    @include borderBottom();
+}
+.border-top{
+    @include borderTop();
 }
 
 @media screen and (max-width:1440px) {

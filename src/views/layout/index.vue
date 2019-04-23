@@ -1,9 +1,10 @@
 <template>
-    <div class="wrap">
-        <div class="leftNav">
+    <div class="wrap wrap-close">
+        <div class="leftNav nav-close">
             <div class="logo">
-                <a href="#">
-                    <img src="./../../assets/logo.png" alt="">
+                <a href="/">
+                    <img src="./../../assets/logo.png" alt="" class="logo-open">
+                    <img src="./../../assets/logo-close.png" alt="" class="logo-close">
                 </a>
             </div>
             <sidebar></sidebar>

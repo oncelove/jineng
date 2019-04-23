@@ -81,7 +81,7 @@
                 </el-menu-item-group>
             </el-submenu>
         </el-menu> -->
-        <ul class="side-bar-box" ref="sideBarItemBox">
+        <ul class="side-bar-box side-close" ref="sideBarItemBox">
             <li>
                 <i class="iconshouye1-copy iconfont"></i>
                 <span>平台首页</span>
@@ -153,9 +153,11 @@ export default {
     methods:{
         mouseOver(){
             this.showNavigation = this.enterShowNav;
+            document.getElementsByClassName('wrap')[0].classList.remove('wrap-close');
         },
         mouseLeave(){
             this.showNavigation = this.leaveShowNav;
+            document.getElementsByClassName('wrap')[0].classList.add('wrap-close');
         }
     },
     mounted(){
