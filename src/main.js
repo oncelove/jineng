@@ -2,19 +2,17 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-
+import VueCookies from 'vue-cookies'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-Vue.use(ElementUI)
-
 import './styles/index.scss'
+import axios_instance from './axios'
+import VueAxios from 'vue-axios'
+Vue.use(ElementUI)
+Vue.use(VueCookies)
+Vue.use(VueAxios, axios_instance);
 
 Vue.config.productionTip = false
-
-import axios from 'axios'
-Object.defineProperty(Vue.prototype, '$http', {
-    value: axios
-})
 
 new Vue({
     router,

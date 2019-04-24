@@ -1,0 +1,61 @@
+@import './mian.scss';
+
+.box-styles{
+    @include boxshadow();
+    @include borderRadius(10);
+    background: $fff;
+}
+.home-title{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 70px;
+    font-size: 18px;
+    color: $fontcolor;
+    em,b,i{
+        font-style: normal;
+    }
+    b{
+        margin: 0 6px;
+        font-size: 30px;
+        color: $maincolor;
+    }
+    i{
+        color: #c8ccc8;
+        font-size: 12px;
+    }
+}
+
+.routine-box{
+    margin-top: 40px;
+    .r-box{
+        height: 290px;
+    }
+    .left-box,.right-box{
+        width: 48%;
+    }
+    .left-box{
+        .r-box{
+            padding-left: 40px;
+        }
+        h4{
+            height: 74px;
+            line-height: 74px;
+            color: $fontcolor;
+        }
+        li{
+            float: left;
+            width: 25%;
+            margin: 20px 0;
+            color: #969996;
+        }
+        span{
+            color: $maincolor;
+            font-size: 32px;
+        }
+        i{
+            font-size: 12px;
+            color: #c8ccc8;
+        }
+    }
+}

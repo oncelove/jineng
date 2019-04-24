@@ -1,25 +1,4 @@
-@charset "utf-8";
-
-$colorc8: #c8ccc8;
-$maincolor: #35c99c;
-$errcolor: #ec494c;
-$fff: #fff;
-$color96: #969996;
-@mixin boxshadow() {
-    box-shadow: 0 0 10px rgba(50,51,50,.1);
-}
-
-@mixin borderRadius($n:4) {
-    border-radius: $n+px;
-}
-
-@mixin borderTop ($w:2, $color:#f5f6fa) {
-    border-top: $w+px solid $color;
-}
-
-@mixin borderBottom ($w:2, $color:#f5f6fa) {
-    border-bottom: $w+px solid $color;
-}
+@import './mian.scss';
 .wrap{
     position: absolute;
     top: 0;

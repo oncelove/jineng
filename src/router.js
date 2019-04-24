@@ -4,14 +4,18 @@ import Home from './views/Home.vue'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
     mode: 'history',
     base: process.env.BASE_URL,
     routes: [
         {
             path: '/',
             name: 'index',
-            component: () => import('./views/layout/index.vue')
+            component: () => import('./views/layout/index.vue'),
+            children:[
+                {path:'/',name:'indexMain',component: () => import('./views/homepage/homepage.vue')},
+                {path: '/modules/sys/user.html',name:'userInfo',component: () => import('./views/layout/content/main.vue')}
+            ]
         },
         {
             path: '/about',
@@ -28,3 +32,22 @@ export default new Router({
         }
     ]
 })
+
+
+// 导航守卫
+// 使用 router.beforeEach 注册一个全局前置守卫，判断用户是否登陆
+router.beforeEach((to, from, next) => {
+    if (to.path === '/login') {
+        next();
+    } else {
+        let token = localStorage.getItem('authorization');
+        if (token === null || token === '') {
+            next('/login');
+        } else {
+            next();
+        }
+    }
+});
+
+
+export default router;

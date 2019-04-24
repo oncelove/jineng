@@ -1,5 +1,5 @@
 <template>
-    <div class="sidebar" @mouseover="mouseOver" @mouseleave="mouseLeave">
+    <div class="sidebar" @mouseleave="mouseLeave">
         <!-- default-active="1-1" -->
         <!-- <el-menu class="el-menu-vertical-demo">
             <el-submenu index="1">
@@ -81,7 +81,7 @@
                 </el-menu-item-group>
             </el-submenu>
         </el-menu> -->
-        <ul class="side-bar-box side-close" ref="sideBarItemBox">
+        <!-- <ul class="side-bar-box side-close" ref="sideBarItemBox">
             <li>
                 <i class="iconshouye1-copy iconfont"></i>
                 <span>平台首页</span>
@@ -122,8 +122,16 @@
                 <span>配置管理</span>
                 <i class="iconfont iconrightArrows"></i>
             </li>
+        </ul> -->
+        <ul class="side-bar-box side-close" ref="sideBarItemBox">
+            <li v-for="(items, index) in menuList" :key="index"  @mouseover="selectItem(items)" @click="itemHref(items)">
+                <i class="iconfont iconpeizhi"></i>
+                <span>{{items.name}}</span>
+                <i class="iconfont iconrightArrows"></i>
+                <!-- <navigation v-if="showNavigation" class="leave" :tonavlist="items.list"></navigation> -->
+            </li>
         </ul>
-        <navigation v-if="showNavigation" class="leave"></navigation>
+        <navigation v-if="showNavigation" class="leave" :tonavList='tonavList'></navigation>
     </div>
 </template>
 
@@ -131,12 +139,14 @@
 import navigation from './navigation'
 // import './../../../assets/icon/iconfont.css'
 export default {
+    props:['menuList'],
     components:{
         navigation,
     },
     data() {
         return {
             showNavigation:false,
+            tonavList:[],
         };
     },
     computed:{
@@ -158,9 +168,25 @@ export default {
         mouseLeave(){
             this.showNavigation = this.leaveShowNav;
             document.getElementsByClassName('wrap')[0].classList.add('wrap-close');
+        },
+        selectItem(item){
+            if (item.list) {
+                this.showNavigation = this.enterShowNav;
+                document.getElementsByClassName('wrap')[0].classList.remove('wrap-close');
+                this.tonavList = item.list;
+            } else {
+                this.showNavigation = false;
+                document.getElementsByClassName('wrap')[0].classList.remove('wrap-close');
+            }
+        },
+        itemHref(item){
+            if (item.url) {
+                this.$router.push({path:item.url})
+            }
         }
     },
     mounted(){
+
     }
 };
 </script>

@@ -6,6 +6,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     state: {
         showNav:false,
+        authorization: localStorage.getItem('authorization') ? localStorage.getItem('authorization') : '',
+        navList:[],
     },
     getters: {
         enterShowNav: state => {
@@ -13,10 +15,17 @@ export default new Vuex.Store({
         },
         leaveShowNav: state => {
             return state.showNav = false;
-        }
+        },
+        
     },
     mutations: {
-
+        changeLogin:function(state,user){
+            state.authorization = user.authorization;
+            localStorage.setItem('authorization', user.authorization);
+        },
+        changeNavList(state,list){
+            state.navList = list;
+        }
     },
     actions: {
 

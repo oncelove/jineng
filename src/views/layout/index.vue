@@ -7,12 +7,13 @@
                     <img src="./../../assets/logo-close.png" alt="" class="logo-close">
                 </a>
             </div>
-            <sidebar></sidebar>
+            <sidebar :menuList="menuList"></sidebar>
         </div>
         <div class="main">
             <topheader></topheader>
             <!-- <div class="content"> -->
-            <mainContent class="content"></mainContent>
+            <router-view class="content"/>
+            <!-- <mainContent class="content"></mainContent> -->
             <!-- </div> -->
         </div>
     </div>
@@ -23,7 +24,22 @@ import sidebar from './sidebar/sidebar'
 import topheader from './header/header'
 import mainContent from './content/main'
 export default {
+    data() {
+        return {
+            menuList:[],
+        }
+    },
     components: { sidebar, topheader, mainContent },
+    created(){
+        console.log(this.$store.state.navList)
+        this.$http.post('/sys/menu/nav').then(res => {
+            console.log(res)
+            this.menuList = res.data.menuList;
+            console.log(this.menuList);
+        }).catch( err => {
+            console.log(err);
+        })
+    }
 }
 </script>
 

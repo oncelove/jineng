@@ -10,8 +10,8 @@
             </div>
             <!-- <div class="login">
                 <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
-                    <el-form-item label="账号" prop="name">
-                        <el-input v-model="ruleForm.name"></el-input>
+                    <el-form-item label="账号" prop="username">
+                        <el-input v-model="ruleForm.username"></el-input>
                     </el-form-item>
                     <el-form-item label="密码" prop="password">
                         <el-input v-model="ruleForm.password"></el-input>
@@ -29,20 +29,19 @@
                 <ul class="come-in">
                     <li>
                         <i class="iconfont icon-user"></i>
-                        <input type="text" placeholder="请输入用户名">
+                        <input type="text" placeholder="请输入用户名" v-model="ruleForm.username">
                     </li>
                     <li>
                         <i class="iconfont icon-password"></i>
-                        <input type="password" placeholder="请输入密码">
+                        <input type="password" placeholder="请输入密码" v-model="ruleForm.password">
                     </li>
                     <li class="Verification">
                         <i class="iconfont iconyanzhengma"></i>
-                        <input type="text" placeholder="请输入验证码">
-                        <!-- <img :src="ruleForm.src" alt="如果看不清楚，请单击图片刷新！" @click="refreshCode"> -->
-                        <img src="./../../assets/logo.png" alt="">
+                        <input type="text" placeholder="请输入验证码" v-model="ruleForm.captcha">
+                        <img :src="ruleForm.src" alt="如果看不清楚，请单击图片刷新！" @click="refreshCode">
                     </li>
                     <li class="submit">
-                        <a href="javascript:;">登陆</a>
+                        <a href="javascript:;" @click="submitForm">登陆</a>
                     </li>
                 </ul>
                 <p>致力于更好的能源管理服务</p>
@@ -53,20 +52,19 @@
 </template>
 
 <script>
-// import axios from 'axios';
-import qs from 'qs'
+import { mapMutations } from 'vuex';
 export default {
     data(){
         return{
             ruleForm:{
-                name: '',
+                username: '',
                 password: '',
                 captcha: '',
                 time: '',
                 src: ''
             },
             rules:{
-                name:[
+                username:[
                     {required: true, message:'请输入账号', trigger: 'blur'}
                 ],
                 password: [
@@ -81,19 +79,54 @@ export default {
     },
     created:function(){
         this.ruleForm.time = (new Date()).valueOf();
-        // this.ruleForm.src = 'http://192.168.0.112:8080/commonservice-system/captcha.jpg?time='+ this.ruleForm.time;
+        this.ruleForm.src = 'http://192.168.0.112:8080/commonservice-system/captcha.jpg?time='+ this.ruleForm.time;
     },
     methods:{
+        ...mapMutations(['changeLogin']),
         refreshCode(){
             this.ruleForm.time = (new Date()).valueOf();
             this.ruleForm.src = "http://192.168.0.112:8080/commonservice-system/captcha.jpg?time=" + this.ruleForm.time;
         },
-        submitForm( formName) {
-            this.$refs[formName].validate( (valid) => {
+        submitForm() {
+            let _this = this;
+            if (_this.ruleForm.username === "" || _this.ruleForm.password === "") {
+                _this.$notify.error({
+                    title: '账号或密码不能为空',
+                });
+                return false;
+            }
+
+            if( _this.ruleForm.captcha === "" ) {
+                _this.$notify.error({
+                    title: '验证码不能为空',
+                });
+                return false;
+            }
+
+            var postData = {
+                'username': _this.ruleForm.username,
+                'password': _this.ruleForm.password,
+                'captcha': _this.ruleForm.captcha,
+                'time': _this.ruleForm.time
+            }
+
+            _this.$http.post('/sys/login',postData).then( res=> {
+                console.log(res);
+                if( res.data.code === 0){
+                    _this.$cookies.set('token',res.data.token);
+                    _this.userToken = res.data.token;
+                    _this.changeLogin({ authorization: _this.userToken });
+                    _this.$router.push({path:'/'})
+                }
+            }).catch(err=>{
+                console.log(err)
+            });
+
+            /*this.$refs[formName].validate( (valid) => {
                 if (valid) {
                     console.log('验证成功');
                     var postData = {
-                        'username': this.ruleForm.name,
+                        'username': this.ruleForm.username,
                         'password': this.ruleForm.password,
                         'captcha': this.ruleForm.captcha,
                         'time': this.ruleForm.time
@@ -109,7 +142,7 @@ export default {
                     console.log('验证失败');
                     return false;
                 }
-            })
+            })*/
         }
     }
 }
