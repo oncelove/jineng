@@ -365,15 +365,12 @@
                 font-size: 35px;
                 color: $maincolor;
                 font-weight: normal;
-                &.errorColor{
-                    color: $errcolor;
-                }
             }
         }
     }
 }
 
-.errorColor{color: $errcolor;}
+.errorColor{color: $errcolor !important ;}
 
 .border-bottom{
     @include borderBottom();

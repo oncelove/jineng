@@ -5,7 +5,7 @@ import { Message } from 'element-ui'
 import router from './router'
 
 Vue.prototype.$http= Axios; 
-Axios.defaults.timeout = 50000 // 请求超时
+Axios.defaults.timeout = 5000 // 请求超时
 Axios.defaults.baseURL = '/api/'  // api 即上面 vue.config.js 中配置的地址
 
 var loading;
