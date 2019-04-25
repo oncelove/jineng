@@ -63,8 +63,7 @@ axios_instance.interceptors.response.use(response => {
 
         if(response.data.code === 401){
             localStorage.removeItem('authorization');
-            console.log(router);
-            // Vue.$router.push('/login')
+            router.push({path:'/login'});
         }
     }
 

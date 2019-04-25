@@ -28,16 +28,16 @@
             <div class="login">
                 <ul class="come-in">
                     <li>
-                        <i class="iconfont icon-user"></i>
+                        <i class="iconfont iconyonghu"></i>
                         <input type="text" placeholder="请输入用户名" v-model="ruleForm.username">
                     </li>
                     <li>
-                        <i class="iconfont icon-password"></i>
+                        <i class="iconfont iconmima"></i>
                         <input type="password" placeholder="请输入密码" v-model="ruleForm.password">
                     </li>
                     <li class="Verification">
                         <i class="iconfont iconyanzhengma"></i>
-                        <input type="text" placeholder="请输入验证码" v-model="ruleForm.captcha">
+                        <input type="text" placeholder="请输入验证码" v-model="ruleForm.captcha" @keyup.enter="submitForm">
                         <img :src="ruleForm.src" alt="如果看不清楚，请单击图片刷新！" @click="refreshCode">
                     </li>
                     <li class="submit">
