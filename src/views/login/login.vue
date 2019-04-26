@@ -79,15 +79,16 @@ export default {
     },
     created:function(){
         this.ruleForm.time = (new Date()).valueOf();
-        // this.ruleForm.src = 'http://39.107.89.154:8080/commonservice-system/captcha.jpg?time='+ this.ruleForm.time;
-        this.ruleForm.src = 'http://192.168.0.112:8080/commonservice-system/captcha.jpg?time='+ this.ruleForm.time;
+        this.ruleForm.src = 'http://39.107.89.154:8000/commonservice-system/captcha.jpg?time='+ this.ruleForm.time;
+        // this.ruleForm.src = 'http://192.168.0.112:8080/commonservice-system/captcha.jpg?time='+ this.ruleForm.time;
     },
     methods:{
         ...mapMutations(['changeLogin']),
         refreshCode(){
+            console.log(this.$GLOBAL);
             this.ruleForm.time = (new Date()).valueOf();
-            // this.ruleForm.src = "http://39.107.89.154:8080/commonservice-system/captcha.jpg?time=" + this.ruleForm.time;
-            this.ruleForm.src = "http://192.168.0.112:8080/commonservice-system/captcha.jpg?time=" + this.ruleForm.time;
+            this.ruleForm.src = "http://39.107.89.154:8000/commonservice-system/captcha.jpg?time=" + this.ruleForm.time;
+            // this.ruleForm.src = "http://192.168.0.112:8080/commonservice-system/captcha.jpg?time=" + this.ruleForm.time;
         },
         submitForm() {
             let _this = this;

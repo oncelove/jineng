@@ -9,11 +9,13 @@ import './styles/index.scss'
 import axios_instance from './axios'
 import VueAxios from 'vue-axios'
 import echarts from 'echarts'
+import baseUrl from './setBaseUrl'
 
 // 拖拽
 // import './tool/directives'
 
 Vue.prototype.$echarts = echarts 
+Vue.prototype.$GLOBAL = baseUrl 
 Vue.use(ElementUI)
 Vue.use(VueCookies)
 Vue.use(VueAxios, axios_instance);
