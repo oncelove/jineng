@@ -32,7 +32,7 @@ export default {
     components: { sidebar, topheader, mainContent },
     created(){
         console.log(this.$store.state.navList)
-        this.$http.post('/sys/menu/nav').then(res => {
+        this.$http.post('/menus/nav').then(res => {
             console.log(res)
             this.menuList = res.data.menuList;
             console.log(this.menuList);

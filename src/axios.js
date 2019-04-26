@@ -3,10 +3,13 @@ import Axios from 'axios'
 import Qs from 'qs'
 import { Message } from 'element-ui'
 import router from './router'
+import baseUrl from './setBaseUrl'
+
+Axios.defaults.withCredentials = true;
+Axios.defaults.baseURL = baseUrl;
 
 Vue.prototype.$http= Axios; 
 Axios.defaults.timeout = 5000 // 请求超时
-Axios.defaults.baseURL = '/api/'  // api 即上面 vue.config.js 中配置的地址
 
 var loading;
 function startLoading() {
