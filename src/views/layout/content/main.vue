@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import searItemsBox from './searItemsBox'
+import searItemsBox from '@/components/searItemsBox'
 import tableBox from './tableBox'
 import page from './page'
 import realdata from './realdata'

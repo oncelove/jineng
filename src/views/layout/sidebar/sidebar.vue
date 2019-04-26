@@ -125,7 +125,7 @@
         </ul> -->
         <ul class="side-bar-box side-close" ref="sideBarItemBox">
             <li v-for="(items, index) in menuList" :key="index"  @mouseover="selectItem(items)" @click="itemHref(items)">
-                <i class="iconfont iconpeizhi"></i>
+                <i class="iconfont" :class="items.icon"></i>
                 <span>{{items.name}}</span>
                 <i class="iconfont iconrightArrows"></i>
                 <!-- <navigation v-if="showNavigation" class="leave" :tonavlist="items.list"></navigation> -->

@@ -31,11 +31,10 @@ export default {
     },
     components: { sidebar, topheader, mainContent },
     created(){
-        console.log(this.$store.state.navList)
         this.$http.post('/menus/nav').then(res => {
             console.log(res)
             this.menuList = res.data.menuList;
-            console.log(this.menuList);
+            // console.log(this.menuList);
         }).catch( err => {
             console.log(err);
         })

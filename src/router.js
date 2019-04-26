@@ -12,8 +12,25 @@ const router = new Router({
             // name: 'index',
             component: () => import('./views/layout/index.vue'),
             children:[
+                // 首页
                 {path:'/',name:'indexMain',component: () => import('./views/homepage/homepage.vue')},
-                {path: '/users',name:'userInfo',component: () => import('./views/main/users/users.vue')},
+                // 用户管理列表
+                {path: '/users',name:'users',component: () => import('./views/main/users/users.vue')},
+                // 部门管理列表
+                {path: '/dept',name:'list',component: () => import('./views/main/department/list.vue')},
+                // 角色管理列表
+                {path: '/role',name:'roles',component: () => import('./views/main/roles/roles.vue')},
+                // 菜单管理列表
+                {path: '/menu',name:'menu',component: () => import('./views/main/menu/menu.vue')},
+                // 运营商管理
+                {path: '/agent',name:'agent',component: () => import('./views/main/agent/agent.vue')},
+                // 配置管理
+                {path: '/config',name:'config',component: () => import('./views/main/config/config.vue')},
+                // 客户管理
+                {path: '/customer',name:'Customer',component: () => import('./views/main/Customer/Customer.vue')},
+                // 档案管理
+                {path: '/document',name:'archives',component: () => import('./views/main/Customer/archives.vue')},
+                // {path: 'modules/job/schedule.html1',name:'schedule',component: () => import('./views/main/schedule/schedule.vue')},
             ]
         },
         {

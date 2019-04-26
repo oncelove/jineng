@@ -9,6 +9,10 @@ import './styles/index.scss'
 import axios_instance from './axios'
 import VueAxios from 'vue-axios'
 import echarts from 'echarts'
+
+// 拖拽
+// import './tool/directives'
+
 Vue.prototype.$echarts = echarts 
 Vue.use(ElementUI)
 Vue.use(VueCookies)

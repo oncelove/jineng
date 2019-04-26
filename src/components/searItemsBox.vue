@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div @mouseleave="onMouseout">
         <span class="item">电力监测</span>
         <span class="item">环境监测</span>
         <span class="item">电梯监测</span>
@@ -10,7 +10,11 @@
 
 <script>
 export default {
-    
+    methods: {
+        onMouseout(){
+            this.$emit('listenToChildEvent',false)
+        }
+    },
 }
 </script>
 

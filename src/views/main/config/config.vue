@@ -20,13 +20,13 @@
         </ul>
         <el-table :data="tableData" style="width: 100%"  class="table-box">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column fixed prop="agentName" label="项目名称" width="150">
+            <el-table-column prop="id" label="id">
             </el-table-column>
-            <el-table-column prop="email" label="email">
+            <el-table-column fixed prop="key" label="key">
             </el-table-column>
-            <el-table-column prop="mobile" label="手机">
+            <el-table-column prop="remark" label="remark">
             </el-table-column>
-            <el-table-column prop="username" label="用户角色">
+            <el-table-column prop="value" label="value">
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="100">
                 <template slot-scope="scope">
@@ -41,11 +41,11 @@
             </el-table-column>
         </el-table>
         <page></page>
-        <el-dialog title="用户信息" :visible.sync="dialogTableVisible">
+        <el-dialog title="配置管理信息" :visible.sync="dialogTableVisible">
             <el-table :data="dialogData">
-                <el-table-column property="email" label="日期" width="150"></el-table-column>
-                <el-table-column property="mobile" label="姓名" width="200"></el-table-column>
-                <el-table-column property="username" label="地址"></el-table-column>
+                <el-table-column property="remark" label="remark" width="150"></el-table-column>
+                <el-table-column property="key" label="key" width="200"></el-table-column>
+                <el-table-column property="value" label="value"></el-table-column>
             </el-table>
         </el-dialog>
     </div>
@@ -55,11 +55,12 @@
 import page from '@/components/page'
 import searItemsBox from '@/components/searItemsBox'
 export default {
-    components:{page, searItemsBox},
+    components:{page,searItemsBox},
     data() {
         return {
             tableData:[],
             dialogData: [],
+            dialogTableVisible: false,
             searItemShow: false,
             activeIndex: '',
             searchTextItem:[
@@ -68,15 +69,14 @@ export default {
                 {id:3,codeText:'监测类型',selectText:'环境监测'},
                 {id:4,codeText:'用户类型',selectText:'医院'},
                 {id:5,codeText:'用户星级',selectText:'一星'}
-            ],
-            dialogTableVisible: false,
+            ]
         }
     },
     created() {
-        this.$http.get('/users').then( res => {
+        this.$http.get('/sys/config/list').then( res => {
             console.log(res);
             this.tableData = res.data.page.list;
-            console.log( this.tableData);
+            // console.log( this.tableData);
         }).catch( err => {
             console.log(err);
         })
