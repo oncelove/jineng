@@ -53,6 +53,7 @@
 
 <script>
 import { mapMutations } from 'vuex';
+import {postRequest} from './../../axios2.js'
 export default {
     data(){
         return{
@@ -79,16 +80,16 @@ export default {
     },
     created:function(){
         this.ruleForm.time = (new Date()).valueOf();
-        this.ruleForm.src = 'http://39.107.89.154:8000/commonservice-system/captcha.jpg?time='+ this.ruleForm.time;
-        // this.ruleForm.src = 'http://192.168.0.112:8080/commonservice-system/captcha.jpg?time='+ this.ruleForm.time;
+        // this.ruleForm.src = 'http://39.107.89.154:8000/commonservice-system/captcha.jpg?time='+ this.ruleForm.time;
+        this.ruleForm.src = 'http://192.168.0.112:8080/commonservice-system/captcha.jpg?time='+ this.ruleForm.time;
     },
     methods:{
         ...mapMutations(['changeLogin']),
         refreshCode(){
             console.log(this.$GLOBAL);
             this.ruleForm.time = (new Date()).valueOf();
-            this.ruleForm.src = "http://39.107.89.154:8000/commonservice-system/captcha.jpg?time=" + this.ruleForm.time;
-            // this.ruleForm.src = "http://192.168.0.112:8080/commonservice-system/captcha.jpg?time=" + this.ruleForm.time;
+            // this.ruleForm.src = "http://39.107.89.154:8000/commonservice-system/captcha.jpg?time=" + this.ruleForm.time;
+            this.ruleForm.src = "http://192.168.0.112:8080/commonservice-system/captcha.jpg?time=" + this.ruleForm.time;
         },
         submitForm() {
             let _this = this;
@@ -112,8 +113,7 @@ export default {
                 'captcha': _this.ruleForm.captcha,
                 'time': _this.ruleForm.time
             }
-
-            _this.$http.post('/sys/login',postData).then( res=> {
+            postRequest('/sys/login',postData).then( res => {
                 console.log(res);
                 if( res.data.code === 0){
                     _this.$cookies.set('token',res.data.token);
@@ -121,31 +121,13 @@ export default {
                     _this.changeLogin({ authorization: _this.userToken });
                     _this.$router.push({path:'/'})
                 }
+                if ( res.data.code === 500 ) {
+                    this.$message.error(res.data.msg);
+                }
             }).catch(err=>{
                 console.log(err)
             });
 
-            /*this.$refs[formName].validate( (valid) => {
-                if (valid) {
-                    console.log('验证成功');
-                    var postData = {
-                        'username': this.ruleForm.username,
-                        'password': this.ruleForm.password,
-                        'captcha': this.ruleForm.captcha,
-                        'time': this.ruleForm.time
-                    }
-                    this.$http.post('/api/sys/login',qs.stringify(postData)).then( r=> {
-                        console.log(r);
-                        console.log(postData);
-                    }).catch(err=>{
-                        console.log(err)
-                    });
-                    // this.$router.push({path:'/'});
-                } else {
-                    console.log('验证失败');
-                    return false;
-                }
-            })*/
         }
     }
 }

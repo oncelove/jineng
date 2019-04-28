@@ -8,6 +8,8 @@ export default new Vuex.Store({
         showNav:false,
         authorization: localStorage.getItem('authorization') ? localStorage.getItem('authorization') : '',
         navList:[],
+        roleNames:null, // 角色列表
+        departmentArray:null, // 部门列表
     },
     getters: {
         enterShowNav: state => {
@@ -25,7 +27,14 @@ export default new Vuex.Store({
         },
         changeNavList(state,list){
             state.navList = list;
+        },
+        changeroleNames( state, list) {
+            state.roleNames = list;
+        },
+        changeDepartmentArray( state, list) {
+            state.departmentArray = list;
         }
+
     },
     actions: {
 

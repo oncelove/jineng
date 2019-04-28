@@ -5,10 +5,11 @@ switch (process.env.NODE_ENV) {
         baseUrl = "/api"  //这里是本地的请求url
         break
     case 'test':   // 注意这里的名字要和步骤二中设置的环境名字对应起来
-        baseUrl = "http://39.107.89.154:8000/commonservice-system"  //这里是测试环境中的url
+        // baseUrl = "http://39.107.89.154:8000/commonservice-system"  //这里是测试环境中的url
+        baseUrl = ""
         break
     case 'production':
-        baseUrl = ""   //生产环境url
+        baseUrl = "http://39.107.89.154:8000/commonservice-system"   //生产环境url
         break
 }
 

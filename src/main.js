@@ -6,8 +6,8 @@ import VueCookies from 'vue-cookies'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import './styles/index.scss'
-import axios_instance from './axios'
-import VueAxios from 'vue-axios'
+// import axios_instance from './axios'
+// import VueAxios from 'vue-axios'
 import echarts from 'echarts'
 import baseUrl from './setBaseUrl'
 
@@ -18,7 +18,7 @@ Vue.prototype.$echarts = echarts
 Vue.prototype.$GLOBAL = baseUrl 
 Vue.use(ElementUI)
 Vue.use(VueCookies)
-Vue.use(VueAxios, axios_instance);
+// Vue.use(VueAxios, axios_instance);
 
 Vue.config.productionTip = false
 
