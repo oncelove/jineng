@@ -207,11 +207,12 @@ export default {
                     console.log(this.dialogFrom);
                     this.dialogFrom.roleIdList = this.roleIdList;
                     if ( this.source ) {
-                        postJsonRequest('/users',this.dialogFrom).then( res => {
-                            console.log(res);
-                        }).catch( err => {
-                            console.log(err);
-                        })
+                        alert('你点击新增里面的提交');
+                        // postJsonRequest('/users',this.dialogFrom).then( res => {
+                        //     console.log(res);
+                        // }).catch( err => {
+                        //     console.log(err);
+                        // })
                     } else {
                         putJsonRequest('/users/'+ this.dialogFrom.userId, this.dialogFrom).then( res => {
                             console.log(res);
