@@ -60,6 +60,7 @@
 <script>
 import page from '@/components/page'
 import searItemsBox from '@/components/searItemsBox'
+import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axios.js'
 export default {
     components:{page, searItemsBox},
     data() {
@@ -79,8 +80,12 @@ export default {
         }
     },
     created() {
-        this.$http.get('/menus').then( res => {
-            // console.log(res);
+        getRequest('/menus').then( res => {
+            console.log(res);
+            let listArray;
+            res.data.menuList.map( (val, i) => {
+                
+            })
             this.tableData = res.data.menuList;
             // console.log( this.tableData);
         }).catch( err => {

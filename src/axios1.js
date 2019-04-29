@@ -1,9 +1,16 @@
-import axios from 'axios'
-import { Message } from 'element-ui'
 import Vue from 'vue'
+import Axios from 'axios'
+import Qs from 'qs'
+import { Message } from 'element-ui'
+import router from './router'
 import baseUrl from './setBaseUrl'
-axios.defaults.baseURL = baseUrl;
-// loading框设置局部刷新，且所有请求完成后关闭loading框
+
+Axios.defaults.withCredentials = true;
+Axios.defaults.baseURL = baseUrl;
+
+Vue.prototype.$http= Axios; 
+Axios.defaults.timeout = 5000 // 请求超时
+
 var loading;
 function startLoading() {
     loading = Vue.prototype.$loading({
@@ -18,8 +25,20 @@ function endLoading() {
     loading.close();
 }
 
-// 请求拦截
-axios.interceptors.request.use(config => {
+var axios_instance = Axios.create({
+    // config里面有这个transformRquest， 这个选项会在发送参数前进行处理。 这时候我们通过Qs.stringify转换为表单查询参数
+    transformRequest: [function (data) {
+        data = Qs.stringify(data);
+        return data;
+    }],
+    // 设置Content - Type
+    headers: {
+        'Content-Type': 'application/json'
+    }    
+});
+
+// 添加请求拦截器
+axios_instance.interceptors.request.use(config => {
     // 在发送请求之前做某事，比如说 设置token
     // config.headers['token'] = 'token';
     startLoading();
@@ -35,7 +54,7 @@ axios.interceptors.request.use(config => {
 });
 
 // 添加响应拦截器
-axios.interceptors.response.use(response => {
+axios_instance.interceptors.response.use(response => {
     // 对响应数据做些事
     endLoading();
     if (response.status === 200) {
@@ -65,51 +84,5 @@ axios.interceptors.response.use(response => {
         Message.error({ message: '服务器被吃了⊙﹏⊙∥' });
     }
 })
-axios.defaults.timeout = 3000;// 请求超时5fen
-// RequestBody
-export const postJsonRequest = (url, params) => {
-    return axios({
-        method: 'post',
-        url: url,
-        data: params,
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    });
-}
-// RequestBody
-export const putJsonRequest = (url, params) => {
-    return axios({
-        method: 'put',
-        url: url,
-        data: params,
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    });
-}
-// formData
-export const postRequest = (url, params) => {
-    return axios({
-        method: 'post',
-        url: url,
-        data: params,
-        transformRequest: [function (data) {
-            let ret = ''
-            for (let it in data) {
-                ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-            }
-            return ret
-        }],
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    });
-}
-export const getRequest = (url, data = '') => {
-    return axios({
-        method: 'get',
-        params: data,
-        url: url,
-    });
-}
+
+export default axios_instance;

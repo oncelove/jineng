@@ -30,6 +30,7 @@ const router = new Router({
                 {path: '/customer',name:'Customer',component: () => import('./views/main/Customer/Customer.vue')},
                 // 档案管理
                 {path: '/document',name:'archives',component: () => import('./views/main/Customer/archives.vue')},
+                {path: '/three',name:'three',component: () => import('./views/main/department/three.vue')},
                 // {path: 'modules/job/schedule.html1',name:'schedule',component: () => import('./views/main/schedule/schedule.vue')},
             ]
         },

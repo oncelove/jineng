@@ -10,6 +10,8 @@ export default new Vuex.Store({
         navList:[],
         roleNames:null, // 角色列表
         departmentArray:null, // 部门列表
+        usersList:null, // 登录后，用户保存的集合
+        dialogTableVisible:false, // 显示弹窗
     },
     getters: {
         enterShowNav: state => {
@@ -18,6 +20,9 @@ export default new Vuex.Store({
         leaveShowNav: state => {
             return state.showNav = false;
         },
+        listenDialogTableVisible: state => {
+            return state.dialogTableVisible;
+        }
         
     },
     mutations: {
@@ -33,6 +38,12 @@ export default new Vuex.Store({
         },
         changeDepartmentArray( state, list) {
             state.departmentArray = list;
+        },
+        changeUsersList (state, list) {
+            state.usersList = list.userList;
+        },
+        changeDialogTableVisible(state, data){
+            state.dialogTableVisible = data;
         }
 
     },

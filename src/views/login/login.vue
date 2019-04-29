@@ -53,7 +53,7 @@
 
 <script>
 import { mapMutations } from 'vuex';
-import {postRequest} from './../../axios2.js'
+import {postRequest} from './../../axios.js'
 export default {
     data(){
         return{
@@ -84,7 +84,7 @@ export default {
         this.ruleForm.src = 'http://192.168.0.112:8080/commonservice-system/captcha.jpg?time='+ this.ruleForm.time;
     },
     methods:{
-        ...mapMutations(['changeLogin']),
+        ...mapMutations(['changeLogin','changeUsersList']),
         refreshCode(){
             console.log(this.$GLOBAL);
             this.ruleForm.time = (new Date()).valueOf();
@@ -119,7 +119,8 @@ export default {
                     _this.$cookies.set('token',res.data.token);
                     _this.userToken = res.data.token;
                     _this.changeLogin({ authorization: _this.userToken });
-                    _this.$router.push({path:'/'})
+                    _this.changeUsersList({userList:res.data.user});
+                    _this.$router.push({path:'/'});
                 }
                 if ( res.data.code === 500 ) {
                     this.$message.error(res.data.msg);

@@ -24,7 +24,13 @@
             <el-table-column prop="username" label="用户名"></el-table-column>
             <el-table-column prop="email" label="邮箱"></el-table-column>
             <el-table-column prop="mobile" label="手机"></el-table-column>
-            <el-table-column prop="agentName" label="运营商"></el-table-column>
+            <el-table-column prop="deptName" label="所属部门"></el-table-column>
+            <el-table-column prop="status" label="状态">
+                <template slot-scope="scope">
+                    <i v-if="scope.row.is_show===0" class="el-icon-close"></i>
+                    <i v-else class="el-icon-check"></i>
+                </template>
+            </el-table-column>
             <el-table-column fixed="right" label="操作" width="100">
                 <template slot-scope="scope">
                     <el-button
@@ -68,11 +74,15 @@
                 </el-form-item>
                 <el-form-item label="角色">
                     <el-checkbox-group v-model="roleIdList" :disabled="dialogDisabled">
-                        <!--  @change="roleIdChange(roles.roleId)" -->
                         <el-checkbox :label="roles.roleId" v-for="(roles,index) in rolesArray" :key="index">
                             {{roles.roleName}}
                         </el-checkbox>
                     </el-checkbox-group>
+                </el-form-item>
+                <el-form-item label="角色属性">
+                    <el-radio-group v-model="dialogFrom.userType" :disabled="dialogDisabled">
+                        <el-radio v-for="(usertype,index) in usersType" :key="index" :label="usertype.id">{{usertype.id}}--{{usertype.name}}</el-radio>
+                    </el-radio-group>
                 </el-form-item>
                 <el-form-item v-if="dialogBtn">
                     <el-button type="primary" @click="onSubmit('dialogFrom')">保存</el-button>
@@ -86,7 +96,7 @@
 <script>
 import page from '@/components/page'
 import searItemsBox from '@/components/searItemsBox'
-import {getRequest, putJsonRequest, postJsonRequest} from '@/axios2.js'
+import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axios.js'
 export default {
     components:{page, searItemsBox},
     data() {
@@ -122,25 +132,43 @@ export default {
                 deptId:'', // 所属部门
                 roleIdList: [], // 用户所属角色
                 userId:null,
-            }
+                userType:'',// 角色属性状态
+            },
+            // 角色属性
+            // usersTypeStatus:'',
+            usersType:[
+                {id:1,name:'极能管理员'},
+                {id:2,name:'运营商'},
+                {id:3,name:'客户'},
+                {id:4,name:'客户下角色'},
+            ]
         }
     },
     created() {
-        // 获取列表数据
-        getRequest('/users').then( res => {
-            console.log(res);
-            this.tableData = res.data.page.list;
-        }).catch( err => {
-            console.log(err);
-        });
+        this.getUsersList();
+    },
+    mounted(){
+        
     },
     methods: {
+        // 获取列表数据
+        getUsersList(){
+            getRequest('/users').then( res => {
+                console.log(res);
+                this.tableData = res.data.page.list;
+            }).catch( err => {
+                console.log(err);
+                this.$message.error(err);
+            });
+        },
+        // 获取用户信息
         getUserMsg(userId,whereClick){
             this.dialogTableVisible = true;
             this.source = false;
             this.rolesArray = this.$store.state.roleNames;
             this.deptArray = this.$store.state.departmentArray;
             Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
+            this.roleIdList = new Array();
             if (whereClick) {
                 this.dialogDisabled = false;
                 this.dialogBtn = true;
@@ -149,7 +177,7 @@ export default {
                 this.dialogDisabled = true;
                 this.dialogBtn = false;
             }
-            
+            this.getUserType();
             getRequest('/users/'+ userId).then( res => {
                 console.log(res);
                 if ( res.data.code === 0 ) {
@@ -165,11 +193,28 @@ export default {
                 }
             }).catch( err => {
                 console.log(err);
+                this.$message.error(err);
             })
+        },
+        // 获取用户属性
+        getUserType(){
+            if (this.$store.state.usersList) {
+                this.dialogFrom.userType = this.$store.state.usersList.userType;
+                this.usersType.map( (val, index) => {
+                    if (this.dialogFrom.userType == val.id) {
+                        if ( index != 0 ) {
+                            let len = index + 1;
+                            this.usersType.splice(index,len);
+                        }
+                    }
+                })
+            } else {
+                this.$message.error('用户角色属性为空，请重新登录');
+                this.$router.push({path:'/login'});
+            }
         },
         // 查看按钮点击
         handleClick(index,row){
-            
             this.getUserMsg(row.userId);
             // console.log(index,row);
         },
@@ -179,7 +224,21 @@ export default {
         },
         // 删除按钮点击
         deleteClick(index,row){
-            console.log(1111);
+            console.log(index,row);
+            deleteRequest('/users/' + row.userId).then( res => {
+                if (res.data.code === 0) {
+                    this.$message({
+                        message: res.data.msg,
+                        type: 'success'
+                    });
+                    this.getUsersList();
+                } else {
+                    this.$message.error(res.data.code,res.data.msg);
+                }
+            }).catch( err=> {
+                console.log(err);
+                this.$message.error(err);
+            })
         },
         // 新增按钮点击
         added(){
@@ -190,6 +249,7 @@ export default {
             this.source = true;
             this.rolesArray = this.$store.state.roleNames;
             this.deptArray = this.$store.state.departmentArray;
+            this.roleIdList = new Array();
         },
         // 搜索下拉框点击
         itemShowFunc(index){
@@ -204,34 +264,41 @@ export default {
         onSubmit(formName){
             this.$refs[formName].validate( (valid) => {
                 if (valid) {
-                    console.log(this.dialogFrom);
                     this.dialogFrom.roleIdList = this.roleIdList;
                     if ( this.source ) {
-                        alert('你点击新增里面的提交');
-                        // postJsonRequest('/users',this.dialogFrom).then( res => {
-                        //     console.log(res);
-                        // }).catch( err => {
-                        //     console.log(err);
-                        // })
-                    } else {
-                        putJsonRequest('/users/'+ this.dialogFrom.userId, this.dialogFrom).then( res => {
-                            console.log(res);
+                        postJsonRequest('/users',this.dialogFrom).then( res => {
                             if (res.data.code === 0) {
                                 this.dialogTableVisible = false;
                                 this.$message({
                                     message: res.data.msg,
                                     type: 'success'
                                 });
+                                this.getUsersList();
                             } else {
                                 this.$message.error(res.data.code,res.data.msg);
                             }
                         }).catch( err => {
-                            console.log(err);
+                            this.$message.error(err);
+                        })
+                    } else {
+                        putJsonRequest('/users/'+ this.dialogFrom.userId, this.dialogFrom).then( res => {
+                            if (res.data.code === 0) {
+                                this.dialogTableVisible = false;
+                                this.$message({
+                                    message: res.data.msg,
+                                    type: 'success'
+                                });
+                                this.getUsersList();
+                            } else {
+                                this.$message.error(res.data.code,res.data.msg);
+                            }
+                        }).catch( err => {
+                            this.$message.error(err);
                         })
                     }
                     
                 } else {
-                    console.log('err');
+                    this.$message.error('验证失败');
                     return false;
                 }
             })

@@ -120,7 +120,7 @@
 
 .main {
     position: absolute;
-    left: 200px;
+    left: 70px;
     top: 0;
     min-height: 100%;
     right: 0;
@@ -390,7 +390,7 @@
     }
 }
 
-.table-box {
+.table-box, .el-tree{
     margin: 30px 0 20px;
     @include boxshadow();
     @include borderRadius(12);

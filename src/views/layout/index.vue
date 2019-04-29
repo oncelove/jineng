@@ -23,7 +23,7 @@
 import sidebar from './sidebar/sidebar'
 import topheader from './header/header'
 import mainContent from './content/main'
-import {getRequest} from './../../axios2.js'
+import {getRequest} from './../../axios.js'
 export default {
     data() {
         return {

@@ -15,41 +15,23 @@
             </li>
             <li class="operation">
                 <a href="javascript:;">查询</a>
+                <a href="javascript:;" @click="added">新增</a>
                 <a href="javascript:;">删除</a>
             </li>
         </ul>
         <el-table :data="tableData" style="width: 100%"  class="table-box">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="address" label="address">
-            </el-table-column>
-            <el-table-column fixed prop="agentId" label="agentId">
-            </el-table-column>
-            <el-table-column prop="agentName" label="agentName">
-            </el-table-column>
-            <el-table-column prop="assistant" label="assistant">
-            </el-table-column>
-            <el-table-column prop="contacts" label="contacts">
-            </el-table-column>
-            <el-table-column prop="createTime" label="createTime">
-            </el-table-column>
-            <el-table-column prop="customerId" label="customerId">
-            </el-table-column>
-            <el-table-column prop="customerName" label="customerName">
-            </el-table-column>
-            <el-table-column prop="customerType" label="customerType">
-            </el-table-column>
-            <el-table-column prop="deletionState" label="deletionState">
-            </el-table-column>
-            <el-table-column prop="description" label="description">
-            </el-table-column>
-            <el-table-column prop="latitude" label="latitude">
-            </el-table-column>
-            <el-table-column prop="longitude" label="longitude">
-            </el-table-column>
-            <el-table-column prop="phone" label="phone">
-            </el-table-column>
-            <el-table-column prop="updateTime" label="updateTime">
-            </el-table-column>
+            <el-table-column fixed prop="agentId" label="极能或运营商id"></el-table-column>
+            <el-table-column prop="customerName" label="客户名"></el-table-column>
+            <el-table-column prop="customerType" label="客户类型"></el-table-column>
+            <el-table-column prop="contacts" label="联系人"></el-table-column>
+            <el-table-column prop="phone" label="联系电话"></el-table-column>
+            <el-table-column prop="assistant" label="业务员"></el-table-column>
+            <el-table-column prop="operationType" label="业务类型"></el-table-column>
+            <el-table-column prop="address" label="地址"></el-table-column>
+            <el-table-column prop="latitude" label="纬度"></el-table-column>
+            <el-table-column prop="longitude" label="经度"></el-table-column>
+            <el-table-column prop="description" label="描述"></el-table-column>
             <el-table-column fixed="right" label="操作" width="100">
                 <template slot-scope="scope">
                     <el-button
@@ -64,11 +46,38 @@
         </el-table>
         <page></page>
         <el-dialog title="客户管理信息" :visible.sync="dialogTableVisible">
-            <el-table :data="dialogData">
-                <el-table-column property="agentName" label="agentName" width="150"></el-table-column>
-                <el-table-column property="customerName" label="customerName" width="200"></el-table-column>
-                <el-table-column property="phone" label="phone"></el-table-column>
-            </el-table>
+            <el-form ref="dialogFrom" :model="dialogFrom" label-width="80px">
+                <el-form-item label="客户名">
+                    <el-input v-model="dialogFrom.customerName" :disabled="dialogDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="客户类型">
+                    <el-input v-model="dialogFrom.customerType" :disabled="dialogDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="联系人">
+                    <el-input v-model="dialogFrom.contacts" :disabled="dialogDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="联系电话">
+                    <el-input v-model="dialogFrom.phone" :disabled="dialogDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="业务员">
+                    <el-input v-model="dialogFrom.assistant" :disabled="dialogDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="业务类型">
+                    <el-input v-model="dialogFrom.operationType" :disabled="dialogDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="地址">
+                    <el-input v-model="dialogFrom.address" :disabled="dialogDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="纬度">
+                    <el-input v-model="dialogFrom.latitude" :disabled="dialogDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="经度">
+                    <el-input v-model="dialogFrom.longitude" :disabled="dialogDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="描述">
+                    <el-input v-model="dialogFrom.description" :disabled="dialogDisabled"></el-input>
+                </el-form-item>
+            </el-form>
         </el-dialog>
     </div>
 </template>
@@ -76,6 +85,7 @@
 <script>
 import page from '@/components/page'
 import searItemsBox from '@/components/searItemsBox'
+import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axios.js'
 export default {
     components:{page,searItemsBox},
     data() {
@@ -91,11 +101,23 @@ export default {
                 {id:3,codeText:'监测类型',selectText:'环境监测'},
                 {id:4,codeText:'用户类型',selectText:'医院'},
                 {id:5,codeText:'用户星级',selectText:'一星'}
-            ]
+            ],
+            dialogFrom:{
+                customerName:'',
+                customerType:'',
+                contacts:'',
+                phone:'',
+                assistant:'',
+                operationType:'',
+                address:'',
+                latitude:'',
+                longitude:'',
+                description:'',
+            }
         }
     },
     created() {
-        this.$http.get('/customers').then( res => {
+        getRequest('/customers').then( res => {
             console.log(res);
             this.tableData = res.data.page.list;
             // console.log( this.tableData);
@@ -116,6 +138,9 @@ export default {
         },
         listenChildShowItem(data){
             this.searItemShow = false;
+        },
+        added(){
+            console.log(111);
         }
     },
 }
