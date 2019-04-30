@@ -16,52 +16,67 @@
             <li class="operation">
                 <a href="javascript:;">查询</a>
                 <a href="javascript:;" @click="addList">添加</a>
-                <a href="javascript:;">删除</a>
             </li>
         </ul>
-        <!-- <el-table :data="tableData" style="width: 100%"  class="table-box">
-            <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="departmentId" label="departmentId" width="150">
-            </el-table-column>
-            <el-table-column fixed prop="agentName" label="项目名称">
-            </el-table-column>
-            <el-table-column prop="name" label="name">
-            </el-table-column>
-            <el-table-column fixed="right" label="操作" width="100">
-                <template slot-scope="scope">
-                    <el-button
-                        @click="handleClick(scope.$index,scope.row)"
-                        type="text"
-                        size="small"
-                        >查看</el-button
-                    >
-                    <el-button type="text" size="small">编辑</el-button>
-                </template>
-            </el-table-column>
-        </el-table> -->
-        <!-- <el-tree
+        <el-tree
+            empty-text="暂无数据"
+            ref="tree"
             :data="treeData"
             :props="defaultProps"
-            show-checkbox
-            accordion
-            node-key="departmentId"
-            @node-click="handleNodeClick"
-            :render-content="renderContent"
-        ></el-tree> -->
-        <!-- <page></page> -->
-        <el-dialog title="部门管理信息" :visible.sync="dialogTableVisible">
-            <el-form ref="dialogFrom" :model="dialogFrom" label-width="80px">
-                <el-form-item label="部门名称">
+            :expand-on-click-node="false"
+            node-key="id"
+        >
+            <!-- @check="handleCheck" :render-content="renderContent" -->
+            <div class="custom-tree-node" slot-scope="{ node, data }">
+                <div><i class="el-icon-menu"></i>{{ node.label }}</div>
+                <div>
+                    <el-button
+                        v-if="data.type != 2"
+                        type="primary"
+                        size="mini"
+                        @click="() => addDialogShow(node, data, 0)">
+                        查看
+                    </el-button>
+                    <el-button
+                        v-if="data.type != 2"
+                        type="primary"
+                        size="mini"
+                        @click="() => addDialogShow(node, data, 1)">
+                        新增
+                    </el-button>
+                    <el-button
+                        v-if="data.type != 2"
+                        type="primary"
+                        plain 
+                        size="mini"
+                        @click="() => addDialogShow(node, data, 2)">
+                        更新
+                    </el-button>
+                    <el-button
+                        type="danger"
+                        size="mini"
+                        @click="() => remove(node, data)">
+                        删除
+                    </el-button>
+                </div>
+            </div>
+        </el-tree>
+        <el-dialog title="部门管理信息" :visible.sync="dialogTableVisible" :source="source">
+            <el-form ref="dialogFrom" :model="dialogFrom" :rules="rules" label-width="100px">
+                <el-form-item label="父部门id">
+                    <el-input v-model="dialogFrom.parentId" :disabled="labelEdit"></el-input>
+                </el-form-item>
+                <el-form-item label="父部门">
+                    <el-input v-model="dialogFrom.parentName" :disabled="labelEdit"></el-input>
+                </el-form-item>
+                <el-form-item label="部门id">
+                    <el-input v-model="dialogFrom.departmentId" :disabled="labelEdit"></el-input>
+                </el-form-item>
+                <el-form-item label="部门名称" prop="name">
                     <el-input v-model="dialogFrom.name" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
-                <el-form-item label="排序">
+                <el-form-item label="排序" prop="orderNum">
                     <el-input v-model="dialogFrom.orderNum" :disabled="dialogDisabled"></el-input>
-                </el-form-item>
-                <el-form-item label="父部门ID">
-                    <el-input v-model="dialogFrom.parentId" :disabled="dialogDisabled"></el-input>
-                </el-form-item>
-                <el-form-item label="类型">
-                    <el-input v-model="dialogFrom.type" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
                 <el-form-item v-if="dialogBtn">
                     <el-button type="primary" @click="onSubmit('dialogFrom')">保存</el-button>
@@ -76,15 +91,11 @@
 import page from '@/components/page'
 import searItemsBox from '@/components/searItemsBox'
 import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axios.js'
+import rules from '@/tool/rules'
 export default {
     components:{page,searItemsBox},
     data() {
         return {
-            tableData:[],
-            dialogData: [],
-            dialogTableVisible: false,
-            dialogDisabled: false,
-            dialogBtn: true,
             searItemShow: false,
             activeIndex: '',
             searchTextItem:[
@@ -95,11 +106,19 @@ export default {
                 {id:5,codeText:'用户星级',selectText:'一星'}
             ],
             dialogFrom:{
-                type:'0',
+                parentName:'',
                 parentId:'',
+                departmentId:'',
                 name:'',
                 orderNum:'',
             },
+            dialogTableVisible:false,
+            dialogDisabled: false,
+            dialogBtn: false,
+            source:true,
+            labelEdit: true,
+            rules:'',
+            flag:'',
             // 部门列表树
             treeData:[],
             defaultProps:{
@@ -109,27 +128,25 @@ export default {
         }
     },
     created() {
-        getRequest('/departments').then( res => {
-            // console.log(res);
-            this.tableData = res.data.deptList;
-            this.treeData = res.data.deptList;
-            console.log( this.treeData);
-        }).catch( err => {
-            console.log(err);
-        });
-
-        getRequest('/departments/select').then( res => {
-            console.log(res);
-        }).catch( err => {
-            console.log(err);
-        });
+        this.rules = rules;
+        this.getDepartmentsList();
     },
     methods: {
-        handleClick(index,row){
-            this.dialogTableVisible = true;
-            this.dialogData = [];
-            this.dialogData.push(row);
-            console.log(index,row);
+        getDepartmentsList(){
+            getRequest('/api/departments').then( res => {
+            // console.log(res);
+                this.treeData = res.data.deptList;
+                let departmentArray = [];
+                res.data.deptList.map( (val, index) => {
+                    departmentArray.push({
+                        depid: val.departmentId,
+                        name: val.name,
+                    })
+                })
+                this.$store.commit('changeDepartmentArray',departmentArray);
+            }).catch( err => {
+                console.log(err);
+            });
         },
         itemShowFunc(index){
             this.activeIndex = index;
@@ -140,11 +157,14 @@ export default {
         },
         addList(){
             this.dialogTableVisible = true;
+            this.dialogBtn = true;
+            Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
+            this.dialogFrom.parentId = 0;
         },
         onSubmit(formName){
             this.$refs[formName].validate( (valid) => {
                 if (valid) {
-                    postJsonRequest('/departments', this.dialogFrom).then( res => {
+                    postJsonRequest('/api/departments', this.dialogFrom).then( res => {
                         console.log(res);
                         if (res.data.code === 0) {
                             this.dialogTableVisible = false;
@@ -164,40 +184,112 @@ export default {
                 }
             })
         },
-        handleNodeClick(data){
-            // console.log(data)
-        },
-        renderContent(h, { node, data, store }) {
-            return (
-                <span style="flex: 1; display: flex; align-items: center; justify-content: space-between; font-size: 14px; padding-right: 8px;">
-                    <span>
-                    <span>{node.label}</span>
-                    </span>
-                    <span>
-                        <el-button style="font-size: 12px;" type="text" on-click={ () => this.append(data) }>Append</el-button>
-                        <el-button style="font-size: 12px;" type="text" on-click={ () => this.remove(node, data) }>Delete</el-button>
-                    </span>
-                </span>);
-        },
-        append(data) {
-            const newChild = { departmentId: id++, label: 'testtest', children: [] };
-            if (!data.children) {
-                this.$set(data, 'children', []);
-            }
-            data.children.push(newChild);
-            console.log(data);
-        },
 
+        // 树结构
+        //新增
+        addDialogShow(node,data,flag) {
+
+            Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
+            this.dialogTableVisible = true;
+            this.dialogDisabled = false;
+            this.flag = flag;
+            this.dialogBtn = true;
+
+            if (flag === 0 || flag === 2) {
+                this.dialogFrom.parentId = data.parentId;
+                this.dialogFrom.parentName = data.parentName;
+                this.dialogFrom.departmentId = data.departmentId;
+                this.dialogFrom.name = data.name;
+                this.dialogFrom.orderNum = data.orderNum;
+            }
+
+            if (flag === 0) {
+                this.dialogDisabled = true;
+                this.dialogBtn = false;
+            }
+
+            if ( flag === 1) {
+                this.dialogFrom.parentId = data.departmentId;
+                this.dialogFrom.parentName = data.name;
+            }
+
+        },
+        onSubmit(formName) {
+           this.$refs[formName].validate( (valid) => {
+                if(valid){
+                    // 编辑
+                    if ( this.flag === 2 ) {
+                        console.log(this.dialogFrom);
+                        putJsonRequest('/api/departments/'+this.dialogFrom.departmentId,this.dialogFrom).then( res => {
+                            console.log(res);
+                            this.dialogTableVisible = false;
+                            if (res.data.code == 0) {
+                                this.$notify.success({
+                                    message:'更新成功',
+                                    duration: 2000
+                                });
+                                this.getDepartmentsList();
+                            }else{
+                                this.$message.error(this.data.code+this.data.msg)
+                            }
+                        }).catch((err) => {
+                            console.log(err)
+                        })
+                        return;
+                    }
+                    // 新增
+                    postJsonRequest('/api/departments',this.dialogFrom).then( res => {
+                        console.log(res);
+                        this.dialogTableVisible = false;
+                        if (res.data.code == 0) {
+                            this.$notify.success({
+                                message:'添加成功',
+                                duration: 2000
+                            });
+                            this.getDepartmentsList();
+                        }else{
+                            this.$message.error(this.data.code+this.data.msg)
+                        }
+                    }).catch((err) => {
+                        console.log(err)
+                    })
+                
+                } else {
+                    this.$message.error('验证未通过，请检查');
+                }
+            })
+        },
         remove(node, data) {
-            const parent = node.parent;
-            const children = parent.data.children || parent.data;
-            const index = children.findIndex(d => d.id === data.id);
-            children.splice(index, 1);
+            deleteRequest('/api/departments/'+data.departmentId).then( res => {
+                console.log(res)
+                if (res.data.code == 0) {
+                    this.getDepartmentsList();
+                    this.$message({
+                        message: res.data.msg,
+                        type: 'success'
+                    });
+                }else{
+                    this.$message.error(res.data.code+res.data.msg)
+                }
+            }).catch( err => {
+                console.log(err);
+            })
         },
     },
 }
 </script>
 
-<style lang="scss">
-    
+<style lang="scss" scope>
+.el-tree-node{
+    padding: 10px;
+}
+.el-tree-node__content {
+    padding: 10px 0;
+    .custom-tree-node {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
 </style>

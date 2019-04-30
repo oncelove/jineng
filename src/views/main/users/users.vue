@@ -44,7 +44,11 @@
                 </template>
             </el-table-column>
         </el-table>
-        <page></page>
+        <page
+            :totalCount="totalCount"
+            v-on:listenToSizeChange="showSizeChange"
+            v-on:listenToCurrentChange="showCurrentChange"
+        ></page>
         <el-dialog title="用户信息" :visible.sync="dialogTableVisible" :source="source">
             <el-form ref="dialogFrom" :model="dialogFrom" :rules="rules" label-width="80px">
                 <el-form-item label="用户名" prop="username">
@@ -96,6 +100,7 @@
 <script>
 import page from '@/components/page'
 import searItemsBox from '@/components/searItemsBox'
+import rules from '@/tool/rules.js'
 import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axios.js'
 export default {
     components:{page, searItemsBox},
@@ -143,43 +148,32 @@ export default {
                 {id:4,name:'客户下角色'},
             ],
             // 校验规则
-            rules:{
-                username:[
-                    { required: true, message: '请输入正确的用户名', trigger: 'blur' },
-                ],
-                mobile:[
-                    { required: true, message: '请输入正确的手机', trigger: 'blur' },
-                ],
-                email:[
-                    { required: true, message: '请输入正确的邮箱', trigger: 'blur' },
-                ],
-                status:[
-                    { required: true, message: '请输入正确的状态', trigger: 'blur' },
-                ],
-                status:[
-                    { required: true, message: '请输入正确的状态', trigger: 'blur' },
-                ],
-                roleIdList:[
-                    { required: true, message: '请输入正确的角色', trigger: 'blur' },
-                ],
-                userType:[
-                    { required: true, message: '请输入正确的角色属性', trigger: 'blur' },
-                ]
-            }
+            rules:{},
+            // 总条数
+            totalCount:null,
         }
     },
     created() {
         this.getUsersList();
+        this.rules = rules;
     },
     mounted(){
         
     },
     methods: {
         // 获取列表数据
-        getUsersList(){
-            getRequest('/users').then( res => {
+        getUsersList(current,size){
+            let limit = size || 10;
+            let cursor = current || 1;
+            let getData = {
+                limit:limit,
+                cursor:cursor,
+            }
+            getRequest('/api/users',getData).then( res => {
                 console.log(res);
                 this.tableData = res.data.page.list;
+                this.totalCount = res.data.page.totalCount;
+                console.log(this.totalCount);
             }).catch( err => {
                 console.log(err);
                 this.$message.error(err);
@@ -202,7 +196,7 @@ export default {
                 this.dialogBtn = false;
             }
             this.getUserType();
-            getRequest('/users/'+ userId).then( res => {
+            getRequest('/api/users/'+ userId).then( res => {
                 console.log(res);
                 if ( res.data.code === 0 ) {
                     this.dialogFrom.username = res.data.user.username;
@@ -249,7 +243,7 @@ export default {
         // 删除按钮点击
         deleteClick(index,row){
             console.log(index,row);
-            deleteRequest('/users/' + row.userId).then( res => {
+            deleteRequest('/api/users/' + row.userId).then( res => {
                 if (res.data.code === 0) {
                     this.$message({
                         message: res.data.msg,
@@ -290,7 +284,7 @@ export default {
                 if (valid) {
                     this.dialogFrom.roleIdList = this.roleIdList;
                     if ( this.source ) {
-                        postJsonRequest('/users',this.dialogFrom).then( res => {
+                        postJsonRequest('/api/users',this.dialogFrom).then( res => {
                             if (res.data.code === 0) {
                                 this.dialogTableVisible = false;
                                 this.$message({
@@ -305,7 +299,7 @@ export default {
                             this.$message.error(err);
                         })
                     } else {
-                        putJsonRequest('/users/'+ this.dialogFrom.userId, this.dialogFrom).then( res => {
+                        putJsonRequest('/api/users/'+ this.dialogFrom.userId, this.dialogFrom).then( res => {
                             if (res.data.code === 0) {
                                 this.dialogTableVisible = false;
                                 this.$message({
@@ -326,6 +320,15 @@ export default {
                     return false;
                 }
             })
+        },
+        // 每页数据条数
+        showSizeChange(val){
+            console.log(val);
+            this.getUsersList('',val);
+        },
+        // 当前页数
+        showCurrentChange(val){
+            console.log(val);
         }
     },
 }

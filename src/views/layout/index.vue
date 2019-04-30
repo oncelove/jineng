@@ -33,7 +33,8 @@ export default {
     components: { sidebar, topheader, mainContent },
     created(){
         // 获取导航栏菜单
-        getRequest('/menus/nav').then(res => {
+        getRequest('/api/menus/nav').then(res => {
+            console.log(res);
             if (res.data.code === 0) {
                 this.menuList = res.data.menuList;
             } else {
@@ -44,7 +45,7 @@ export default {
             this.$message.error(err + 'url:/menus/nav');
         });
         // 获取角色列表
-        getRequest('/roles/select').then( res => {
+        getRequest('/api/roles/select').then( res => {
             if (res.data.code === 0) {
                 let rolesArray = [];
                 res.data.list.map( (val, index) => {
@@ -62,7 +63,7 @@ export default {
             this.$message.error(err + 'url:/roles/select');
         })
         // 获取部门列表
-        getRequest('/departments/select').then( res => {
+        getRequest('/api/departments/select').then( res => {
             if (res.data.code === 0) {
                 let departmentArray = [];
                 res.data.deptList.map( (val, index) => {

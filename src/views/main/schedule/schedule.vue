@@ -54,6 +54,7 @@
 <script>
 import page from '@/components/page'
 import searItemsBox from '@/components/searItemsBox'
+import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axios.js'
 export default {
     components:{page,searItemsBox},
     data() {
@@ -73,7 +74,7 @@ export default {
         }
     },
     created() {
-        this.$http.get('/sys/config/list').then( res => {
+        getRequest('/api/sys/config/list').then( res => {
             console.log(res);
             this.tableData = res.data.page.list;
             // console.log( this.tableData);

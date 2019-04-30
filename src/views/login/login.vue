@@ -113,7 +113,7 @@ export default {
                 'captcha': _this.ruleForm.captcha,
                 'time': _this.ruleForm.time
             }
-            postRequest('/sys/login',postData).then( res => {
+            postRequest('/api/sys/login',postData).then( res => {
                 console.log(res);
                 if( res.data.code === 0){
                     _this.$cookies.set('token',res.data.token);

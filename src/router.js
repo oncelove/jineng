@@ -31,6 +31,8 @@ const router = new Router({
                 // 档案管理
                 {path: '/document',name:'archives',component: () => import('./views/main/Customer/archives.vue')},
                 {path: '/three',name:'three',component: () => import('./views/main/department/three.vue')},
+                // 站点管理
+                {path: '/123',name:'stations',component: () => import('./views/main/stations/stations.vue')},
                 // {path: 'modules/job/schedule.html1',name:'schedule',component: () => import('./views/main/schedule/schedule.vue')},
             ]
         },

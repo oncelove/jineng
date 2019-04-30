@@ -91,6 +91,7 @@
 <script>
 import page from '@/components/page'
 import searItemsBox from '@/components/searItemsBox'
+import rules from '@/tool/rules'
 import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axios.js'
 export default {
     components:{page,searItemsBox},
@@ -123,46 +124,16 @@ export default {
                 description:'', // 描述
                 customerId:'',
             },
-            rules:{
-                customerName:[
-                    { required: true, message: '请输入正确的客户名称', trigger: 'blur' },
-                ],
-                customerType:[
-                    { required: true, message: '请输入正确的客户类型', trigger: 'blur' },
-                ],
-                contacts:[
-                    { required: true, message: '请输入正确的联系人', trigger: 'blur' },
-                ],
-                phone:[
-                    { required: true, message: '请输入正确的手机', trigger: 'blur' },
-                ],
-                assistant:[
-                    { required: true, message: '请输入正确的业务员', trigger: 'blur' },
-                ],
-                operationType:[
-                    { required: true, message: '请输入正确的业务类型', trigger: 'blur' },
-                ],
-                address:[
-                    { required: true, message: '请输入正确的地址', trigger: 'blur' },
-                ],
-                latitude:[
-                    { required: true, message: '请输入正确的纬度', trigger: 'blur' },
-                ],
-                longitude:[
-                    { required: true, message: '请输入正确的经度', trigger: 'blur' },
-                ],
-                description:[
-                    { required: true, message: '请输入正确的描述', trigger: 'blur' },
-                ],
-            }
+            rules:{}
         }
     },
     created() {
         this.getCustomerList();
+        this.rules = rules;
     },
     methods: {
         getCustomerList(){
-            getRequest('/customers').then( res => {
+            getRequest('/api/customers').then( res => {
                 console.log(res);
                 this.tableData = res.data.page.list;
                 // console.log( this.tableData);
@@ -175,7 +146,7 @@ export default {
             this.source = false;
             Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
             this.dialogFrom.customerId = id;
-            getRequest('/customers/'+ id).then( res => {
+            getRequest('/api/customers/'+ id).then( res => {
                 console.log(res);
                 if ( res.data.code === 0 ){
                     this.dialogFrom.customerName = res.data.customer.customerName;
@@ -222,7 +193,7 @@ export default {
         // 删除按钮点击
         deleteClick(index,row){
             console.log(index,row);
-            deleteRequest('/customers/' + row.customerId).then( res => {
+            deleteRequest('/api/customers/' + row.customerId).then( res => {
                 if (res.data.code === 0) {
                     this.$message({
                         message: res.data.msg,
@@ -241,7 +212,7 @@ export default {
             this.$refs[formName].validate( (valid) => {
                 if (valid) {
                     if ( this.source ) {
-                        postJsonRequest('/customers',this.dialogFrom).then( res => {
+                        postJsonRequest('/api/customers',this.dialogFrom).then( res => {
                             console.log(res);
                             // if (res.data.code === 0) {
                             //     this.dialogTableVisible = false;
@@ -257,7 +228,7 @@ export default {
                             this.$message.error(err);
                         })
                     } else {
-                        postJsonRequest('/customers/'+ this.dialogFrom.customerId,this.dialogFrom).then( res => {
+                        postJsonRequest('/api/customers/'+ this.dialogFrom.customerId,this.dialogFrom).then( res => {
                             console.log(res.data.code);
                             if (res.data.code === 0 ) {
                                 this.dialogTableVisible = false;

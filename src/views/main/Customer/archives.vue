@@ -115,7 +115,7 @@ export default {
     },
     methods: {
         getDocumentsList(){
-            getRequest('/documents').then( res => {
+            getRequest('/api/documents').then( res => {
                 console.log(res);
                 if (res.data.code === 0) {
                     this.tableData = res.data.page.list;
@@ -170,7 +170,7 @@ export default {
         onSubmit(formName){
             this.$refs[formName].validate( (valid) => {
                 if (valid) {
-                    putJsonRequest('/documents/'+ this.dialogFrom.documentId, this.dialogFrom).then( res => {
+                    putJsonRequest('/api/documents/'+ this.dialogFrom.documentId, this.dialogFrom).then( res => {
                         if (res.data.code === 0) {
                             this.dialogTableVisible = false;
                             this.$message({
