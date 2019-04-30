@@ -17,6 +17,7 @@
                 <a href="javascript:;">查询</a>
                 <a href="javascript:;" @click="added">新增</a>
                 <a href="javascript:;">删除</a>
+                <a href="javascript:;" @click="recovery">恢复数据</a>
             </li>
         </ul>
         <el-table :data="tableData" style="width: 100%"  class="table-box">
@@ -40,42 +41,47 @@
                         size="small"
                         >查看</el-button
                     >
-                    <el-button type="text" size="small">编辑</el-button>
+                    <el-button type="text" size="small" @click="editClick(scope.$index,scope.row)">编辑</el-button>
+                    <el-button type="text" size="small" @click="deleteClick(scope.$index,scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
         <page></page>
-        <el-dialog title="客户管理信息" :visible.sync="dialogTableVisible">
-            <el-form ref="dialogFrom" :model="dialogFrom" label-width="80px">
-                <el-form-item label="客户名">
+        <el-dialog title="客户管理信息" :visible.sync="dialogTableVisible" :source="source">
+            <el-form ref="dialogFrom" :model="dialogFrom" label-width="80px" :rules="rules">
+                <el-form-item label="客户名" prop="customerName">
                     <el-input v-model="dialogFrom.customerName" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
-                <el-form-item label="客户类型">
+                <el-form-item label="客户类型" prop="customerType">
                     <el-input v-model="dialogFrom.customerType" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
-                <el-form-item label="联系人">
+                <el-form-item label="联系人" prop="contacts">
                     <el-input v-model="dialogFrom.contacts" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
-                <el-form-item label="联系电话">
+                <el-form-item label="联系电话" prop="phone">
                     <el-input v-model="dialogFrom.phone" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
-                <el-form-item label="业务员">
+                <el-form-item label="业务员" prop="assistant">
                     <el-input v-model="dialogFrom.assistant" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
-                <el-form-item label="业务类型">
+                <el-form-item label="业务类型" prop="operationType">
                     <el-input v-model="dialogFrom.operationType" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
-                <el-form-item label="地址">
+                <el-form-item label="地址" prop="address">
                     <el-input v-model="dialogFrom.address" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
-                <el-form-item label="纬度">
+                <el-form-item label="纬度" prop="latitude">
                     <el-input v-model="dialogFrom.latitude" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
-                <el-form-item label="经度">
+                <el-form-item label="经度" prop="longitude">
                     <el-input v-model="dialogFrom.longitude" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
-                <el-form-item label="描述">
+                <el-form-item label="描述" prop="description">
                     <el-input v-model="dialogFrom.description" :disabled="dialogDisabled"></el-input>
+                </el-form-item>
+                <el-form-item v-if="dialogBtn">
+                    <el-button type="primary" @click="onSubmit('dialogFrom')">保存</el-button>
+                    <el-button @click="dialogTableVisible = false">取消</el-button>
                 </el-form-item>
             </el-form>
         </el-dialog>
@@ -91,9 +97,11 @@ export default {
     data() {
         return {
             tableData:[],
-            dialogData: [],
             dialogTableVisible: false,
+            dialogDisabled: false,
+            dialogBtn: false,
             searItemShow: false,
+            source:true,
             activeIndex: '',
             searchTextItem:[
                 {id:1,codeText:'状态',selectText:'在线'},
@@ -103,33 +111,92 @@ export default {
                 {id:5,codeText:'用户星级',selectText:'一星'}
             ],
             dialogFrom:{
-                customerName:'',
-                customerType:'',
-                contacts:'',
-                phone:'',
-                assistant:'',
-                operationType:'',
-                address:'',
-                latitude:'',
-                longitude:'',
-                description:'',
+                customerName:'', // 客户名称
+                customerType:'', // 客户类型
+                contacts:'', // 联系人
+                phone:'', // 手机
+                assistant:'',// 业务员
+                operationType:'',// 业务类型
+                address:'', // 地址
+                latitude:'', // 纬度
+                longitude:'', // 经度
+                description:'', // 描述
+                customerId:'',
+            },
+            rules:{
+                customerName:[
+                    { required: true, message: '请输入正确的客户名称', trigger: 'blur' },
+                ],
+                customerType:[
+                    { required: true, message: '请输入正确的客户类型', trigger: 'blur' },
+                ],
+                contacts:[
+                    { required: true, message: '请输入正确的联系人', trigger: 'blur' },
+                ],
+                phone:[
+                    { required: true, message: '请输入正确的手机', trigger: 'blur' },
+                ],
+                assistant:[
+                    { required: true, message: '请输入正确的业务员', trigger: 'blur' },
+                ],
+                operationType:[
+                    { required: true, message: '请输入正确的业务类型', trigger: 'blur' },
+                ],
+                address:[
+                    { required: true, message: '请输入正确的地址', trigger: 'blur' },
+                ],
+                latitude:[
+                    { required: true, message: '请输入正确的纬度', trigger: 'blur' },
+                ],
+                longitude:[
+                    { required: true, message: '请输入正确的经度', trigger: 'blur' },
+                ],
+                description:[
+                    { required: true, message: '请输入正确的描述', trigger: 'blur' },
+                ],
             }
         }
     },
     created() {
-        getRequest('/customers').then( res => {
-            console.log(res);
-            this.tableData = res.data.page.list;
-            // console.log( this.tableData);
-        }).catch( err => {
-            console.log(err);
-        })
+        this.getCustomerList();
     },
     methods: {
-        handleClick(index,row){
+        getCustomerList(){
+            getRequest('/customers').then( res => {
+                console.log(res);
+                this.tableData = res.data.page.list;
+                // console.log( this.tableData);
+            }).catch( err => {
+                console.log(err);
+            })
+        },
+        getCustomers(id){
             this.dialogTableVisible = true;
-            this.dialogData = [];
-            this.dialogData.push(row);
+            this.source = false;
+            Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
+            this.dialogFrom.customerId = id;
+            getRequest('/customers/'+ id).then( res => {
+                console.log(res);
+                if ( res.data.code === 0 ){
+                    this.dialogFrom.customerName = res.data.customer.customerName;
+                    this.dialogFrom.customerType = res.data.customer.customerType;
+                    this.dialogFrom.contacts = res.data.customer.contacts;
+                    this.dialogFrom.phone = res.data.customer.phone;
+                    this.dialogFrom.assistant = res.data.customer.assistant;
+                    this.dialogFrom.operationType = res.data.customer.operationType;
+                    this.dialogFrom.address = res.data.customer.address;
+                    this.dialogFrom.latitude = res.data.customer.latitude;
+                    this.dialogFrom.longitude = res.data.customer.longitude;
+                    this.dialogFrom.description = res.data.customer.description;
+                }
+            }).catch( err => {
+                console.log(err);
+            })
+        },
+        handleClick(index,row){
+            this.dialogDisabled = true;
+            this.dialogBtn = false;
+            this.getCustomers(row.customerId);
             console.log(index,row);
         },
         itemShowFunc(index){
@@ -140,7 +207,98 @@ export default {
             this.searItemShow = false;
         },
         added(){
+            this.dialogTableVisible = true;
+            this.dialogBtn = true;
+            this.dialogDisabled = false;
+            Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
+            this.source = true;
             console.log(111);
+        },
+        editClick(index,row){
+            this.dialogDisabled = false;
+            this.dialogBtn = true;
+            this.getCustomers(row.customerId);
+        },
+        // 删除按钮点击
+        deleteClick(index,row){
+            console.log(index,row);
+            deleteRequest('/customers/' + row.customerId).then( res => {
+                if (res.data.code === 0) {
+                    this.$message({
+                        message: res.data.msg,
+                        type: 'success'
+                    });
+                    this.getCustomerList();
+                } else {
+                    this.$message.error(res.data.code+res.data.msg);
+                }
+            }).catch( err=> {
+                console.log(err);
+                this.$message.error(err);
+            })
+        },
+        onSubmit(formName){
+            this.$refs[formName].validate( (valid) => {
+                if (valid) {
+                    if ( this.source ) {
+                        postJsonRequest('/customers',this.dialogFrom).then( res => {
+                            console.log(res);
+                            // if (res.data.code === 0) {
+                            //     this.dialogTableVisible = false;
+                            //     this.$message({
+                            //         message: res.data.msg,
+                            //         type: 'success'
+                            //     });
+                            //     this.getCustomerList();
+                            // } else {
+                            //     this.$message.error(res.data.code+res.data.msg);
+                            // }
+                        }).catch( err => {
+                            this.$message.error(err);
+                        })
+                    } else {
+                        postJsonRequest('/customers/'+ this.dialogFrom.customerId,this.dialogFrom).then( res => {
+                            console.log(res.data.code);
+                            if (res.data.code === 0 ) {
+                                this.dialogTableVisible = false;
+                            }else{
+                                this.$message.error(res.data.code+res.data.msg);
+                            }
+                            // if (res.data.code === 0) {
+                            //     this.dialogTableVisible = false;
+                            //     this.$message({
+                            //         message: res.data.msg,
+                            //         type: 'success'
+                            //     });
+                            //     this.getCustomerList();
+                            // } else {
+                            //     this.$message.error(res.data.code+res.data.msg);
+                            // }
+                        }).catch( err => {
+                            this.$message.error(err);
+                        })
+                    }
+                } else {
+                    this.$message.error('验证失败');
+                    return false;
+                }
+            });
+        },
+        recovery(){
+            this.$prompt('请输入您要恢复的客户ID','提示',{
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+            }).then( ({ value }) => {
+                this.$message({
+                    type: 'success',
+                    message: '你输入的id是: ' + value
+                });
+            }).catch( ()=> {
+                this.$message({
+                    type: 'info',
+                    message: '取消输入'
+                });
+            })
         }
     },
 }

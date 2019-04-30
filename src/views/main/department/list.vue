@@ -153,7 +153,7 @@ export default {
                                 type: 'success'
                             });
                         } else {
-                            this.$message.error(res.data.code,res.data.msg);
+                            this.$message.error(res.data.code+res.data.msg);
                         }
                     }).catch( err => {
                         this.$message.error(err);

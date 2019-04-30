@@ -82,15 +82,15 @@ export default {
     created() {
         getRequest('/menus').then( res => {
             console.log(res);
-            let listArray;
-            res.data.menuList.map( (val, i) => {
-                
-            })
+            
             this.tableData = res.data.menuList;
             // console.log( this.tableData);
         }).catch( err => {
             console.log(err);
         })
+    },
+    mounted(){
+        
     },
     methods: {
         handleClick(index,row){
@@ -98,6 +98,14 @@ export default {
             this.dialogData = [];
             this.dialogData.push(row);
             console.log(index,row);
+            this.showList();
+        },
+        showList(){
+            let listArray = '';
+            this.tableData.map( (val, i) => {
+                listArray = this.familyTree(this.tableData,val.parentId);
+            });
+            console.log(listArray);
         },
         itemShowFunc(index){
             this.activeIndex = index;
@@ -105,7 +113,21 @@ export default {
         },
         listenChildShowItem(data){
             this.searItemShow = false;
-        }
+        },
+        familyTree(arr, pid) {
+            var temp = [];
+            var forFn = function(arr, pid) {
+                for (var i = 0; i < arr.length; i++) {
+                var item = arr[i];
+                if (item.id == pid) {
+                    temp.push(item);
+                    forFn(arr, item.pid);
+                }
+                }
+            };
+            forFn(arr, pid);
+            return temp;
+        },
     },
 }
 </script>

@@ -46,40 +46,40 @@
         </el-table>
         <page></page>
         <el-dialog title="用户信息" :visible.sync="dialogTableVisible" :source="source">
-            <el-form ref="dialogFrom" :model="dialogFrom" label-width="80px">
-                <el-form-item label="用户名">
+            <el-form ref="dialogFrom" :model="dialogFrom" :rules="rules" label-width="80px">
+                <el-form-item label="用户名" prop="username">
                     <el-input v-model="dialogFrom.username" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
                 <el-form-item label="密码">
                     <el-input v-model="dialogFrom.password" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
-                <el-form-item label="所属部门">
+                <el-form-item label="所属部门" prop="deptId">
                     <el-select v-model="dialogFrom.deptId" :disabled="dialogDisabled">
                         <el-option v-for="(dept, index) in deptArray" :key="index" :label="dept.name" :value="dept.depid">
                             {{ dept.name }}
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="邮箱">
+                <el-form-item label="邮箱" prop="email">
                     <el-input v-model="dialogFrom.email" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
-                <el-form-item label="手机号码">
+                <el-form-item label="手机号码" prop="mobile">
                     <el-input v-model="dialogFrom.mobile" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
-                <el-form-item label="状态">
+                <el-form-item label="状态" prop="status">
                     <el-radio-group v-model="dialogFrom.status" :disabled="dialogDisabled">
                         <el-radio :label="0">禁用</el-radio>
                         <el-radio :label="1">正常</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item label="角色">
+                <el-form-item label="角色" prop="roleIdList">
                     <el-checkbox-group v-model="roleIdList" :disabled="dialogDisabled">
                         <el-checkbox :label="roles.roleId" v-for="(roles,index) in rolesArray" :key="index">
                             {{roles.roleName}}
                         </el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
-                <el-form-item label="角色属性">
+                <el-form-item label="角色属性" prop="userType">
                     <el-radio-group v-model="dialogFrom.userType" :disabled="dialogDisabled">
                         <el-radio v-for="(usertype,index) in usersType" :key="index" :label="usertype.id">{{usertype.id}}--{{usertype.name}}</el-radio>
                     </el-radio-group>
@@ -141,7 +141,31 @@ export default {
                 {id:2,name:'运营商'},
                 {id:3,name:'客户'},
                 {id:4,name:'客户下角色'},
-            ]
+            ],
+            // 校验规则
+            rules:{
+                username:[
+                    { required: true, message: '请输入正确的用户名', trigger: 'blur' },
+                ],
+                mobile:[
+                    { required: true, message: '请输入正确的手机', trigger: 'blur' },
+                ],
+                email:[
+                    { required: true, message: '请输入正确的邮箱', trigger: 'blur' },
+                ],
+                status:[
+                    { required: true, message: '请输入正确的状态', trigger: 'blur' },
+                ],
+                status:[
+                    { required: true, message: '请输入正确的状态', trigger: 'blur' },
+                ],
+                roleIdList:[
+                    { required: true, message: '请输入正确的角色', trigger: 'blur' },
+                ],
+                userType:[
+                    { required: true, message: '请输入正确的角色属性', trigger: 'blur' },
+                ]
+            }
         }
     },
     created() {
@@ -189,7 +213,7 @@ export default {
                     // this.dialogFrom.roleIdList = res.data.user.roleIdList;
                     this.roleIdList = res.data.user.roleIdList;
                 }else{
-                    this.$message.error(res.data.code,res.data.msg);
+                    this.$message.error(res.data.code+res.data.msg);
                 }
             }).catch( err => {
                 console.log(err);
@@ -233,7 +257,7 @@ export default {
                     });
                     this.getUsersList();
                 } else {
-                    this.$message.error(res.data.code,res.data.msg);
+                    this.$message.error(res.data.code+res.data.msg);
                 }
             }).catch( err=> {
                 console.log(err);
@@ -275,7 +299,7 @@ export default {
                                 });
                                 this.getUsersList();
                             } else {
-                                this.$message.error(res.data.code,res.data.msg);
+                                this.$message.error(res.data.code+res.data.msg);
                             }
                         }).catch( err => {
                             this.$message.error(err);
@@ -290,7 +314,7 @@ export default {
                                 });
                                 this.getUsersList();
                             } else {
-                                this.$message.error(res.data.code,res.data.msg);
+                                this.$message.error(res.data.code+res.data.msg);
                             }
                         }).catch( err => {
                             this.$message.error(err);

@@ -120,7 +120,7 @@ export default {
                 if (res.data.code === 0) {
                     this.tableData = res.data.page.list;
                 } else {
-                    this.$message.error(res.data.code,res.data.msg);
+                    this.$message.error(res.data.code+res.data.msg);
                 }
             }).catch( err => {
                 console.log(err);
@@ -179,7 +179,7 @@ export default {
                             });
                             this.getDocumentsList();
                         } else {
-                            this.$message.error(res.data.code,res.data.msg);
+                            this.$message.error(res.data.code+res.data.msg);
                         }
                     }).catch( err => {
                         console.log(err);
