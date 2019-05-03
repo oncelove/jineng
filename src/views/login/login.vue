@@ -86,7 +86,7 @@ export default {
     methods:{
         ...mapMutations(['changeLogin','changeUsersList']),
         refreshCode(){
-            console.log(this.$GLOBAL);
+            // console.log(this.$GLOBAL);
             this.ruleForm.time = (new Date()).valueOf();
             this.ruleForm.src = "http://39.107.89.154:8000/commonservice-system/captcha.jpg?time=" + this.ruleForm.time;
             // this.ruleForm.src = "http://192.168.0.112:8080/commonservice-system/captcha.jpg?time=" + this.ruleForm.time;
@@ -121,9 +121,11 @@ export default {
                     _this.changeLogin({ authorization: _this.userToken });
                     _this.changeUsersList({userList:res.data.user});
                     _this.$router.push({path:'/'});
+                    sessionStorage.username = res.data.user.username;
                 }
                 if ( res.data.code === 500 ) {
                     this.$message.error(res.data.msg);
+                    this.refreshCode();
                 }
             }).catch(err=>{
                 console.log(err)

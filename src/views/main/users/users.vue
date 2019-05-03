@@ -138,6 +138,7 @@ export default {
                 roleIdList: [], // 用户所属角色
                 userId:null,
                 userType:'',// 角色属性状态
+                salt:'',
             },
             // 角色属性
             // usersTypeStatus:'',
@@ -173,20 +174,21 @@ export default {
                 console.log(res);
                 this.tableData = res.data.page.list;
                 this.totalCount = res.data.page.totalCount;
-                console.log(this.totalCount);
+                // console.log(this.totalCount);
             }).catch( err => {
                 console.log(err);
                 this.$message.error(err);
             });
         },
         // 获取用户信息
-        getUserMsg(userId,whereClick){
+        getUserMsg(userId,whereClick,salt){
             this.dialogTableVisible = true;
             this.source = false;
             this.rolesArray = this.$store.state.roleNames;
             this.deptArray = this.$store.state.departmentArray;
             Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
             this.roleIdList = new Array();
+            this.dialogFrom.salt = salt;
             if (whereClick) {
                 this.dialogDisabled = false;
                 this.dialogBtn = true;
@@ -238,7 +240,7 @@ export default {
         },
         // 编辑按钮点击
         editClick(index,row){
-            this.getUserMsg(row.userId, true);
+            this.getUserMsg(row.userId, true,row.salt);
         },
         // 删除按钮点击
         deleteClick(index,row){
@@ -281,6 +283,7 @@ export default {
         // 保存修改内容
         onSubmit(formName){
             this.$refs[formName].validate( (valid) => {
+                console.log(this.dialogFrom);
                 if (valid) {
                     this.dialogFrom.roleIdList = this.roleIdList;
                     if ( this.source ) {

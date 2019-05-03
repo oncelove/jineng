@@ -1,16 +1,13 @@
 <template>
     <ul class="navigation" @mouseleave="leave">
-        <!-- <li>
-            <span>11111</span>
-        </li>
-        <li class="active">
-            <span>22222</span>
-        </li> -->
-        <!-- v-bind:class="{'active':index == current}" -->
-        <li v-for="(item, index) in tonavList" :key="index" @click="toItemUrl(item, index)" >
+        <router-link 
+            tag="li" 
+            v-for="(item, index) in tonavList" 
+            :key="index"
+            :to="{path:item.url}">
             <i class="iconfont" :class="item.icon"></i>
             <span>{{ item.name }}</span>
-        </li>
+        </router-link>
     </ul>
 </template>
 
@@ -35,13 +32,15 @@ export default {
         toItemUrl(item,index){
 
             if (item.url) {
-                item.url = item.url.replace(/modules\/sys\//,'');
+                item.url = item.url.replace(/modules/,'');
                 item.url = item.url.replace(/.html/,'');
                 this.current=index;
                 this.$router.push({path:item.url});
             }
             
         }
+    },
+    created(){
     }
 
 }
@@ -50,6 +49,9 @@ export default {
 <style lang="scss" scoped>
 .iconfont{
     font-size: 20px;
+}
+.router-link-exact-active{
+
 }
 </style>
 

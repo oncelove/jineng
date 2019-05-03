@@ -41,6 +41,7 @@ export default new Vuex.Store({
         },
         changeUsersList (state, list) {
             state.usersList = list.userList;
+            localStorage.setItem('userType',list.userList.userType)
         },
         changeDialogTableVisible(state, data){
             state.dialogTableVisible = data;

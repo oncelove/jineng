@@ -19,7 +19,7 @@ const rules ={
     status:[
         { required: true, message: ' 状态不能为空', trigger: 'blur' },
     ],
-    roleIdList:[
+    roleIdArray:[
         { required: true, message: ' 角色不能为空', trigger: 'blur' },
     ],
     userType:[
@@ -70,6 +70,12 @@ const rules ={
     orderNum:[
         { required: true, message: '排序不能为空', trigger: 'blur' },
     ],
+    deptId:[
+        { required: true, message: '部门不能为空', trigger: 'blur' },
+    ],
+    selectedOptions:[
+        { required: true, message: '运营商不能为空', trigger: 'blur' },
+    ]
 }
 
 export default rules;

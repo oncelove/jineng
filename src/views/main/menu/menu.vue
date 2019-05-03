@@ -160,7 +160,6 @@ export default {
             getRequest('/api/menus').then( res => {
                 console.log(res);
                 if ( res.data.code == 0) {
-                    this.getIdIsShow(res.data.menuList,res.data.menuIdList);
                     this.treeData = res.data.menuList;
                     
                 }else {
@@ -285,10 +284,6 @@ export default {
                 console.log(err);
             })
         },
-
-        getIdIsShow(menusArr,){
-
-        }
     },
 }
 </script>

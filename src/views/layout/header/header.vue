@@ -29,8 +29,14 @@
             <span class="iconfont iconerweima1" title="二维码"></span>
             <div class=" user-box">
                 <img src="https://wwc.alicdn.com/avatar/getAvatar.do" alt="">
-                <span class="username">用户昵称用户昵称</span>
-                <i class="iconfont iconxia"></i>
+                <el-dropdown trigger="click" @command="handleCommand" class="usernameBox">
+                    <span class="el-dropdown-link">
+                        {{username}}<i class="el-icon-arrow-down el-icon--right"></i>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item command="logout">退出</el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
             </div>
         </div>
     </header>
@@ -41,12 +47,32 @@ export default {
     data() {
         return {
             searchText:'',
+            userName:'',
         }
     },
+    created(){
+        this.username = sessionStorage.getItem('username');
+    },
+    methods:{
+        handleCommand(command){
+            if (command == 'logout') {
+                localStorage.removeItem('authorization');
+                localStorage.removeItem('userType');
+                sessionStorage.removeItem('username');
+                this.$router.push({name:'login'})
+            }
+        }
+    }
 }
 </script>
 
 <style lang="scss" scoped>
-
+.usernameBox{
+    width: 120px;
+    text-align: center;
+}
+.el-dropdown-menu{
+    width: 120px;
+}
 </style>
 

@@ -37,13 +37,13 @@
                         @click="() => addDialogShow(node, data, 0)">
                         查看
                     </el-button>
-                    <el-button
+                    <!-- <el-button
                         v-if="data.type != 2"
                         type="primary"
                         size="mini"
                         @click="() => addDialogShow(node, data, 1)">
                         新增
-                    </el-button>
+                    </el-button> -->
                     <el-button
                         v-if="data.type != 2"
                         type="primary"

@@ -5,7 +5,6 @@
                 <i class="iconfont" :class="items.icon"></i>
                 <span>{{items.name}}</span>
                 <i class="iconfont iconrightArrows"></i>
-                <!-- <navigation v-if="showNavigation" class="leave" :tonavlist="items.list"></navigation> -->
             </li>
         </ul>
         <navigation v-if="showNavigation" class="leave" :tonavList='tonavList'></navigation>
@@ -43,13 +42,13 @@ export default {
             document.getElementsByClassName('wrap')[0].classList.add('wrap-close');
         },
         selectItem(item){
-            if (item.children) {
+            if ( !item.children || item.children.length === 0) {
+                this.showNavigation = false;
+                document.getElementsByClassName('wrap')[0].classList.remove('wrap-close');
+            } else {
                 this.showNavigation = this.enterShowNav;
                 document.getElementsByClassName('wrap')[0].classList.remove('wrap-close');
                 this.tonavList = item.children;
-            } else {
-                this.showNavigation = false;
-                document.getElementsByClassName('wrap')[0].classList.remove('wrap-close');
             }
         },
         itemHref(item){

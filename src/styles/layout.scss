@@ -69,7 +69,8 @@
         font-size: 18px;
 
         &:hover,
-        &.active {
+        &.active,
+        &.router-link-exact-active {
             color: $maincolor;
             background-color: #e6e6e6;
         }

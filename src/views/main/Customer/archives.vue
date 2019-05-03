@@ -165,6 +165,7 @@ export default {
             this.dialogDisabled = false;
             this.dialogBtn = true;
             this.dialogTableVisible = true;
+            this.uploadShow = true;
         },
         // 保存修改内容
         onSubmit(formName){

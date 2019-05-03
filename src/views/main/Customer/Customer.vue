@@ -17,7 +17,7 @@
                 <a href="javascript:;">查询</a>
                 <a href="javascript:;" @click="added">新增</a>
                 <a href="javascript:;">删除</a>
-                <a href="javascript:;" @click="recovery">恢复数据</a>
+                <!-- <a href="javascript:;" @click="recovery">恢复数据</a> -->
             </li>
         </ul>
         <el-table :data="tableData" style="width: 100%"  class="table-box">
@@ -46,7 +46,11 @@
                 </template>
             </el-table-column>
         </el-table>
-        <page></page>
+        <page
+            :totalCount="totalCount"
+            v-on:listenToSizeChange="showSizeChange"
+            v-on:listenToCurrentChange="showCurrentChange"
+        ></page>
         <el-dialog title="客户管理信息" :visible.sync="dialogTableVisible" :source="source">
             <el-form ref="dialogFrom" :model="dialogFrom" label-width="80px" :rules="rules">
                 <el-form-item label="客户名" prop="customerName">
@@ -60,6 +64,15 @@
                 </el-form-item>
                 <el-form-item label="联系电话" prop="phone">
                     <el-input v-model="dialogFrom.phone" :disabled="dialogDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="运营商">
+                    <el-cascader
+                        :options="options"
+                        :props="optionProps"
+                        v-model="selectedOptions"
+                        :disabled="dialogDisabled"
+                        @change="handleChange">
+                    </el-cascader>
                 </el-form-item>
                 <el-form-item label="业务员" prop="assistant">
                     <el-input v-model="dialogFrom.assistant" :disabled="dialogDisabled"></el-input>
@@ -92,6 +105,7 @@
 import page from '@/components/page'
 import searItemsBox from '@/components/searItemsBox'
 import rules from '@/tool/rules'
+// import {clearValidate} from '@/tool/clearValidate'
 import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axios.js'
 export default {
     components:{page,searItemsBox},
@@ -111,6 +125,8 @@ export default {
                 {id:4,codeText:'用户类型',selectText:'医院'},
                 {id:5,codeText:'用户星级',selectText:'一星'}
             ],
+            options:[],
+            selectedOptions:[],
             dialogFrom:{
                 customerName:'', // 客户名称
                 customerType:'', // 客户类型
@@ -123,8 +139,16 @@ export default {
                 longitude:'', // 经度
                 description:'', // 描述
                 customerId:'',
+                agentId:'',
             },
-            rules:{}
+            rules:{},
+            optionProps:{
+                value: 'agentId',
+                label: 'name',
+                children: 'children'
+            },
+            // 总条数
+            totalCount:null,
         }
     },
     created() {
@@ -132,20 +156,30 @@ export default {
         this.rules = rules;
     },
     methods: {
-        getCustomerList(){
-            getRequest('/api/customers').then( res => {
+        getCustomerList(current,size){
+            let limit = size || 10;
+            let cursor = current || 1;
+            let getData = {
+                limit:limit,
+                cursor:cursor,
+            }
+            console.log(current,getData)
+            getRequest('/api/customers',getData).then( res => {
                 console.log(res);
                 this.tableData = res.data.page.list;
+                this.totalCount = res.data.page.totalCount;
                 // console.log( this.tableData);
             }).catch( err => {
                 console.log(err);
             })
         },
-        getCustomers(id){
+        getCustomers(id,agentId){
             this.dialogTableVisible = true;
             this.source = false;
             Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
             this.dialogFrom.customerId = id;
+            this.getAgent(agentId);
+            
             getRequest('/api/customers/'+ id).then( res => {
                 console.log(res);
                 if ( res.data.code === 0 ){
@@ -167,7 +201,7 @@ export default {
         handleClick(index,row){
             this.dialogDisabled = true;
             this.dialogBtn = false;
-            this.getCustomers(row.customerId);
+            this.getCustomers(row.customerId,row.agentId);
             console.log(index,row);
         },
         itemShowFunc(index){
@@ -178,17 +212,43 @@ export default {
             this.searItemShow = false;
         },
         added(){
+            this.clearValidate('dialogFrom');
             this.dialogTableVisible = true;
             this.dialogBtn = true;
             this.dialogDisabled = false;
             Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
+            this.getAgent();
             this.source = true;
-            console.log(111);
+        },
+        getAgent(agentId){
+            // options
+            this.selectedOptions = [];
+            this.selectedOptions.push(agentId);
+            getRequest('/api/agent/select').then( res => {
+                console.log(res);
+                if ( res.data.code === 0) {
+                    this.options = res.data.agentList;
+                    this.options.map( (val, index) => {
+                        if (val.agentId == agentId) {
+                            console.log(val.agentId);
+                        }
+                    })
+                } else {
+                    this.$message.error(res.data.code + res.data.msg)
+                }
+            }).catch( err => {
+                console.log(err);
+            })
+        },
+        handleChange(nowval){
+            console.log(nowval);
+            this.dialogFrom.agentId = nowval[0];
         },
         editClick(index,row){
+            this.clearValidate('dialogFrom');
             this.dialogDisabled = false;
             this.dialogBtn = true;
-            this.getCustomers(row.customerId);
+            this.getCustomers(row.customerId,row.agentId);
         },
         // 删除按钮点击
         deleteClick(index,row){
@@ -212,18 +272,19 @@ export default {
             this.$refs[formName].validate( (valid) => {
                 if (valid) {
                     if ( this.source ) {
+                        console.log(this.dialogFrom);
                         postJsonRequest('/api/customers',this.dialogFrom).then( res => {
                             console.log(res);
-                            // if (res.data.code === 0) {
-                            //     this.dialogTableVisible = false;
-                            //     this.$message({
-                            //         message: res.data.msg,
-                            //         type: 'success'
-                            //     });
-                            //     this.getCustomerList();
-                            // } else {
-                            //     this.$message.error(res.data.code+res.data.msg);
-                            // }
+                            if (res.data.code === 0) {
+                                this.dialogTableVisible = false;
+                                this.$message({
+                                    message: res.data.msg,
+                                    type: 'success'
+                                });
+                                this.getCustomerList();
+                            } else {
+                                this.$message.error(res.data.code+res.data.msg);
+                            }
                         }).catch( err => {
                             this.$message.error(err);
                         })
@@ -270,6 +331,21 @@ export default {
                     message: '取消输入'
                 });
             })
+        },
+        clearValidate(formName){
+            if (this.$refs[formName] !== undefined) {
+                this.$refs[formName].resetFields();
+            }
+        },
+        // 每页数据条数
+        showSizeChange(val){
+            console.log(val);
+            this.getCustomerList('',val);
+        },
+        // 当前页数
+        showCurrentChange(val){
+            console.log(val);
+            this.getCustomerList(val);
         }
     },
 }
