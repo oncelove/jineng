@@ -107,7 +107,7 @@ export default {
     data() {
         return {
             tableData:[],
-            dialogData: null,
+            
             searItemShow: false,
             activeIndex: '',
             searchTextItem:[
@@ -329,6 +329,7 @@ export default {
         // 当前页数
         showCurrentChange(val){
             console.log(val);
+            this.getUsersList(val);
         }
     },
 }

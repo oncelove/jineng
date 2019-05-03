@@ -6,7 +6,8 @@
         <li class="active">
             <span>22222</span>
         </li> -->
-        <li v-for="(item, index) in tonavList" :key="index" @click="toItemUrl(item, index)" v-bind:class="{'active':index == current}">
+        <!-- v-bind:class="{'active':index == current}" -->
+        <li v-for="(item, index) in tonavList" :key="index" @click="toItemUrl(item, index)" >
             <i class="iconfont" :class="item.icon"></i>
             <span>{{ item.name }}</span>
         </li>

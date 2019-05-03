@@ -31,8 +31,8 @@
             <div class="custom-tree-node" slot-scope="{ node, data }">
                 <div><i class="el-icon-menu"></i>{{ node.label }}</div>
                 <div>
+                    <!-- v-if="data.type != 2" -->
                     <el-button
-                        v-if="data.type != 2"
                         type="primary"
                         size="mini"
                         @click="() => addDialogShow(node, data, 0)">
@@ -125,7 +125,7 @@ export default {
             //树状
             treeData:[],
             defaultProps: {
-                children: 'list',
+                children: 'children',
                 label: 'name'
             },
             flag:null,
@@ -187,7 +187,7 @@ export default {
             this.dialogTableVisible = true;
             this.flag = flag;
 
-            if (flag === 0 || flag === 1) {
+            if (flag === 0 || flag === 2) {
                 this.dialogFrom.url = data.url;
                 this.dialogFrom.type = data.type;
                 this.dialogFrom.name = data.name;

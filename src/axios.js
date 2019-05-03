@@ -58,14 +58,15 @@ axios.interceptors.response.use(response => {
     return response;
 }, error => {
     endLoading();
-    if (!err.response.status) {
-        return Promise.reject(error.data); // 返回接口返回的错误信息
-    }
-    if (err.response.status == 500) {
-        Message.error({ message: '服务器被吃了⊙﹏⊙∥' });
-    }
+    console.log(error);
+    // if (!error.response.status) {
+    //     return Promise.reject(error.data); // 返回接口返回的错误信息
+    // }
+    // if (error.response.status == 500) {
+    //     Message.error({ message: '服务器被吃了⊙﹏⊙∥' });
+    // }
 })
-axios.defaults.timeout = 3000;// 请求超时5fen
+axios.defaults.timeout = 30000;// 请求超时5fen
 // RequestBody => post
 export const postJsonRequest = (url, params) => {
     return axios({
