@@ -85,8 +85,17 @@
                 </el-form-item>
                 <el-form-item label="角色属性" prop="userType">
                     <el-radio-group v-model="dialogFrom.userType" :disabled="dialogDisabled">
-                        <el-radio v-for="(usertype,index) in usersType" :key="index" :label="usertype.id">{{usertype.id}}--{{usertype.name}}</el-radio>
+                        <el-radio v-for="(usertype,index) in usersType" :key="index" :label="usertype.id" @change="radioChange">
+                            <!-- {{usertype.id}}-- -->
+                            {{usertype.name}}
+                        </el-radio>
                     </el-radio-group>
+                </el-form-item>
+                <el-form-item label="运营商" v-if="OperatorShow">
+                    <operatorChange v-on:lintenToChildSelected="selectedOptions" :disabled="dialogDisabled" :agentId="dialogFrom.agentId"></operatorChange>
+                </el-form-item>
+                <el-form-item label="客户" v-if="CustomerShow">
+                    <CustomerChange :agentId="dialogFrom.agentId" v-on:lisenTochildCustomer="lisenTochildCustomer" :disabled="dialogDisabled" :customerId="dialogFrom.customerId"></CustomerChange>
                 </el-form-item>
                 <el-form-item v-if="dialogBtn">
                     <el-button type="primary" @click="onSubmit('dialogFrom')">保存</el-button>
@@ -101,9 +110,11 @@
 import page from '@/components/page'
 import searItemsBox from '@/components/searItemsBox'
 import rules from '@/tool/rules.js'
+import operatorChange from '@/components/operatorChange'
+import CustomerChange from '@/components/CustomerChange'
 import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axios.js'
 export default {
-    components:{page, searItemsBox},
+    components:{page, searItemsBox, operatorChange, CustomerChange},
     data() {
         return {
             tableData:[],
@@ -139,9 +150,11 @@ export default {
                 userId:null,
                 userType:'',// 角色属性状态
                 salt:'',
+                agentId:0,  // 运营商id
+                customerId:null, // 客户id
             },
             // 角色属性
-            // usersTypeStatus:'',
+            usersTypeStatus:'',
             usersType:[
                 {id:1,name:'极能管理员'},
                 {id:2,name:'运营商'},
@@ -152,6 +165,9 @@ export default {
             rules:{},
             // 总条数
             totalCount:null,
+
+            OperatorShow:false,
+            CustomerShow:false,
         }
     },
     created() {
@@ -197,7 +213,7 @@ export default {
                 this.dialogDisabled = true;
                 this.dialogBtn = false;
             }
-            this.getUserType();
+            // this.getUserType();
             getRequest('/api/users/'+ userId).then( res => {
                 console.log(res);
                 if ( res.data.code === 0 ) {
@@ -206,8 +222,20 @@ export default {
                     this.dialogFrom.email =  res.data.user.email;
                     this.dialogFrom.status =  res.data.user.status;
                     this.dialogFrom.deptId =  res.data.user.deptId;
-                    // this.dialogFrom.roleIdList = res.data.user.roleIdList;
+                    this.dialogFrom.userType = res.data.user.userType;
                     this.roleIdList = res.data.user.roleIdList;
+                    this.dialogFrom.agentId = res.data.user.agentId;
+                    if (this.dialogFrom.userType != 1) {
+                        this.OperatorShow = true;
+                    } else {
+                        this.OperatorShow = false;
+                    }
+
+                    if ( this.dialogFrom.userType != 1 && this.dialogFrom.userType != 2) {
+                        this.CustomerShow = true;
+                    } else {
+                        this.CustomerShow =false;
+                    }
                 }else{
                     this.$message.error(res.data.code+res.data.msg);
                 }
@@ -219,9 +247,9 @@ export default {
         // 获取用户属性
         getUserType(){
             if (this.$store.state.usersList) {
-                this.dialogFrom.userType = this.$store.state.usersList.userType;
+                this.usersTypeStatus = this.$store.state.usersList.userType;
                 this.usersType.map( (val, index) => {
-                    if (this.dialogFrom.userType == val.id) {
+                    if (this.usersTypeStatus == val.id) {
                         if ( index != 0 ) {
                             let len = index + 1;
                             this.usersType.splice(index,len);
@@ -270,6 +298,7 @@ export default {
             this.rolesArray = this.$store.state.roleNames;
             this.deptArray = this.$store.state.departmentArray;
             this.roleIdList = new Array();
+            this.dialogFrom.agentId = 0;
         },
         // 搜索下拉框点击
         itemShowFunc(index){
@@ -333,6 +362,28 @@ export default {
         showCurrentChange(val){
             console.log(val);
             this.getUsersList(val);
+        },
+
+        radioChange(data){
+            console.log(data);
+            if ( data != 1) {
+                this.OperatorShow = true;
+            } else {
+                this.OperatorShow = false;
+            }
+
+            if ( data != 1 && data != 2) {
+                this.CustomerShow = true;
+            } else {
+                this.CustomerShow =false;
+            }
+        },
+
+        selectedOptions(val){
+            this.dialogFrom.agentId = val[0];
+        },
+        lisenTochildCustomer(val){
+            this.dialogFrom.customerId = val.customerId;
         }
     },
 }

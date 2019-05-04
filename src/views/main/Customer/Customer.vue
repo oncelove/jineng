@@ -193,6 +193,7 @@ export default {
                     this.dialogFrom.latitude = res.data.customer.latitude;
                     this.dialogFrom.longitude = res.data.customer.longitude;
                     this.dialogFrom.description = res.data.customer.description;
+                    this.dialogFrom.agentId = res.data.customer.agentId;
                 }
             }).catch( err => {
                 console.log(err);
@@ -244,6 +245,7 @@ export default {
             console.log(nowval);
             this.dialogFrom.agentId = nowval[0];
         },
+            // 编辑按钮
         editClick(index,row){
             this.clearValidate('dialogFrom');
             this.dialogDisabled = false;
@@ -289,10 +291,11 @@ export default {
                             this.$message.error(err);
                         })
                     } else {
-                        postJsonRequest('/api/customers/'+ this.dialogFrom.customerId,this.dialogFrom).then( res => {
+                        putJsonRequest('/api/customers/'+ this.dialogFrom.customerId,this.dialogFrom).then( res => {
                             console.log(res.data.code);
                             if (res.data.code === 0 ) {
                                 this.dialogTableVisible = false;
+                                this.getCustomerList();
                             }else{
                                 this.$message.error(res.data.code+res.data.msg);
                             }

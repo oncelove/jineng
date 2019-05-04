@@ -50,8 +50,10 @@ export default {
 .iconfont{
     font-size: 20px;
 }
-.router-link-exact-active{
-
+.navigation{
+    li{
+        cursor: pointer;
+    }
 }
 </style>
 
