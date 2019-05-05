@@ -32,7 +32,7 @@ const router = new Router({
                 // 档案管理
                 {path: '/sys/document',name:'archives',component: () => import('./views/main/Customer/archives.vue')},
                 // 站点管理
-                {path: '/123',name:'stations',component: () => import('./views/main/stations/stations.vue')},
+                {path: '/sys/123',name:'stations',component: () => import('./views/main/stations/stations.vue')},
             ]
         },
         {

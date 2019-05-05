@@ -95,7 +95,12 @@
                     <operatorChange v-on:lintenToChildSelected="selectedOptions" :disabled="dialogDisabled" :agentId="dialogFrom.agentId"></operatorChange>
                 </el-form-item>
                 <el-form-item label="客户" v-if="CustomerShow">
-                    <CustomerChange :agentId="dialogFrom.agentId" v-on:lisenTochildCustomer="lisenTochildCustomer" :disabled="dialogDisabled" :customerId="dialogFrom.customerId"></CustomerChange>
+                    <CustomerChange 
+                        :agentId="dialogFrom.agentId"
+                        v-on:lisenTochildCustomer="lisenTochildCustomer" 
+                        :disabled="dialogDisabled" 
+                        :customerId="dialogFrom.customerId">
+                    </CustomerChange>
                 </el-form-item>
                 <el-form-item v-if="dialogBtn">
                     <el-button type="primary" @click="onSubmit('dialogFrom')">保存</el-button>
@@ -225,6 +230,7 @@ export default {
                     this.dialogFrom.userType = res.data.user.userType;
                     this.roleIdList = res.data.user.roleIdList;
                     this.dialogFrom.agentId = res.data.user.agentId;
+                    this.dialogFrom.customerId = res.data.user.customerId;
                     if (this.dialogFrom.userType != 1) {
                         this.OperatorShow = true;
                     } else {

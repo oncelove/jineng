@@ -124,6 +124,7 @@ export default {
         }
     },
     methods:{
+        // 第一次掉的接口
         getList(current, size){
             let limit = size || 10;
             let cursor = current || 1;

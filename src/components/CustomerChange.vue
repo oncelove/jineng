@@ -56,6 +56,7 @@ export default {
     },
     created(){
         this.dialogDisabled = this.disabled;
+        console.log(this.customerId);
     },
     methods:{
         getCustomersList(current, size){
