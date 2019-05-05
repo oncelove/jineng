@@ -33,6 +33,10 @@ const router = new Router({
                 {path: '/sys/document',name:'archives',component: () => import('./views/main/Customer/archives.vue')},
                 // 站点管理
                 {path: '/sys/123',name:'stations',component: () => import('./views/main/stations/stations.vue')},
+                //产品管理
+                {path: '/sys/456',name:'products',component: () => import('./views/main/products/products.vue')},
+                //设备管理
+                {path: '/sys/789',name:'equipments',component: () => import('./views/main/equipments/equipments.vue')},
             ]
         },
         {
