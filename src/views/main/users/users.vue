@@ -77,11 +77,12 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="角色" prop="roleIdList">
-                    <el-checkbox-group v-model="roleIdList" :disabled="dialogDisabled">
+                    <userCheckbox v-on:listenToUserChange="showUserChange" :userchecked="userchecked" :disabled="dialogDisabled"></userCheckbox>
+                    <!-- <el-checkbox-group v-model="roleIdList" :disabled="dialogDisabled">
                         <el-checkbox :label="roles.roleId" v-for="(roles,index) in rolesArray" :key="index">
                             {{roles.roleName}}
                         </el-checkbox>
-                    </el-checkbox-group>
+                    </el-checkbox-group> -->
                 </el-form-item>
                 <el-form-item label="角色属性" prop="userType">
                     <el-radio-group v-model="dialogFrom.userType" :disabled="dialogDisabled">
@@ -93,6 +94,12 @@
                 </el-form-item>
                 <el-form-item label="运营商" v-if="OperatorShow">
                     <operatorChange v-on:lintenToChildSelected="selectedOptions" :disabled="dialogDisabled" :agentId="dialogFrom.agentId"></operatorChange>
+                </el-form-item>
+                <el-form-item label="是否查看全部数据" v-if="seeAllData" label-width="140px">
+                    <el-radio-group v-model="dialogFrom.isAll" :disabled="dialogDisabled">
+                        <el-radio :label="0">是</el-radio>
+                        <el-radio :label="1">否</el-radio>
+                    </el-radio-group>
                 </el-form-item>
                 <el-form-item label="客户" v-if="CustomerShow">
                     <CustomerChange 
@@ -117,9 +124,10 @@ import searItemsBox from '@/components/searItemsBox'
 import rules from '@/tool/rules.js'
 import operatorChange from '@/components/operatorChange'
 import CustomerChange from '@/components/CustomerChange'
+import userCheckbox from '@/components/userCheckbox'
 import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axios.js'
 export default {
-    components:{page, searItemsBox, operatorChange, CustomerChange},
+    components:{page, searItemsBox, operatorChange, CustomerChange, userCheckbox},
     data() {
         return {
             tableData:[],
@@ -142,8 +150,9 @@ export default {
             dialogBtn: false,
             // 弹窗显示的数据
             deptArray:[], // 部门列表
-            rolesArray:[], // 角色列表
-            roleIdList: [], // 用户所属角色
+            // rolesArray:[], // 角色列表
+            // roleIdList: [], // 用户所属角色
+            userchecked:[],//   传给子组件的值
             dialogFrom:{
                 username:'', // 用户名
                 password:'', // 密码
@@ -157,6 +166,7 @@ export default {
                 salt:'',
                 agentId:0,  // 运营商id
                 customerId:null, // 客户id
+                isAll:0, // 是否查看全部数据
             },
             // 角色属性
             usersTypeStatus:'',
@@ -173,6 +183,7 @@ export default {
 
             OperatorShow:false,
             CustomerShow:false,
+            seeAllData: false,
         }
     },
     created() {
@@ -192,10 +203,8 @@ export default {
                 cursor:cursor,
             }
             getRequest('/api/users',getData).then( res => {
-                console.log(res);
                 this.tableData = res.data.page.list;
                 this.totalCount = res.data.page.totalCount;
-                // console.log(this.totalCount);
             }).catch( err => {
                 console.log(err);
                 this.$message.error(err);
@@ -208,7 +217,6 @@ export default {
             this.rolesArray = this.$store.state.roleNames;
             this.deptArray = this.$store.state.departmentArray;
             Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
-            this.roleIdList = new Array();
             this.dialogFrom.salt = salt;
             if (whereClick) {
                 this.dialogDisabled = false;
@@ -220,7 +228,6 @@ export default {
             }
             // this.getUserType();
             getRequest('/api/users/'+ userId).then( res => {
-                console.log(res);
                 if ( res.data.code === 0 ) {
                     this.dialogFrom.username = res.data.user.username;
                     this.dialogFrom.mobile = res.data.user.mobile;
@@ -228,25 +235,14 @@ export default {
                     this.dialogFrom.status =  res.data.user.status;
                     this.dialogFrom.deptId =  res.data.user.deptId;
                     this.dialogFrom.userType = res.data.user.userType;
-                    this.roleIdList = res.data.user.roleIdList;
+                    this.userchecked = res.data.user.roleIdList;
                     this.dialogFrom.agentId = res.data.user.agentId;
                     this.dialogFrom.customerId = res.data.user.customerId;
-                    if (this.dialogFrom.userType != 1) {
-                        this.OperatorShow = true;
-                    } else {
-                        this.OperatorShow = false;
-                    }
-
-                    if ( this.dialogFrom.userType != 1 && this.dialogFrom.userType != 2) {
-                        this.CustomerShow = true;
-                    } else {
-                        this.CustomerShow =false;
-                    }
+                    this.ifShowCheckout(this.dialogFrom.userType);
                 }else{
                     this.$message.error(res.data.code+res.data.msg);
                 }
             }).catch( err => {
-                console.log(err);
                 this.$message.error(err);
             })
         },
@@ -270,7 +266,6 @@ export default {
         // 查看按钮点击
         handleClick(index,row){
             this.getUserMsg(row.userId);
-            // console.log(index,row);
         },
         // 编辑按钮点击
         editClick(index,row){
@@ -278,7 +273,6 @@ export default {
         },
         // 删除按钮点击
         deleteClick(index,row){
-            console.log(index,row);
             deleteRequest('/api/users/' + row.userId).then( res => {
                 if (res.data.code === 0) {
                     this.$message({
@@ -303,7 +297,6 @@ export default {
             this.source = true;
             this.rolesArray = this.$store.state.roleNames;
             this.deptArray = this.$store.state.departmentArray;
-            this.roleIdList = new Array();
             this.dialogFrom.agentId = 0;
         },
         // 搜索下拉框点击
@@ -318,9 +311,7 @@ export default {
         // 保存修改内容
         onSubmit(formName){
             this.$refs[formName].validate( (valid) => {
-                console.log(this.dialogFrom);
                 if (valid) {
-                    this.dialogFrom.roleIdList = this.roleIdList;
                     if ( this.source ) {
                         postJsonRequest('/api/users',this.dialogFrom).then( res => {
                             if (res.data.code === 0) {
@@ -361,17 +352,18 @@ export default {
         },
         // 每页数据条数
         showSizeChange(val){
-            console.log(val);
             this.getUsersList('',val);
         },
         // 当前页数
         showCurrentChange(val){
-            console.log(val);
             this.getUsersList(val);
         },
 
         radioChange(data){
-            console.log(data);
+            this.ifShowCheckout(data);
+        },
+
+        ifShowCheckout(data){
             if ( data != 1) {
                 this.OperatorShow = true;
             } else {
@@ -383,6 +375,12 @@ export default {
             } else {
                 this.CustomerShow =false;
             }
+
+            if ( data === 2) {
+                this.seeAllData = true;
+            } else {
+                this.seeAllData = false;
+            }
         },
 
         selectedOptions(val){
@@ -390,6 +388,9 @@ export default {
         },
         lisenTochildCustomer(val){
             this.dialogFrom.customerId = val.customerId;
+        },
+        showUserChange(val){
+            this.dialogFrom.roleIdList = val;
         }
     },
 }

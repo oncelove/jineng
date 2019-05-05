@@ -19,7 +19,7 @@
             </li>
         </ul>
         <el-row :gutter="20" class="agentsBox">
-            <el-col :span="8">
+            <el-col :span="10">
                 <el-tree
                     empty-text="暂无数据"
                     ref="tree"
@@ -70,7 +70,7 @@
                     </div>
                 </el-tree>
             </el-col>
-            <el-col :span="16">
+            <el-col :span="14">
                 <div class="CustomerBox">
                     <el-table :data="tableData" style="width: 100%"  class="table-box">
                         <el-table-column type="selection" width="55"></el-table-column>
@@ -119,7 +119,7 @@
         </el-dialog>
 
         <el-dialog title="迁移客户" :visible.sync="transferVisible">
-            <el-form ref="transferFrom" :model="transferFrom" >
+            <el-form ref="transferFrom" :model="transferFrom" label-width="80px" >
                 <el-form-item label="客户名">
                     <el-select v-model="transferData" multiple placeholder="请选择">
                         <el-option
@@ -138,6 +138,9 @@
                         @change="handleChange">
                     </el-cascader>
                 </el-form-item>
+                <el-form-item label="角色">
+                    <userCheckbox v-on:listenToUserChange="showUserChange" :disabled="transferDisabled" :userchecked="userchecked"></userCheckbox>
+                </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="transferSubmit('transferFrom')">保存</el-button>
                     <el-button @click="transferVisible = false">取消</el-button>
@@ -150,9 +153,10 @@
 <script>
 import page from '@/components/page'
 import searItemsBox from '@/components/searItemsBox'
+import userCheckbox from '@/components/userCheckbox'
 import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axios.js'
 export default {
-    components:{page,searItemsBox},
+    components:{page,searItemsBox,userCheckbox},
     data() {
         return {
             tableData:[],
@@ -194,6 +198,9 @@ export default {
             transferData:[],
             transferOptions:[],
             transferFrom:{},
+            roleIdList:[],
+            transferDisabled:true,
+            userchecked:[],
 
             selectedOptions:[],
             options:[],
@@ -315,6 +322,8 @@ export default {
         transfer(node, data){
             console.log(data);
             this.transferVisible = true;
+            this.transferDisabled = false;
+            this.userCheckbox = [];
             // this.transferOptions
             getRequest('/api/customers?agentId='+data.agentId).then( res => {
                 console.log(res);
@@ -336,7 +345,7 @@ export default {
         },
 
         handleChange(nowval){
-            console.log(nowval);
+            // console.log(nowval);
             this.dialogFrom.agentId = nowval[0];
         },
 
@@ -344,8 +353,10 @@ export default {
             this.transferVisible = false;
             let postData = {
                 ids: this.transferData,
-                targetId: this.selectedOptions
+                agentId: this.selectedOptions[0],
+                roleId: this.roleIdList
             }
+            console.log(postData);
             postJsonRequest('/api/agent/transfer',postData).then( res => {
                 console.log(res);
             }).catch(err => {
@@ -360,6 +371,11 @@ export default {
         // 当前页数
         showCurrentChange(val){
             this.getCustomersList(val);
+        },
+
+        showUserChange(val){
+            console.log(val);
+            this.roleIdList = val;
         }
     },
 }

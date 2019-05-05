@@ -141,7 +141,11 @@ export default {
             }
             getRequest('/test/stations',getData).then( res => {
                 console.log(res);
-                this.tableData = res.data.result.records;
+                if ( res.data.code === 0) {
+                    this.tableData = res.data.data.records;
+                } else {
+                    this.$message.error(res.data.code + res.data.msg)
+                }
             }).catch( err => {
                 console.log(err);
             })

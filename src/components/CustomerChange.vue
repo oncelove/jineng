@@ -40,7 +40,7 @@ export default {
             this.dialogDisabled =  val;
         },
         customerId(val){
-            console.log(val);
+            this.customerInput = val;
         }
     },
     props:['agentId', 'dialogVisible','disabled','customerId'],
@@ -56,7 +56,8 @@ export default {
     },
     created(){
         this.dialogDisabled = this.disabled;
-        console.log(this.customerId);
+        this.customerInput = this.customerId;
+        // console.log(this.customerId);s
     },
     methods:{
         getCustomersList(current, size){
@@ -67,9 +68,7 @@ export default {
                 limit: limit,
                 customerId: this.customerId
             }
-            console.log(this.agentId + 43);
             getRequest('/api/customers?agentId='+this.agentId,getData).then( res => {
-                console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.page.list;
                     this.totalCount = res.data.page.totalCount;
@@ -82,7 +81,6 @@ export default {
         },
 
         seeCustomer(){
-            console.log(this.agentId);
             if (this.agentId) {
                 this.dialogTableVisible = true;
                 this.getCustomersList();
@@ -93,7 +91,6 @@ export default {
         },
 
         Choice(index, row){
-            console.log(row);
             this.dialogTableVisible = false;
             this.customerInput = row.customerName;
             this.$emit('lisenTochildCustomer',row)
