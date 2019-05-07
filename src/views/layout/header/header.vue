@@ -24,7 +24,9 @@
             </div>
             <span class="iconfont iconjiankongshebei" title="监控"></span>
             <span class="iconfont iconxitong" title="大屏显示"></span>
-            <span class="iconfont iconlingdang" title="提示"></span>
+            <el-badge :value="errNumbers" class="mar-20">
+                <span class="iconfont iconlingdang" title="提示" @click="goDeviceErrList"></span>
+            </el-badge>
             <span class="iconfont iconquanping" title="全屏"></span>
             <span class="iconfont iconerweima1" title="二维码"></span>
             <div class=" user-box">
@@ -43,15 +45,23 @@
 </template>
 
 <script>
+import {getRequest} from '@/axios.js'
 export default {
     data() {
         return {
             searchText:'',
             userName:'',
+            socketUrl:'ws://192.168.0.112:8085/websocket/0-11',
+            socket:null,
+            errNumbers:null,
         }
     },
     created(){
         this.username = sessionStorage.getItem('username');
+    },
+    mounted(){
+        this.connentSocket();
+        this.getErrNumbers();
     },
     methods:{
         handleCommand(command){
@@ -61,6 +71,32 @@ export default {
                 sessionStorage.removeItem('username');
                 this.$router.push({name:'login'})
             }
+        },
+        connentSocket(){
+            if ( typeof(WebSocket)  == "undefined" ) {
+                this.$message.error('您的浏览器不支持websocket');
+                return;
+            }
+            this.socket = new WebSocket(this.socketUrl);
+            this.socket.onopen = () => { console.log('socket已链接')};
+            this.socket.onclose = () => { console.log('socket已关闭')};
+            this.socket.onerror = () => { console.log('socket链接错误')};
+            this.socket.onmessage = msg => { console.log(msg); };
+        },
+
+        getErrNumbers(){
+            getRequest('/catch/deviceWarning/total').then( res => {
+                if ( res.data.code === 0) {
+                    this.errNumbers = res.data.data;
+                } else {
+                    this.$message.error('请尝试刷新页面');
+                }
+            }).catch( err => {
+                console.log(err);
+            })
+        },
+        goDeviceErrList(){
+            this.$router.push({name:'archideviceserrves'});
         }
     }
 }
@@ -73,6 +109,9 @@ export default {
 }
 .el-dropdown-menu{
     width: 120px;
+}
+.mar-20{
+    margin: 0 20px 0 0;
 }
 </style>
 

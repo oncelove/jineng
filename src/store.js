@@ -39,9 +39,9 @@ export default new Vuex.Store({
         changeDepartmentArray( state, list) {
             state.departmentArray = list;
         },
-        changeUsersList (state, list) {
-            state.usersList = list.userList;
-            localStorage.setItem('userType',list.userList.userType)
+        changeUsersList(state, list) {
+            state.usersList = list;
+            // localStorage.setItem('userType',list.userList.userType)
         },
         changeDialogTableVisible(state, data){
             state.dialogTableVisible = data;

@@ -1,14 +1,10 @@
 <template>
     <div class="position">
         <el-input v-model="customerInput" :disabled="noclick"></el-input>
-        <el-button @click="seeCustomer" class="seeCustomer" :disabled="dialogDisabled">查看客户</el-button>
-        <el-dialog :visible.sync="dialogTableVisible" title="客户信息" :modal-append-to-body='false'>
+        <el-button class="seeStation" @click="seeStation" :disabled="dialogDisabled">查看站点</el-button>
+        <el-dialog :visible.sync="dialogTableVisible" title="站点信息" :modal-append-to-body='false'>
             <el-table :data="tableData" style="width: 100%"  class="table-box" ref="singleTable">
-                <el-table-column prop="agentName" label="运营商名称"></el-table-column>
-                <el-table-column prop="customerName" label="客户名"></el-table-column>
-                <el-table-column prop="contacts" label="联系人"></el-table-column>
-                <el-table-column prop="phone" label="手机"></el-table-column>
-                <el-table-column prop="address" label="地址"></el-table-column>
+                <el-table-column prop="customerName" label="站点名称"></el-table-column>
                 <el-table-column fixed="right" label="操作" width="100">
                     <template slot-scope="scope">
                         <el-button
@@ -39,11 +35,11 @@ export default {
         disabled(val){
             this.dialogDisabled =  val;
         },
-        customerName(val){
+        stationId(val){
             this.customerInput = val;
         },
     },
-    props:['agentId', 'dialogVisible','disabled','customerId','customerName'],
+    props:['disabled','stationId'],
     data(){
         return{
             dialogTableVisible: false,
@@ -56,9 +52,8 @@ export default {
     },
     created(){
         this.dialogDisabled = this.disabled;
-        console.log(this.customerName);
-        this.customerInput = this.customerName;
-        // console.log(this.customerId);
+        console.log(this.stationId);
+        this.customerInput = this.stationId;
     },
     methods:{
         getCustomersList(current, size){
@@ -67,12 +62,12 @@ export default {
             let getData ={
                 cursor: cursor,
                 limit: limit,
-                customerId: this.customerId
             }
-            getRequest('/api/customers?agentId='+this.agentId,getData).then( res => {
+            getRequest('/test/stations',getData).then( res => {
+                console.log(res);
                 if ( res.data.code === 0) {
-                    this.tableData = res.data.page.list;
-                    this.totalCount = res.data.page.totalCount;
+                    this.tableData = res.data.data.records;
+                    this.totalCount = res.data.data.total;
                 } else {
                     this.$message.error(res.data.code + res.data.msg);
                 }
@@ -81,21 +76,15 @@ export default {
             })
         },
 
-        seeCustomer(){
-            console.log(this.agentId);
-            if (this.agentId) {
-                this.dialogTableVisible = true;
-                this.getCustomersList();
-            } else {
-                this.$message.error('请选择运营商');
-            }
-            
-        },
-
         Choice(index, row){
             this.dialogTableVisible = false;
             this.customerInput = row.customerName;
-            this.$emit('lisenTochildCustomer',row)
+            this.$emit('lisenTochildStation',row)
+        },
+
+        seeStation(){
+            this.getCustomersList();
+            this.dialogTableVisible = true;
         },
 
         // 每页数据条数
@@ -116,11 +105,8 @@ export default {
 .position{
     position: relative;
 }
-.seeCustomer{
+.seeStation{
     position: absolute;
     right: 0;
-}
-.table{
-    z-index: 999999;
 }
 </style>

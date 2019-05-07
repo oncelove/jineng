@@ -21,14 +21,21 @@
         <el-table :data="tableData" style="width: 100%"  class="table-box">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="产品编号"></el-table-column>
-            <el-table-column prop="productName" label="产品名称"></el-table-column>
-            <el-table-column prop="productKey" label="阿里云key"></el-table-column>
-            <el-table-column prop="nodeType" label="节点类型"></el-table-column>
-            <el-table-column prop="isShow" label="是否显示产品"></el-table-column>
+            <el-table-column prop="name" label="产品名称"></el-table-column>
+            <el-table-column prop="nodeType" label="节点类型">
+                <template slot-scope="scope">
+                    <em v-if="scope.row.nodeType === 0">设备</em>
+                    <em v-else>网关</em>
+                </template>
+            </el-table-column>
+            <el-table-column prop="isShow" label="是否显示产品">
+                <template slot-scope="scope">
+                    <em v-if="scope.row.isShow === 0">不显示</em>
+                    <em v-else>显示</em>
+                </template>
+            </el-table-column>
             <el-table-column prop="description" label="站点描述"></el-table-column>
-            <el-table-column prop="createUser" label="创建者"></el-table-column>
             <el-table-column prop="createTime" label="创建时间"></el-table-column>
-            <el-table-column prop="delFlg" label="删除标记"></el-table-column>
             <el-table-column fixed="right" label="操作" width="240">
                 <template slot-scope="scope">
                     <el-button
@@ -61,42 +68,26 @@
         <el-dialog title="产品管理信息" :visible.sync="dialogTableVisible">
             <el-form ref="dialogFrom" :model="dialogFrom" label-width="80px">
                 <el-form-item label="产品编号">
-                    <el-input v-model="dialogFrom.id" :disabled="dialogDisabled"></el-input>
+                    <el-input v-model="dialogFrom.id" :disabled="noClick"></el-input>
                 </el-form-item>
                 <el-form-item label="产品名称">
-                    <el-input v-model="dialogFrom.productName" :disabled="dialogDisabled"></el-input>
-                </el-form-item>
-                <el-form-item label="阿里云key">
-                    <el-input v-model="dialogFrom.productKey" :disabled="dialogDisabled"></el-input>
+                    <el-input v-model="dialogFrom.name" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
                 <el-form-item label="节点类型">
-                    <el-input v-model="dialogFrom.nodeType" :disabled="dialogDisabled"></el-input>
+                    <el-radio-group v-model="dialogFrom.nodeType" :disabled="disabledNoEdit">
+                        <el-radio :label="0">设备</el-radio>
+                        <el-radio :label="1">网关</el-radio>
+                    </el-radio-group>
                 </el-form-item>
-                <el-form-item label="是否显示产品">
-                    <el-input v-model="dialogFrom.isShow" :disabled="dialogDisabled"></el-input>
+                <el-form-item label="是否显示">
+                    <el-radio-group v-model="dialogFrom.isShow" :disabled="dialogDisabled">
+                        <el-radio :label="0">不显示</el-radio>
+                        <el-radio :label="1">显示</el-radio>
+                    </el-radio-group>
                 </el-form-item>
                 <el-form-item label="站点描述">
                     <el-input v-model="dialogFrom.description" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
-
-                <!-- <el-form-item label="所属部门">
-                    <el-select v-model="dialogFrom.deptId" :disabled="dialogDisabled" @change="departmentChange">
-                        <el-option v-for="(dept, index) in deptArray" :key="index" :label="dept.name" :value="dept.depid">
-                            {{ dept.name }}
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="菜单集合" class="rolesMenu">
-                    <el-input v-model="dialogFrom.menuIdListShow" :disabled="dialogNoEdit"></el-input>
-                    <el-button @click="seeMenus">{{text}}菜单</el-button>
-                </el-form-item>
-                <el-form-item label="站点集合" class="rolesMenu" v-if="stationShow">
-                    <el-input v-model="dialogFrom.stationIdListShow" :disabled="dialogNoEdit"></el-input>
-                    <el-button @click="seeStation">{{text}}站点</el-button>
-                </el-form-item>
-                <el-form-item label="备注信息">
-                    <el-input v-model="dialogFrom.remark" :disabled="dialogDisabled"></el-input>
-                </el-form-item> -->
                 <el-form-item v-if="dialogBtn">
                     <el-button type="primary" @click="onSubmit('dialogFrom')">保存</el-button>
                     <el-button @click="dialogTableVisible = false">取消</el-button>
@@ -104,38 +95,6 @@
             </el-form>
         </el-dialog>
 
-        <el-dialog title="菜单信息" :visible.sync="dialogMenusVisible">
-            <el-form ref="dialogMenusFrom" :model="dialogMenusFrom" label-width="80px">
-                <el-tree
-                    :data="menusData"
-                    show-checkbox
-                    node-key="menuId"
-                    ref="meuns"
-                    :props="defaultProps"
-                    :default-checked-keys="dialogMenusFrom.defaultChecked"
-                ></el-tree>
-                <el-form-item v-if="dialogMenusBtn">
-                    <el-button type="primary" @click="onSubmitMenus">保存</el-button>
-                    <el-button @click="dialogMenusVisible = false">取消</el-button>
-                </el-form-item>
-            </el-form>
-        </el-dialog>
-
-        <el-dialog title="站点信息" :visible.sync="dialogStationVisible">
-            <el-form ref="dialogMenusFrom" :model="dialogMenusFrom" label-width="80px">
-                <el-tree
-                    :data="menusData"
-                    show-checkbox
-                    node-key="menuId"
-                    :props="defaultProps"
-                    :default-checked-keys="dialogMenusFrom.defaultChecked"
-                ></el-tree>
-                <el-form-item v-if="dialogMenusBtn">
-                    <el-button type="primary" @click="onSubmitMenus('dialogMenusFrom')">保存</el-button>
-                    <el-button @click="dialogStationVisible = false">取消</el-button>
-                </el-form-item>
-            </el-form>
-        </el-dialog>
     </div>
 </template>
 
@@ -144,7 +103,7 @@ import page from '@/components/page'
 import searItemsBox from '@/components/searItemsBox'
 import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axios.js'
 import rules from '@/tool/rules.js'
-
+import { mapMutations } from 'vuex';
 export default {
     components:{page, searItemsBox},
     data() {
@@ -161,8 +120,6 @@ export default {
                 {id:5,codeText:'用户星级',selectText:'一星'}
             ],
 
-            text:'查看',
-
             // 总条数
             totalCount:null,
 
@@ -172,47 +129,34 @@ export default {
             // dialog需要的
             dialogTableVisible: false,
             dialogDisabled:false,
+            disabledNoEdit:false,
             dialogBtn:true,
             dialogNoEdit:true,
             flag:'',
-            deptArray:[], // 部门列表
             dialogFrom:{
                 id: null,
-                productName: null,
-                productKey: null,
+                name: null,
                 nodeType: null,
                 isShow: null,
                 description: null,
+                createUser:null,
+                updateUser:null,
             },
             stationShow:false,
 
-            // 菜单树
-            dialogMenusVisible:false,
-            menusData:[],
-            dialogMenusBtn:false,
-            dialogMenusFrom:{
-                defaultChecked:[],
-            },
-            defaultProps:{
-                children: 'children',
-                label: 'name'
-            },
-
-            // 站点
-            dialogStationVisible:false,
+            noClick:true,
             
         }
     },
     created() {
         this.getProsList();
         this.rules = rules;
-        let constUserType = localStorage.getItem('userType');
-        if (constUserType === 3) {
-            this.stationShow = true;
-        }
     },
     methods: {
-
+        getUserID(){
+            this.dialogFrom.createUser = this.$store.state.usersList.userId;
+            this.dialogFrom.updateUser = this.$store.state.usersList.userId;
+        },
         getProsList(current,size){
             let limit = size || 10;
             let cursor = current || 1;
@@ -222,25 +166,28 @@ export default {
             };
             getRequest('/test/products',getData).then( res => {
                 console.log(res);
-                // this.tableData = res.data.page.list;
-                // this.totalCount = res.data.page.totalCount;
+                if ( res.data.code === 0) {
+                    this.tableData = res.data.data.records;
+                } else {
+                    this.$message.error(res.data.code + res.data.msg);
+                }
             }).catch( err => {
                 console.log(err);
             })
         },
 
         getProsMsg(roleId){
-            getRequest('/test/products/'+id).then( res => {
+            getRequest('/test/products/'+roleId).then( res => {
                 console.log(res);
                 if (res.data.code === 0) {
-                    this.dialogFrom.id = res.data.result.id;
-                    this.dialogFrom.productName = res.data.result.productName;
-                    this.dialogFrom.productKey = res.data.result.productKey;
-                    this.dialogFrom.nodeType = res.data.result.nodeType;
-                    this.dialogFrom.isShow = res.data.result.isShow;
-                    this.dialogFrom.description = res.data.result.description;
+                    this.dialogFrom.id = res.data.data.id;
+                    this.dialogFrom.name = res.data.data.name;
+                    this.dialogFrom.nodeType = res.data.data.nodeType;
+                    this.dialogFrom.isShow = res.data.data.isShow;
+                    this.dialogFrom.description = res.data.data.description;
+                    // this.dialogFrom.createUser = this.$store.state.usersList
                 } else {
-                    // this.$message.error(res.data.code + res.data.msg);
+                    this.$message.error(res.data.code + res.data.msg);
                 }
             }).catch( err => {
                 console.log(err);
@@ -248,30 +195,31 @@ export default {
         },
 
         addDialogShow(index,row,flag){
+            console.log(index);
+            console.log(row);
             this.dialogTableVisible = true;
-            this.deptArray = this.$store.state.departmentArray;
             Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
             this.flag = flag;
+            this.disabledNoEdit = true;
             if ( flag === 0 ) {
                 this.dialogDisabled = true;
                 this.dialogBtn = false;
-                this.text = "查看";
                 this.dialogMenusBtn = false;
             }
 
             if ( flag === 2 ) {
                 this.dialogDisabled = false;
                 this.dialogBtn = true;
-                this.text = "编辑";
                 this.dialogMenusBtn = true;
             }
 
-            this.getProsMsg(row.roleId);
+            this.getUserID();
+            this.getProsMsg(row.id);
         },
 
         // 删除
         remove(index,row){
-            deleteRequest('/test/products/'+row.roleId).then( res => {
+            deleteRequest('/test/products/'+row.id).then( res => {
                 if ( res.data.code === 0) {
                     this.$notify.success({
                         message:'删除成功',
@@ -286,51 +234,15 @@ export default {
             })
         },
 
-        // 查看菜单
-        seeMenus(){
-            this.dialogMenusVisible = true;
-            this.menusData = [];
-            getRequest('/api/menus').then( res => {
-                console.log(res);
-                if ( res.data.code == 0) {
-                    this.menusData = res.data.menuList;
-                }else {
-                    this.$message.error(res.data.code+res.data.msg)
-                }
-            }).catch( err => {
-                console.log(err);
-            })
-        },
-
-        // 查看站点
-        seeStation(){
-            this.dialogStationVisible = true;
-        },
-
-        // 保存菜单
-        onSubmitMenus(){
-            this.dialogMenusVisible = false;
-            let checkedList = this.$refs.meuns.getCheckedNodes();
-            let checkedId =[];
-            checkedList.map((val, index) => {
-                checkedId.push(val.menuId);
-            })
-            this.dialogFrom.menuIdListShow = checkedId.join(',');
-            this.dialogFrom.menuIdList = checkedId;
-        },
-
         // 新增
         addList(){
             this.dialogTableVisible = true;
             Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
             this.dialogMenusBtn = true;
             this.dialogBtn = true;
-            this.text = "编辑";
             this.flag = 1;
             this.dialogDisabled = false;
-            this.deptArray = this.$store.state.departmentArray;
-            this.dialogFrom.stationIdList = [];
-            this.dialogFrom.menuIdList = [];
+            this.disabledNoEdit = false;
         },
 
         departmentChange(selVal){
@@ -345,7 +257,6 @@ export default {
                     console.log(this.dialogFrom);
                     if ( this.flag === 1) {
                         postJsonRequest('/test/products',this.dialogFrom).then( res => {
-                            console.log(res);
                             if ( res.data.code === 0) {
                                 this.$notify.success({
                                     message:'添加成功',
@@ -353,7 +264,7 @@ export default {
                                 });
                                 this.getProsList();
                             } else {
-                                this.$message.error(this.data.code+this.data.msg)
+                                this.$message.error(res.data.code+res.data.msg)
                             }
                         }).catch( err => {
                             console.log(err)
@@ -361,6 +272,7 @@ export default {
                         return;
                     }
                     putJsonRequest('/test/products/'+this.dialogFrom.id,this.dialogFrom).then( res => {
+                        console.log(res);
                         if ( res.data.code === 0) {
                             this.$notify.success({
                                 message:'更新成功',
@@ -409,5 +321,8 @@ export default {
             right: 0;
         }
     }
+}
+em{
+    font-style: normal;
 }
 </style>

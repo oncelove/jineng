@@ -354,7 +354,7 @@ export default {
             let postData = {
                 ids: this.transferData,
                 agentId: this.selectedOptions[0],
-                roleId: this.roleIdList
+                roleIds: this.roleIdList
             }
             console.log(postData);
             postJsonRequest('/api/agent/transfer',postData).then( res => {

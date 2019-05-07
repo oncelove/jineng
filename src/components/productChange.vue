@@ -1,14 +1,15 @@
 <template>
     <div class="position">
         <el-input v-model="customerInput" :disabled="noclick"></el-input>
-        <el-button @click="seeCustomer" class="seeCustomer" :disabled="dialogDisabled">查看客户</el-button>
-        <el-dialog :visible.sync="dialogTableVisible" title="客户信息" :modal-append-to-body='false'>
+        <el-button class="seeProduct" @click="seeProduct" :disabled="dialogDisabled">查看产品</el-button>
+        <el-dialog 
+            :visible.sync="dialogTableVisible" 
+            title="产品信息" 
+            :close-on-click-modal="false"
+            :modal-append-to-body='false'>
             <el-table :data="tableData" style="width: 100%"  class="table-box" ref="singleTable">
-                <el-table-column prop="agentName" label="运营商名称"></el-table-column>
-                <el-table-column prop="customerName" label="客户名"></el-table-column>
-                <el-table-column prop="contacts" label="联系人"></el-table-column>
-                <el-table-column prop="phone" label="手机"></el-table-column>
-                <el-table-column prop="address" label="地址"></el-table-column>
+                <el-table-column prop="id" label="id"></el-table-column>
+                <el-table-column prop="name" label="产品名称"></el-table-column>
                 <el-table-column fixed="right" label="操作" width="100">
                     <template slot-scope="scope">
                         <el-button
@@ -39,11 +40,11 @@ export default {
         disabled(val){
             this.dialogDisabled =  val;
         },
-        customerName(val){
+        productId(val){
             this.customerInput = val;
         },
     },
-    props:['agentId', 'dialogVisible','disabled','customerId','customerName'],
+    props:['disabled','productId'],
     data(){
         return{
             dialogTableVisible: false,
@@ -56,23 +57,22 @@ export default {
     },
     created(){
         this.dialogDisabled = this.disabled;
-        console.log(this.customerName);
-        this.customerInput = this.customerName;
-        // console.log(this.customerId);
+        console.log(this.productId);
+        this.customerInput = this.productId;
     },
     methods:{
-        getCustomersList(current, size){
+        getProductList(current, size){
             let limit = size || 10;
             let cursor = current || 1;
             let getData ={
                 cursor: cursor,
                 limit: limit,
-                customerId: this.customerId
             }
-            getRequest('/api/customers?agentId='+this.agentId,getData).then( res => {
+            getRequest('/test/products',getData).then( res => {
+                console.log(res);
                 if ( res.data.code === 0) {
-                    this.tableData = res.data.page.list;
-                    this.totalCount = res.data.page.totalCount;
+                    this.tableData = res.data.data.records;
+                    this.totalCount = res.data.data.total;
                 } else {
                     this.$message.error(res.data.code + res.data.msg);
                 }
@@ -81,32 +81,26 @@ export default {
             })
         },
 
-        seeCustomer(){
-            console.log(this.agentId);
-            if (this.agentId) {
-                this.dialogTableVisible = true;
-                this.getCustomersList();
-            } else {
-                this.$message.error('请选择运营商');
-            }
-            
-        },
-
         Choice(index, row){
             this.dialogTableVisible = false;
-            this.customerInput = row.customerName;
-            this.$emit('lisenTochildCustomer',row)
+            this.customerInput = row.name;
+            this.$emit('lisenTochildProduct',row)
+        },
+
+        seeProduct(){
+            this.getProductList();
+            this.dialogTableVisible = true;
         },
 
         // 每页数据条数
         showSizeChange(val){
             console.log(val);
-            this.getCustomersList('',val);
+            this.getProductList('',val);
         },
         // 当前页数
         showCurrentChange(val){
             console.log(val);
-            this.getCustomersList(val);
+            this.getProductList(val);
         },
     }
 }
@@ -116,11 +110,8 @@ export default {
 .position{
     position: relative;
 }
-.seeCustomer{
+.seeProduct{
     position: absolute;
     right: 0;
-}
-.table{
-    z-index: 999999;
 }
 </style>

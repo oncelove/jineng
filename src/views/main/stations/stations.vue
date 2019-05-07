@@ -16,7 +16,6 @@
             <li class="operation">
                 <a href="javascript:;">查询</a>
                 <a href="javascript:;" @click="added">新增</a>
-                <a href="javascript:;">删除</a>
             </li>
         </ul>
         <el-table :data="tableData" style="width: 100%">
@@ -46,15 +45,21 @@
             :totalCount="totalCount"
             v-on:listenToSizeChange="showSizeChange"
             v-on:listenToCurrentChange="showCurrentChange"
-            v-if="pageShow"
         ></page>
-        <el-dialog title="站点信息" :visible.sync="dialogTableVisible" :source="source">
+        <el-dialog title="站点信息" :visible.sync="dialogTableVisible">
             <el-form ref="dialogFrom" :model="dialogFrom" :rules="rules" label-width="80px">
                 <el-form-item label="站点编号" prop="id">
                     <el-input v-model="dialogFrom.id" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
                 <el-form-item label="客户编号" prop="customer_id">
-                    <el-input v-model="dialogFrom.customerId" :disabled="dialogDisabled"></el-input>
+                    <CustomerChange 
+                        :agentId="agentId"
+                        v-on:lisenTochildCustomer="ChildCustomer"
+                        :disabled="dialogDisabled"
+                        :customerId="dialogFrom.customerId"
+                        :customerName="dialogFrom.customerName"
+                    ></CustomerChange>
+                    <!-- <el-input v-model="dialogFrom.customerId" :disabled="dialogDisabled"></el-input> -->
                 </el-form-item>
                 <el-form-item label="站点名称" prop="name">
                     <el-input v-model="dialogFrom.name" :disabled="dialogDisabled"></el-input>
@@ -88,13 +93,14 @@ import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axio
 import page from '@/components/page'
 import searItemsBox from '@/components/searItemsBox'
 import rules from '@/tool/rules'
+import CustomerChange from '@/components/CustomerChange'
 export default {
-    components:{page,searItemsBox},
+    components:{page, searItemsBox, CustomerChange},
     data(){
         return{
             tableData:[],
             
-            customer_id:null,
+            customerId:null,
             UrlBase:'',
             rules:{},
 
@@ -110,17 +116,29 @@ export default {
             ],
 
             // 弹窗的
-            dialogFrom:{},
+            dialogFrom:{
+                id: null,
+                customerId: null,
+                name: null,
+                address: null,
+                type: null,
+                lon: null,
+                lat: null,
+                description: null,
+            },
             dialogTableVisible:false,
             dialogDisabled: false,
             dialogBtn: false,
-            source:true,
 
             // 总条数
             totalCount:null,
             pages:1,
             limit:10,
-            pageShow:false,
+
+            whileAdd:false,
+            editId:0,
+
+            agentId:null,
         }
     },
     methods:{
@@ -131,18 +149,13 @@ export default {
             let getData ={
                 cursor: cursor,
                 limit: limit,
-                customerId: this.customerId
             }
 
-            if(this.tableData <= 0) {
-                this.pageShow = false;
-            } else {
-                this.pageShow = true;
-            }
             getRequest('/test/stations',getData).then( res => {
                 console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;
+                    this.totalCount = res.data.data.total;
                 } else {
                     this.$message.error(res.data.code + res.data.msg)
                 }
@@ -151,36 +164,97 @@ export default {
             })
         },
         seeList(id){
-            getRequest('/stations/'+id).then( res => {
-                console.log(res);
+            this.dialogTableVisible = true;
+            Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
+            this.getAgentId();
+            getRequest('/test/stations/'+id).then( res => {
+                if ( res.data.code === 0 ) {
+                    console.log(res.data.data)
+                    this.dialogFrom.id = res.data.data.id;
+                    this.dialogFrom.customerId = res.data.data.customerId;
+                    this.dialogFrom.name = res.data.data.name;
+                    this.dialogFrom.address = res.data.data.address;
+                    this.dialogFrom.type = res.data.data.type;
+                    this.dialogFrom.lon = res.data.data.lon;
+                    this.dialogFrom.lat = res.data.data.lat;
+                    this.dialogFrom.description = res.data.data.description;
+                    this.dialogFrom.customerName = res.data.data.customerName;
+                    console.log(this.dialogFrom);
+                } else {
+                    this.$message.error(res.data.code + res.data.msg);
+                }
             }).catch( err => {
                 console.log(err);
             })
         },
         added(){
-            this.dialogFrom = {};
+            Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
             this.dialogTableVisible = true;
+            this.dialogDisabled = false;
             this.dialogBtn = true;
+            this.whileAdd = true;
+            this.getAgentId();
+        },
+        getAgentId(){
+            console.log(this.$store.state.usersList);
+            if ( this.$store.state.usersList ) {
+                // this.agentId = this.$store.state.usersList.agentId;
+                this.agentId = 31;
+            } else {
+                this.agentId = 0;
+            }
         },
         deleteClick(index, row){
-            console.log(row);
+            deleteRequest('/test/stations/'+row.id).then( res => {
+                if ( res.data.code === 0) {
+                    this.$message.success('删除成功');
+                    this.getList();
+                } else {
+                    this.$message.error( res.data.code + res.data.msg );
+                }
+            }).catch( err => {
+                console.log(err);
+            })
         },
         editClick(index, row){
             console.log(row);
-            this.seeList(row.id)
+            this.dialogBtn = true;
+            this.dialogDisabled = false;
+            this.seeList(row.id);
+            this.whileAdd = false;
+            this.editId = row.id;
         },
         handleClick(row) {
             console.log(row);
+            this.dialogBtn = false;
+            this.dialogDisabled = true;
             this.seeList(row.id)
         },
         onSubmit(formName){
             this.$refs[formName].validate( (valid) => {
                 if (valid) {
-                    postJsonRequest('/test/stations',this.dialogFrom).then( res => {
-                        console.log(res);
-                    }).catch( err => {
-                        console.log(err);
-                    })
+                    if ( this.whileAdd ) {
+                        postJsonRequest('/test/stations',this.dialogFrom).then( res => {
+                            console.log(res);
+                            if ( res.data.code === 0) {
+                                this.getList();
+                            } else {
+                                this.$message.error(res.data.code + res.data.msg);
+                            }
+                        }).catch( err => {
+                            console.log(err);
+                        })
+                    } else {
+                        putJsonRequest('/test/stations/'+this.editId, this.dialogFrom).then( res => {
+                            if ( res.data.code === 0) {
+                                this.dialogTableVisible = false;
+                            } else {
+                                this.$message.error(res.data.code + res.data.msg);
+                            }
+                        }).catch( error => {
+                            console.log(error);
+                        })
+                    }
                 }else {
                     this.$message.error('验证失败');
                     return false;
@@ -206,8 +280,13 @@ export default {
         // 当前页数
         showCurrentChange(val){
             console.log(val);
+            this.getList(val);
+        },
+
+
+        ChildCustomer(val){
+            this.dialogFrom.customerId = val.customerId;
         }
-        
     },
     created() {
         this.getList();

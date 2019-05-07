@@ -30,13 +30,22 @@ const router = new Router({
                 // 客户管理
                 {path: '/sys/customer',name:'Customer',component: () => import('./views/main/Customer/Customer.vue')},
                 // 档案管理
-                {path: '/sys/document',name:'archives',component: () => import('./views/main/Customer/archives.vue')},
+                { path: '/sys/document', name: 'archives', component: () => import('./views/main/Customer/archives.vue') },
+                // 报警列表
+                {path: '/deviceserr',name:'archideviceserrves',component: () => import('./views/main/devicesErr/errList.vue')},
+                // rpc
+                {path: '/rpc',name:'rpc',component: () => import('./views/main/rpc/rpc.vue')},
                 // 站点管理
-                {path: '/sys/123',name:'stations',component: () => import('./views/main/stations/stations.vue')},
+                {path: '/sys/stations',name:'stations',component: () => import('./views/main/stations/stations.vue')},
                 //产品管理
-                {path: '/sys/456',name:'products',component: () => import('./views/main/products/products.vue')},
+                {path: '/sys/products',name:'products',component: () => import('./views/main/products/products.vue')},
                 //设备管理
-                {path: '/sys/789',name:'equipments',component: () => import('./views/main/equipments/equipments.vue')},
+                { path: '/sys/equipments', name: 'equipments', component: () => import('./views/main/equipments/equipments.vue') },
+                // 维修记录
+                { path: '/sys/123', name: 'record', component: () => import('./views/main/devopt/record.vue') },
+                // 维修人员
+                { path: '/sys/456', name: 'person', component: () => import('./views/main/devopt/devoptPerson.vue') },
+                
             ]
         },
         {

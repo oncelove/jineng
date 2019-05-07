@@ -200,7 +200,7 @@ export default {
     created() {
         this.getRolesList();
         this.rules = rules;
-        let constUserType = localStorage.getItem('userType');
+        let constUserType = this.$store.state.usersList.userType;
         if (constUserType === 3) {
             this.stationShow = true;
         }

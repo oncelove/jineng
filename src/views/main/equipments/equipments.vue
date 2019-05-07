@@ -18,7 +18,7 @@
                 <a href="javascript:;" @click="addList">添加</a>
             </li>
         </ul>
-        <el-table :data="tableData" style="width: 100%"  class="table-box">
+        <el-table :data="tableData" style="width: 100%" :stripe="true" class="table-box">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="设备编号"></el-table-column>
             <el-table-column prop="stationId" label="站点编号"></el-table-column>
@@ -26,13 +26,13 @@
             <el-table-column prop="name" label="设备本地名称"></el-table-column>
             <el-table-column prop="sequence" label="设备序列号"></el-table-column>
             <el-table-column prop="sim" label="SIM卡号"></el-table-column>
-            <el-table-column prop="type" label="设备类型"></el-table-column>
+            <el-table-column prop="typeCodeName" label="设备类型"></el-table-column>
             <el-table-column prop="location" label="安装位置"></el-table-column>
             <el-table-column prop="installTime" label="安装时间"></el-table-column>
             <el-table-column prop="installPerson" label="安装与调试人员"></el-table-column>
             <el-table-column prop="brand" label="设备品牌"></el-table-column>
             <el-table-column prop="description" label="设备描述"></el-table-column>
-            <el-table-column fixed="right" label="操作" width="240">
+            <el-table-column fixed="right" label="操作" width="210" align="center">
                 <template slot-scope="scope">
                     <el-button
                         type="primary"
@@ -62,15 +62,15 @@
             v-on:listenToCurrentChange="showCurrentChange"
         ></page>
         <el-dialog title="设备管理信息" :visible.sync="dialogTableVisible">
-            <el-form ref="dialogFrom" :model="dialogFrom" label-width="80px">
-                <el-form-item label="设备编号">
+            <el-form ref="dialogFrom" :model="dialogFrom" label-width="120px">
+                <!-- <el-form-item label="设备编号">
                     <el-input v-model="dialogFrom.id" :disabled="dialogDisabled"></el-input>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="站点编号">
-                    <el-input v-model="dialogFrom.stationId" :disabled="dialogDisabled"></el-input>
+                    <stationChange :disabled="dialogDisabled" :stationId="dialogFrom.stationId" v-on:lisenTochildStation="childStation"></stationChange>
                 </el-form-item>
                 <el-form-item label="产品编号">
-                    <el-input v-model="dialogFrom.productId" :disabled="dialogDisabled"></el-input>
+                    <productChange :disabled="dialogDisabled" :productId="dialogFrom.productId" v-on:lisenTochildProduct="childProduct" ></productChange>
                 </el-form-item>
                 <el-form-item label="设备本地名称">
                     <el-input v-model="dialogFrom.name" :disabled="dialogDisabled"></el-input>
@@ -82,13 +82,37 @@
                     <el-input v-model="dialogFrom.sim" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
                 <el-form-item label="设备类型">
-                    <el-input v-model="dialogFrom.type" :disabled="dialogDisabled"></el-input>
+                    <el-radio-group v-model="dialogFrom.type" :disabled="dialogDisabled">
+                        <p>
+                            <el-radio :label="11">变压器</el-radio>
+                            <el-radio :label="12">高压进线柜</el-radio>
+                            <el-radio :label="13">高压出线柜</el-radio>
+                            <el-radio :label="14">低压进线总柜</el-radio>
+                            <el-radio :label="15">电容补偿柜</el-radio>
+                            <el-radio :label="16">低压出线回路</el-radio>
+                        </p>
+                        <p>
+                            <el-radio :label="21">电表</el-radio>
+                            <el-radio :label="22">通讯管理机</el-radio>
+                            <el-radio :label="23">环境传感器</el-radio>
+                            <el-radio :label="24">摄像头</el-radio>
+                            <el-radio :label="25">断电报警器</el-radio>
+                        </p>
+                        
+                    </el-radio-group>
                 </el-form-item>
                 <el-form-item label="安装位置">
                     <el-input v-model="dialogFrom.location" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
                 <el-form-item label="安装时间">
-                    <el-input v-model="dialogFrom.installTime" :disabled="dialogDisabled"></el-input>
+                    <el-date-picker
+                        :disabled="dialogDisabled"
+                        v-model="dialogFrom.installTime"
+                        value-format="yyyy-MM-dd HH:mm:ss"
+                        format="yyyy-MM-dd HH:mm:ss"
+                        type="datetime"
+                        placeholder="选择日期">
+                    </el-date-picker>
                 </el-form-item>
                 <el-form-item label="安装与调试人员">
                     <el-input v-model="dialogFrom.installPerson" :disabled="dialogDisabled"></el-input>
@@ -99,24 +123,6 @@
                 <el-form-item label="设备描述">
                     <el-input v-model="dialogFrom.description" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
-                <!-- <el-form-item label="所属部门">
-                    <el-select v-model="dialogFrom.deptId" :disabled="dialogDisabled" @change="departmentChange">
-                        <el-option v-for="(dept, index) in deptArray" :key="index" :label="dept.name" :value="dept.depid">
-                            {{ dept.name }}
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="菜单集合" class="rolesMenu">
-                    <el-input v-model="dialogFrom.menuIdListShow" :disabled="dialogNoEdit"></el-input>
-                    <el-button @click="seeMenus">{{text}}菜单</el-button>
-                </el-form-item>
-                <el-form-item label="站点集合" class="rolesMenu" v-if="stationShow">
-                    <el-input v-model="dialogFrom.stationIdListShow" :disabled="dialogNoEdit"></el-input>
-                    <el-button @click="seeStation">{{text}}站点</el-button>
-                </el-form-item>
-                <el-form-item label="备注信息">
-                    <el-input v-model="dialogFrom.remark" :disabled="dialogDisabled"></el-input>
-                </el-form-item> -->
                 <el-form-item v-if="dialogBtn">
                     <el-button type="primary" @click="onSubmit('dialogFrom')">保存</el-button>
                     <el-button @click="dialogTableVisible = false">取消</el-button>
@@ -124,49 +130,19 @@
             </el-form>
         </el-dialog>
 
-        <el-dialog title="菜单信息" :visible.sync="dialogMenusVisible">
-            <el-form ref="dialogMenusFrom" :model="dialogMenusFrom" label-width="80px">
-                <el-tree
-                    :data="menusData"
-                    show-checkbox
-                    node-key="menuId"
-                    ref="meuns"
-                    :props="defaultProps"
-                    :default-checked-keys="dialogMenusFrom.defaultChecked"
-                ></el-tree>
-                <el-form-item v-if="dialogMenusBtn">
-                    <el-button type="primary" @click="onSubmitMenus">保存</el-button>
-                    <el-button @click="dialogMenusVisible = false">取消</el-button>
-                </el-form-item>
-            </el-form>
-        </el-dialog>
-
-        <el-dialog title="站点信息" :visible.sync="dialogStationVisible">
-            <el-form ref="dialogMenusFrom" :model="dialogMenusFrom" label-width="80px">
-                <el-tree
-                    :data="menusData"
-                    show-checkbox
-                    node-key="menuId"
-                    :props="defaultProps"
-                    :default-checked-keys="dialogMenusFrom.defaultChecked"
-                ></el-tree>
-                <el-form-item v-if="dialogMenusBtn">
-                    <el-button type="primary" @click="onSubmitMenus('dialogMenusFrom')">保存</el-button>
-                    <el-button @click="dialogStationVisible = false">取消</el-button>
-                </el-form-item>
-            </el-form>
-        </el-dialog>
     </div>
 </template>
 
 <script>
 import page from '@/components/page'
+import stationChange from '@/components/stationChange'
+import productChange from '@/components/productChange'
 import searItemsBox from '@/components/searItemsBox'
 import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axios.js'
 import rules from '@/tool/rules.js'
 
 export default {
-    components:{page, searItemsBox},
+    components:{page, searItemsBox, stationChange, productChange},
     data() {
         return {
             tableData:[],
@@ -181,8 +157,6 @@ export default {
                 {id:5,codeText:'用户星级',selectText:'一星'}
             ],
 
-            text:'查看',
-
             // 总条数
             totalCount:null,
 
@@ -193,9 +167,7 @@ export default {
             dialogTableVisible: false,
             dialogDisabled:false,
             dialogBtn:true,
-            dialogNoEdit:true,
             flag:'',
-            deptArray:[], // 部门列表
             dialogFrom:{
                 id: null,
                 stationId: null,
@@ -204,38 +176,36 @@ export default {
                 sequence: null,
                 sim: null,
                 type: null,
+                typeCodeName:null,
                 location: null,
                 installTime: null,
                 installPerson: null,
                 brand: null,
                 description: null,
             },
-            stationShow:false,
-
-            // 菜单树
-            dialogMenusVisible:false,
-            menusData:[],
-            dialogMenusBtn:false,
-            dialogMenusFrom:{
-                defaultChecked:[],
-            },
-            defaultProps:{
-                children: 'children',
-                label: 'name'
-            },
 
             // 站点
-            dialogStationVisible:false,
+            stationId:null,
+
+            typeName:[
+                {id:11,name:'变压器'},
+                {id:12,name:'高压进线柜'},
+                {id:13,name:'高压出线柜'},
+                {id:14,name:'低压进线总柜'},
+                {id:15,name:'电容补偿柜'},
+                {id:16,name:'低压出线回路'},
+                {id:21,name:'电表'},
+                {id:22,name:'通讯管理机'},
+                {id:23,name:'环境传感器'},
+                {id:24,name:'摄像头'},
+                {id:25,name:'断电报警器'}
+            ]
             
         }
     },
     created() {
         this.getEqusList();
         this.rules = rules;
-        let constUserType = localStorage.getItem('userType');
-        if (constUserType === 3) {
-            this.stationShow = true;
-        }
     },
     methods: {
 
@@ -248,22 +218,44 @@ export default {
             };
             getRequest('/test/devices',getData).then( res => {
                 console.log(res);
-                this.tableData = res.data.result.records;
+                if ( res.data.code === 0) {
+                    this.tableData = res.data.data.records;
+                    this.totalCount = res.data.data.total;
+                    this.getTypeName();
+                } else {
+                    this.$message.error(res.data.code + res.data.msg)
+                }
             }).catch( err => {
                 console.log(err);
             })
         },
 
+        getTypeName() {
+            this.tableData.map( (val,i) => {
+                this.typeName.map((value, index) => {
+                    if (val.type == value.id) {
+                        this.tableData[i].typeCodeName = value.name;
+                    }
+                })
+            })
+        },
+
         getEqusMsg(roleId){
-            getRequest('/test/devices/'+id).then( res => {
+            getRequest('/test/devices/'+roleId).then( res => {
                 console.log(res);
                 if (res.data.code === 0) {
-                    this.dialogFrom.id = res.data.result.id;
-                    this.dialogFrom.productName = res.data.result.productName;
-                    this.dialogFrom.productKey = res.data.result.productKey;
-                    this.dialogFrom.nodeType = res.data.result.nodeType;
-                    this.dialogFrom.isShow = res.data.result.isShow;
-                    this.dialogFrom.description = res.data.result.description;
+                    this.dialogFrom.id = res.data.data.id;
+                    this.dialogFrom.productId = res.data.data.productId;
+                    this.dialogFrom.stationId = res.data.data.stationId;
+                    this.dialogFrom.name =res.data.data.name;
+                    this.dialogFrom.sequence = res.data.data.sequence;
+                    this.dialogFrom.sim = res.data.data.sim;
+                    this.dialogFrom.type = parseInt(res.data.data.type);
+                    this.dialogFrom.location = res.data.data.location;
+                    this.dialogFrom.installTime = res.data.data.installTime;
+                    this.dialogFrom.installPerson = res.data.data.installPerson;
+                    this.dialogFrom.brand = res.data.data.brand;
+                    this.dialogFrom.description = res.data.data.description;
                 } else {
                     this.$message.error(res.data.code + res.data.msg);
                 }
@@ -274,29 +266,26 @@ export default {
 
         addDialogShow(index,row,flag){
             this.dialogTableVisible = true;
-            this.deptArray = this.$store.state.departmentArray;
             Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
             this.flag = flag;
             if ( flag === 0 ) {
                 this.dialogDisabled = true;
                 this.dialogBtn = false;
-                this.text = "查看";
                 this.dialogMenusBtn = false;
             }
 
             if ( flag === 2 ) {
                 this.dialogDisabled = false;
                 this.dialogBtn = true;
-                this.text = "编辑";
                 this.dialogMenusBtn = true;
             }
-
-            this.getEqusMsg(row.roleId);
+            console.log(row);
+            this.getEqusMsg(row.id);
         },
 
         // 删除
         remove(index,row){
-            deleteRequest('/test/devices/'+row.roleId).then( res => {
+            deleteRequest('/test/devices/'+row.id).then( res => {
                 if ( res.data.code === 0) {
                     this.$notify.success({
                         message:'删除成功',
@@ -311,51 +300,14 @@ export default {
             })
         },
 
-        // 查看菜单
-        seeMenus(){
-            this.dialogMenusVisible = true;
-            this.menusData = [];
-            getRequest('/api/menus').then( res => {
-                console.log(res);
-                if ( res.data.code == 0) {
-                    this.menusData = res.data.menuList;
-                }else {
-                    this.$message.error(res.data.code+res.data.msg)
-                }
-            }).catch( err => {
-                console.log(err);
-            })
-        },
-
-        // 查看站点
-        seeStation(){
-            this.dialogStationVisible = true;
-        },
-
-        // 保存菜单
-        onSubmitMenus(){
-            this.dialogMenusVisible = false;
-            let checkedList = this.$refs.meuns.getCheckedNodes();
-            let checkedId =[];
-            checkedList.map((val, index) => {
-                checkedId.push(val.menuId);
-            })
-            this.dialogFrom.menuIdListShow = checkedId.join(',');
-            this.dialogFrom.menuIdList = checkedId;
-        },
-
         // 新增
         addList(){
             this.dialogTableVisible = true;
             Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
             this.dialogMenusBtn = true;
             this.dialogBtn = true;
-            this.text = "编辑";
             this.flag = 1;
             this.dialogDisabled = false;
-            this.deptArray = this.$store.state.departmentArray;
-            this.dialogFrom.stationIdList = [];
-            this.dialogFrom.menuIdList = [];
         },
 
         departmentChange(selVal){
@@ -419,7 +371,19 @@ export default {
         showCurrentChange(val){
             console.log(val);
             this.getEqusList(val);
+        },
+
+        childStation(val){
+            console.log(val);
+            this.dialogFrom.stationId = val.id;
+        },
+
+        childProduct(val){
+            console.log(val);
+            this.dialogFrom.productId = val.id;
         }
+
+        
     },
 }
 </script>

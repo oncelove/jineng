@@ -25,6 +25,10 @@ export default {
     watch:{
         disabled(val){
             this.dialogDisabled = val;
+        },
+        userchecked(val){
+            console.log(val);
+            this.roleIdList = val;
         }
     },
     created(){

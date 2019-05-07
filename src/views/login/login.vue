@@ -119,7 +119,7 @@ export default {
                     _this.$cookies.set('token',res.data.token);
                     _this.userToken = res.data.token;
                     _this.changeLogin({ authorization: _this.userToken });
-                    _this.changeUsersList({userList:res.data.user});
+                    this.$store.commit('changeUsersList',res.data.user);
                     _this.$router.push({path:'/'});
                     sessionStorage.username = res.data.user.username;
                 }

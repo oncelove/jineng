@@ -106,7 +106,8 @@
                         :agentId="dialogFrom.agentId"
                         v-on:lisenTochildCustomer="lisenTochildCustomer" 
                         :disabled="dialogDisabled" 
-                        :customerId="dialogFrom.customerId">
+                        :customerId="dialogFrom.customerId"
+                        :customerName="dialogFrom.customerName">
                     </CustomerChange>
                 </el-form-item>
                 <el-form-item v-if="dialogBtn">
@@ -166,6 +167,7 @@ export default {
                 salt:'',
                 agentId:0,  // 运营商id
                 customerId:null, // 客户id
+                customerName:null,
                 isAll:0, // 是否查看全部数据
             },
             // 角色属性
@@ -228,6 +230,7 @@ export default {
             }
             // this.getUserType();
             getRequest('/api/users/'+ userId).then( res => {
+                console.log(res);
                 if ( res.data.code === 0 ) {
                     this.dialogFrom.username = res.data.user.username;
                     this.dialogFrom.mobile = res.data.user.mobile;
@@ -238,6 +241,7 @@ export default {
                     this.userchecked = res.data.user.roleIdList;
                     this.dialogFrom.agentId = res.data.user.agentId;
                     this.dialogFrom.customerId = res.data.user.customerId;
+                    this.dialogFrom.customerName = res.data.user.customerName;
                     this.ifShowCheckout(this.dialogFrom.userType);
                 }else{
                     this.$message.error(res.data.code+res.data.msg);
