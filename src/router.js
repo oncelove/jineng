@@ -42,9 +42,13 @@ const router = new Router({
                 //设备管理
                 { path: '/sys/equipments', name: 'equipments', component: () => import('./views/main/equipments/equipments.vue') },
                 // 维修记录
-                { path: '/sys/123', name: 'record', component: () => import('./views/main/devopt/record.vue') },
+                { path: '/sys/record', name: 'record', component: () => import('./views/main/devopt/record.vue') },
                 // 维修人员
-                { path: '/sys/456', name: 'person', component: () => import('./views/main/devopt/devoptPerson.vue') },
+                { path: '/sys/devoptPerson', name: 'person', component: () => import('./views/main/devopt/devoptPerson.vue') },
+                // 运维车辆
+                { path: '/sys/devoptCar', name: 'car', component: () => import('./views/main/devopt/devoptCar.vue') },
+                // 巡检计划
+                { path: '/sys/123', name: 'plan', component: () => import('./views/main/devopt/devoptPlan.vue') },
                 
             ]
         },

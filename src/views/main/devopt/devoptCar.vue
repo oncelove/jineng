@@ -1,14 +1,16 @@
 <template>
     <div>
-        运维人员
+        运维车辆
         <el-button @click="addNews">新增</el-button>
         <el-table :data="tableData" style="width: 100%"  class="table-box">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="name" label="运维人员"></el-table-column>
+            <el-table-column prop="id" label="车辆编号"></el-table-column>
             <el-table-column prop="agentId" label="运营商编号"></el-table-column>
-            <el-table-column prop="position" label="职位"></el-table-column>
-            <el-table-column prop="phone" label="电话"></el-table-column>
-            <el-table-column fixed="right" label="操作" width="250">
+            <el-table-column prop="license" label="车牌号"></el-table-column>
+            <el-table-column prop="type" label="车辆类型"></el-table-column>
+            <el-table-column prop="createDate" label="购买日期"></el-table-column>
+            <el-table-column prop="description" label="车辆描述"></el-table-column>
+            <el-table-column fixed="right" label="操作" width="100">
                 <template slot-scope="scope">
                     <el-button
                         @click="handleClick(scope.$index,scope.row)"
@@ -29,28 +31,27 @@
 
         <el-dialog title="用户信息" :visible.sync="dialogTableVisible">
             <el-form ref="dialogFrom" :model="dialogFrom" :rules="rules" label-width="100px">
-                <el-form-item label="运维人员名称">
-                    <el-input v-model="dialogFrom.name" :disabled="dialogDisabled"></el-input>
-                </el-form-item>
                 <el-form-item label="运营商编号">
-                    <!-- <el-input v-model="dialogFrom.agentId" :disabled="dialogDisabled"></el-input> -->
                     <operatorChange v-on:lintenToChildSelected="selectedOptions" :disabled="dialogDisabled" :agentId="dialogFrom.agentId"></operatorChange>
                 </el-form-item>
-                <el-form-item label="职位类型">
-                    <el-input v-model="dialogFrom.position" :disabled="dialogDisabled"></el-input>
+                <el-form-item label="车牌号">
+                    <el-input v-model="dialogFrom.license" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
-                <!-- <el-form-item label="运维类型">
-                    <el-radio-group v-model="dialogFrom.type" :disabled="dialogDisabled">
-                        <el-radio :label="1">智慧用电用户</el-radio>
-                        <el-radio :label="2">配电房托管基础用户（线上托管）</el-radio>
-                        <el-radio :label="3">配电房托管中级用户（线上加线下巡检</el-radio>
-                        <el-radio :label="4">配电房高级用户（线上 线下巡检  年度试验和保养）</el-radio>
-                        <el-radio :label="5">配电全托管用户（高级用户+现场专业值守人员）</el-radio>
-                        <el-radio :label="6">能耗综合托管用户</el-radio>
-                    </el-radio-group>
-                </el-form-item> -->
-                <el-form-item label="电话">
-                    <el-input v-model="dialogFrom.phone" :disabled="dialogDisabled"></el-input>
+                <el-form-item label="类型">
+                    <el-input v-model="dialogFrom.type" :disabled="dialogDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="车辆描述">
+                    <el-input v-model="dialogFrom.description" :disabled="dialogDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="购买日期">
+                    <el-date-picker
+                        v-model="dialogFrom.createDate"
+                        :disabled="dialogDisabled"
+                        value-format="yyyy-MM-dd"
+                        format="yyyy-MM-dd"
+                        type="date"
+                        placeholder="选择日期">
+                    </el-date-picker>
                 </el-form-item>
                 <el-form-item v-if="dialogBtn">
                     <el-button type="primary" @click="onSubmit('dialogFrom')">保存</el-button>
@@ -82,10 +83,11 @@ export default {
             dialogBtn: false,
             dialogFrom:{
                 id:null,
-                name: null,
-                phone: null,
-                position: null,
                 agentId: null,
+                license: null,
+                type: null,
+                description: null,
+                createDate: null,
             },
             rules:null,
 
@@ -101,11 +103,12 @@ export default {
                 cursor:cursor,
             };
 
-            getRequest('/mode/maintenance/operators',getData).then((res) => {
-                console.log(res);
+            getRequest('/mode/maintenance/vehicles',getData).then((res) => {
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;
                     this.totalCount = res.data.data.total;
+                } else {
+                    this.$message.error(res.data.code + res.data.msg);
                 }
             }).catch((err) => {
                 console.log(err);
@@ -115,14 +118,16 @@ export default {
         },
 
         getRecordPerson(rowID){
-            getRequest('/mode/maintenance/operators/'+rowID).then( res => {
-                console.log(res);
+            getRequest('/mode/maintenance/vehicles/'+rowID).then( res => {
                 if ( res.data.code === 0) {
-                    this.dialogFrom.name = res.data.data.name;
-                    this.dialogFrom.phone = res.data.data.phone;
-                    this.dialogFrom.position = res.data.data.position;
-                    this.dialogFrom.agentId = res.data.data.agentId;
                     this.dialogFrom.id = res.data.data.id;
+                    this.dialogFrom.agentId = res.data.data.agentId;
+                    this.dialogFrom.license = res.data.data.license;
+                    this.dialogFrom.type = res.data.data.type;
+                    this.dialogFrom.description = res.data.data.description;
+                    this.dialogFrom.createDate = res.data.data.createDate;
+                } else {
+                    this.$message.error(res.data.code + res.data.msg);
                 }
             }).catch( err => {
                 console.log(err);
@@ -144,10 +149,10 @@ export default {
             this.getRecordPerson(row.id);
         },
         deleteClick(index, row){
-            deleteRequest('/mode/maintenance/operators/'+row.id).then( res => {
-                console.log(res);
+            deleteRequest('/mode/maintenance/vehicles/'+row.id).then( res => {
                 if ( res.data.code === 0) {
                     this.$message.success('删除成功！！！')
+                    this.getRecordList();
                 } else {
                     this.$message.error(res.data.code + res.data.msg);
                 }
@@ -160,14 +165,14 @@ export default {
             Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
             this.dialogTableVisible = true;
             this.dialogBtn = true;
+            this.dialogDisabled = false;
         },
 
         onSubmit(formName){
             this.$refs[formName].validate( (valid) => {
                 if (valid) {
                     if ( this.flag === 1) {
-                        postJsonRequest('/mode/maintenance/operators',this.dialogFrom).then( res => {
-                            console.log(res);
+                        postJsonRequest('/mode/maintenance/vehicles',this.dialogFrom).then( res => {
                             if ( res.data.code === 0) {
                                 this.$message.success('添加成功');
                                 this.dialogTableVisible = false;
@@ -180,7 +185,7 @@ export default {
                         })
                         return;
                     } else {
-                        putJsonRequest('/mode/maintenance/operators/'+this.dialogFrom.id,this.dialogFrom).then( res => {
+                        putJsonRequest('/mode/maintenance/vehicles/'+this.dialogFrom.id,this.dialogFrom).then( res => {
                             if ( res.data.code === 0) {
                                 this.$message.success('更新成功！！！');
                                 this.dialogTableVisible = false;

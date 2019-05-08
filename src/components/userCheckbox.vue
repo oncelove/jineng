@@ -1,4 +1,5 @@
 <template>
+    <!-- 角色选择 -->
     <el-checkbox-group v-model="roleIdList" :disabled="dialogDisabled">
         <el-checkbox 
             :label="roles.roleId" 

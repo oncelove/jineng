@@ -388,7 +388,7 @@ export default {
         },
 
         selectedOptions(val){
-            this.dialogFrom.agentId = val[0];
+            this.dialogFrom.agentId = val;
         },
         lisenTochildCustomer(val){
             this.dialogFrom.customerId = val.customerId;

@@ -120,7 +120,4 @@ export default {
     position: absolute;
     right: 0;
 }
-.table{
-    z-index: 999999;
-}
 </style>
