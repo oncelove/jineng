@@ -34,9 +34,9 @@ export default {
         disabled(val){
             this.dialogDisabled =  val;
         },
-        // operatorId(val){
-        //     this.operatorInput = val;
-        // }
+        operatorId(val){
+            this.operatorInput = val;
+        }
     },
     data(){
         return {
@@ -91,8 +91,6 @@ export default {
     },
     mounted(){
         this.dialogDisabled = this.disabled;
-        
-        
     }
 }
 </script>

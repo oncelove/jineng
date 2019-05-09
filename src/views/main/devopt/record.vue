@@ -4,11 +4,10 @@
         <el-button @click="addNews">新增</el-button>
         <el-table :data="tableData" style="width: 100%"  class="table-box">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="operatorId" label="运维人员编号"></el-table-column>
-            <el-table-column prop="customerId" label="客户编号"></el-table-column>
-            <el-table-column prop="title" label="标题"></el-table-column>
+            <el-table-column prop="operators" label="运维人员编号"></el-table-column>
+            <el-table-column prop="customerName" label="客户"></el-table-column>
             <el-table-column prop="content" label="内容"></el-table-column>
-            <el-table-column prop="type" label="运维类型"></el-table-column>
+            <el-table-column prop="typeName" label="运维类型"></el-table-column>
             <el-table-column prop="devices" label="硬件编号集"></el-table-column>
             <el-table-column prop="stations" label="站点编号集"></el-table-column>
             <el-table-column fixed="right" label="操作" width="100">
@@ -33,10 +32,21 @@
         <el-dialog title="用户信息" :visible.sync="dialogTableVisible">
             <el-form ref="dialogFrom" :model="dialogFrom" :rules="rules" label-width="100px">
                 <el-form-item label="运维人员编号">
-                    <el-input v-model="dialogFrom.operatorId" :disabled="dialogDisabled"></el-input>
+                    <!-- <el-input v-model="dialogFrom.operatorId" :disabled="dialogDisabled"></el-input> -->
+                    <personChange 
+                        :disabled="dialogDisabled" 
+                        :operatorId="dialogFrom.operators"
+                        v-on:lintenToChildSelected="childOperators">
+                    </personChange>
+                </el-form-item>
+                <el-form-item label="运营商编号">
+                    <operatorChange 
+                        v-on:lintenToChildSelected="selectedOptions" 
+                        :disabled="dialogDisabled" 
+                        :agentId="dialogFrom.agentId">
+                    </operatorChange>
                 </el-form-item>
                 <el-form-item label="客户编号">
-                    <operatorChange v-on:lintenToChildSelected="selectedOptions" :disabled="dialogDisabled" :agentId="dialogFrom.agentId"></operatorChange>
                     <CustomerChange 
                         :agentId="dialogFrom.agentId"
                         v-on:lisenTochildCustomer="ChildCustomer"
@@ -45,20 +55,33 @@
                         :customerName="dialogFrom.customerName"
                     ></CustomerChange>
                 </el-form-item>
-                <el-form-item label="标题">
-                    <el-input v-model="dialogFrom.title" :disabled="dialogDisabled"></el-input>
-                </el-form-item>
                 <el-form-item label="内容">
                     <el-input v-model="dialogFrom.content" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
                 <el-form-item label="运维类型">
-                    <el-input v-model="dialogFrom.type" :disabled="dialogDisabled"></el-input>
+                    <!-- <el-input v-model="dialogFrom.type" :disabled="dialogDisabled"></el-input> -->
+                    <el-radio-group v-model="dialogFrom.type" :disabled="dialogDisabled">
+                        <p v-for="(devoptType, index) in typeArr" :key="index">
+                            <el-radio :label="devoptType.id">{{devoptType.name}}</el-radio>
+                        </p>
+                    </el-radio-group>
                 </el-form-item>
-                <el-form-item label="硬件编号集">
-                    <el-input v-model="dialogFrom.devices" :disabled="dialogDisabled"></el-input>
+                <el-form-item label="设备编号">
+                    <!-- <el-input v-model="dialogFrom.devices" :disabled="dialogDisabled"></el-input> -->
+                    <devicesChange 
+                        :isShowDevices="isShowDevices" 
+                        :disabled="dialogDisabled" 
+                        :deviceId="dialogFrom.devices"
+                        v-on:listToChildDevices="ChildDevices">
+                    </devicesChange>
                 </el-form-item>
-                <el-form-item label="站点编号集">
-                    <el-input v-model="dialogFrom.stations" :disabled="dialogDisabled"></el-input>
+                <el-form-item label="站点编号">
+                    <!-- <el-input v-model="dialogFrom.stations" :disabled="dialogDisabled"></el-input> -->
+                    <stationChange 
+                        :disabled="dialogDisabled" 
+                        :stationId="dialogFrom.stations" 
+                        v-on:lisenTochildStation="childStation">
+                    </stationChange>
                 </el-form-item>
                 <el-form-item v-if="dialogBtn">
                     <el-button type="primary" @click="onSubmit('dialogFrom')">保存</el-button>
@@ -77,9 +100,12 @@ import page from '@/components/page'
 import rules from '@/tool/rules.js'
 import operatorChange from '@/components/operatorChange'
 import CustomerChange from '@/components/CustomerChange'
+import personChange from '@/components/devoptPersonChange'
+import stationChange from '@/components/stationChange'
+import devicesChange  from '@/components/devicesChange2'
 
 export default {
-    components:{page, CustomerChange, operatorChange},
+    components:{page, CustomerChange, operatorChange, personChange, stationChange, devicesChange},
     data () {
         return {
             totalCount:null,
@@ -91,12 +117,13 @@ export default {
             dialogBtn: false,
             dialogFrom:{
                 id:null,
-                agentId:null,
-                startTime:null,
-                customerName:null,
+                content:null,
                 customerId:null,
-                cycle:null,
-                type:null,
+                customerName:null,
+                devices:null,
+                operators: null,
+                stations: null,
+                type: null,
             },
             rules:null,
 
@@ -109,6 +136,7 @@ export default {
                 {id:6,name:'能耗综合托管用户'},
             ],
             
+            isShowDevices:false,
 
             flag:null,
         }
@@ -122,12 +150,14 @@ export default {
                 cursor:cursor,
             };
 
-            getRequest('/mode/maintenance/plans',getData).then((res) => {
+            getRequest('/mode/maintenance/records',getData).then((res) => {
                 console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;
                     this.totalCount = res.data.data.total;
                     this.typeNameShow();
+                }else {
+                    this.$message.error(res.data.code + res.data.msg);
                 }
             }).catch((err) => {
                 console.log(err);
@@ -145,14 +175,16 @@ export default {
         },
 
         getRecordPerson(rowID){
-            getRequest('/mode/maintenance/plans/'+rowID, this.dialogFrom).then( res => {
+            getRequest('/mode/maintenance/records/'+rowID, this.dialogFrom).then( res => {
                 console.log(res);
                 if ( res.data.code === 0) {
                     this.dialogFrom.id = res.data.data.id;
-                    this.dialogFrom.startTime = res.data.data.startTime;
-                    this.dialogFrom.customerName = res.data.data.customerName;
+                    this.dialogFrom.content = res.data.data.content;
                     this.dialogFrom.customerId = res.data.data.customerId;
-                    this.dialogFrom.cycle = res.data.data.cycle;
+                    this.dialogFrom.customerName = res.data.data.customerName;
+                    this.dialogFrom.devices = res.data.data.devices;
+                    this.dialogFrom.operators = res.data.data.operators;
+                    this.dialogFrom.stations = res.data.data.stations;
                     this.dialogFrom.type = res.data.data.type;
                     this.typeNameShow();
                 } else {
@@ -178,7 +210,7 @@ export default {
             this.getRecordPerson(row.id);
         },
         deleteClick(index, row){
-            deleteRequest('/mode/maintenance/plans/'+row.id).then( res => {
+            deleteRequest('/mode/maintenance/records/'+row.id).then( res => {
                 console.log(res);
                 if ( res.data.code === 0) {
                     this.$message.success('删除成功');
@@ -201,7 +233,8 @@ export default {
             this.$refs[formName].validate( (valid) => {
                 if (valid) {
                     if ( this.flag === 1) {
-                        postJsonRequest('/mode/maintenance/plans',this.dialogFrom).then( res => {
+                        console.log(this.dialogFrom);
+                        postJsonRequest('/mode/maintenance/records',this.dialogFrom).then( res => {
                             this.dialogTableVisible = false;
                             if ( res.data.code === 0) {
                                 this.$message.success('添加成功');
@@ -214,7 +247,7 @@ export default {
                         })
                         return;
                     } else {
-                        putJsonRequest('/mode/maintenance/plans/'+this.dialogFrom.id,this.dialogFrom).then( res => {
+                        putJsonRequest('/mode/maintenance/records/'+this.dialogFrom.id,this.dialogFrom).then( res => {
                             this.dialogTableVisible = false;
                             if ( res.data.code === 0) {
                                 this.$message.success('修改成功');
@@ -234,7 +267,18 @@ export default {
         },
 
 
-        
+        childStation(val){
+            console.log(val);
+            this.dialogFrom.stations = val.id;
+        },
+        childOperators(val){
+            console.log(val);
+            this.dialogFrom.operators = val;
+        },
+        ChildDevices(val){
+            console.log(val);
+            this.dialogFrom.devices = val.id;
+        },
         ChildCustomer(val){
             this.dialogFrom.customerId = val.customerId;
         },

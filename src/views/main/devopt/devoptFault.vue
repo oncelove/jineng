@@ -5,16 +5,13 @@
         <el-table :data="tableData" style="width: 100%"  class="table-box">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="故障单编号"></el-table-column>
-            <el-table-column prop="recordId" label="运维记录编号"></el-table-column>
             <el-table-column prop="operatorId" label="运维人员编号"></el-table-column>
-            <el-table-column prop="customerId" label="客户编号"></el-table-column>
+            <el-table-column prop="customerName" label="客户编号"></el-table-column>
             <el-table-column prop="deviceId" label="硬件编号"></el-table-column>
-            <el-table-column prop="title" label="故障单标题"></el-table-column>
             <el-table-column prop="content" label="故障单内容"></el-table-column>
             <el-table-column prop="accessory" label="上传图片"></el-table-column>
             <el-table-column prop="createTime" label="创建时间"></el-table-column>
-            <el-table-column prop="status" label="状态"></el-table-column>
-            <el-table-column prop="type" label="故障单类型"></el-table-column>
+            <el-table-column prop="typeName" label="故障单类型"></el-table-column>
             <el-table-column prop="updateTime" label="更新时间"></el-table-column>
             <el-table-column fixed="right" label="操作" width="100">
                 <template slot-scope="scope">
@@ -41,7 +38,6 @@
                     <operatorChange v-on:lintenToChildSelected="selectedOptions" :disabled="dialogDisabled" :agentId="dialogFrom.agentId"></operatorChange>
                 </el-form-item>
                 <el-form-item label="运维人员编号">
-                    <!-- <el-input v-model="dialogFrom.operatorId" :disabled="dialogDisabled"></el-input> -->
                     <devoptPersonChange :disabled="dialogDisabled" :operatorId="dialogFrom.operatorId" v-on:lintenToChildSelected="ChildSelected"></devoptPersonChange>
                 </el-form-item>
                 <el-form-item label="客户编号">
@@ -53,9 +49,6 @@
                         :customerName="dialogFrom.customerName"
                     ></CustomerChange>
                 </el-form-item>
-                <!-- <el-form-item label="标题">
-                    <el-input v-model="dialogFrom.title" :disabled="dialogDisabled"></el-input>
-                </el-form-item> -->
                 <el-form-item label="内容">
                     <el-input v-model="dialogFrom.content" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
@@ -63,15 +56,18 @@
                     <el-input v-model="dialogFrom.accessory" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
                 <el-form-item label="硬件编号">
-                    <el-input v-model="dialogFrom.deviceId" :disabled="dialogDisabled"></el-input>
+                    <devicesChange 
+                        :isShowDevices="isShowDevices" 
+                        :disabled="dialogDisabled" 
+                        :deviceId="dialogFrom.deviceId"
+                        v-on:listToChildDevices="ChildDevices">
+                    </devicesChange>
                 </el-form-item>
                 <el-form-item label="类型">
                     <el-radio-group v-model="dialogFrom.type" :disabled="dialogDisabled">
-                        <el-radio :label="1">智慧用电用户</el-radio>
                         <p v-for="(typeGroup,index) in dialogFrom.typeGroup" :key="index">
                             <el-radio :label="typeGroup.id">{{typeGroup.name}}</el-radio>
                         </p>
-                        
                     </el-radio-group>
                 </el-form-item>
                 
@@ -93,15 +89,17 @@ import rules from '@/tool/rules.js'
 import CustomerChange from '@/components/CustomerChange'
 import operatorChange from '@/components/operatorChange'
 import devoptPersonChange from '@/components/devoptPersonChange'
+import devicesChange from '@/components/devicesChange2'
 
 export default {
-    components:{page, CustomerChange, operatorChange, devoptPersonChange},
+    components:{page, CustomerChange, operatorChange, devoptPersonChange, devicesChange},
     data () {
         return {
             totalCount:null,
 
             tableData:[],
 
+            isShowDevices: false,
             dialogTableVisible: false,
             dialogDisabled:false,
             dialogBtn: false,
@@ -109,6 +107,12 @@ export default {
                 operatorId:null,
                 typeGroup:[],
                 agentId:null,
+                type:null,
+                accessory: null,
+                content: null,
+                customerId: null,
+                customerName: null,
+                deviceId:null,
             },
             rules:null,
 
@@ -129,6 +133,8 @@ export default {
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;
                     this.totalCount = res.data.data.total;
+                    this.getTypeGroup(true);
+                    
                 } else {
                     this.$message.error(res.data.code + res.data.msg);
                 }
@@ -138,19 +144,34 @@ export default {
         },
 
         getRecordPerson(rowID){
-            putJsonRequest('/mode/maintenance/faults/'+rowID, this.dialogFrom).then( res => {
+            getRequest('/mode/maintenance/faults/'+rowID).then( res => {
                 console.log(res);
-                this.getTypeGroup();
+                if ( res.data.code === 0) {
+                    this.dialogFrom.agentId = res.data.data.agentId;
+                    this.dialogFrom.operatorId = res.data.data.operatorId;
+                    this.dialogFrom.type = res.data.data.type;
+                    this.dialogFrom.accessory = res.data.data.accessory;
+                    this.dialogFrom.content = res.data.data.content;
+                    this.dialogFrom.customerName = res.data.data.customerName;
+                    this.dialogFrom.customerId = res.data.data.customerId;
+                    this.dialogFrom.customerName = res.data.data.customerName;
+                    this.dialogFrom.deviceId = res.data.data.deviceId;
+                    this.getTypeGroup();
+                }else {
+                    this.$message.error(res.data.code + res.data.msg);
+                }
             }).catch( err => {
                 console.log(err);
             })
         },
 
-        getTypeGroup(){
+        getTypeGroup(da){
             getRequest('/mode/maintenance/faults/types').then( res => {
-                console.log(res);
                 if ( res.data.code === 0) {
-                    this.dialogFrom.typeGroup = res.data.data
+                    this.dialogFrom.typeGroup = res.data.data;
+                    if (da) {
+                        this.changeType();
+                    }
                 } else {
                     this.$message.error(res.data.code + res.data.msg);
                 }
@@ -159,13 +180,26 @@ export default {
             })
         },
 
+        changeType(){
+            this.dialogFrom.typeGroup.map( (val,i) => {
+                this.tableData.map((value, index) => {
+                    if (value.type === val.id) {
+                        this.tableData[index].typeName = val.name;
+                    }
+                })
+            })
+        },
+
         handleClick(index, row){
+            Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
             this.dialogTableVisible = true;
             this.dialogBtn =  false;
             this.dialogDisabled = true;
             this.getRecordPerson(row.id);
         },
         editClick(index, row){
+            Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
+            this.flag = 2;
             this.dialogTableVisible = true;
             this.dialogBtn = true;
             this.dialogDisabled = false;
@@ -173,14 +207,22 @@ export default {
         },
         deleteClick(index, row){
             deleteRequest('/mode/maintenance/faults/'+row.id).then( res => {
-                console.log(res);
+                if ( res.data.code === 0) {
+                    this.getRecordList();
+                    this.$message.success('删除成功！！！')
+                } else {
+                    this.$message.error(res.data.code + res.data.msg);
+                }
             }).catch( err => {
                 console.log(err);
             })
         },
         addNews(){
+            Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
             this.flag = 1;
             this.dialogTableVisible = true;
+            this.dialogDisabled = false;
+            this.dialogBtn = true;
             this.getTypeGroup();
         },
 
@@ -190,13 +232,26 @@ export default {
                     if ( this.flag === 1) {
                         postJsonRequest('/mode/maintenance/faults',this.dialogFrom).then( res => {
                             console.log(res);
+                             if ( res.data.code === 0) {
+                                this.getRecordList();
+                                this.dialogTableVisible = false;
+                                this.$message.success('添加成功！！！')
+                            } else {
+                                this.$message.error(res.data.code + res.data.msg);
+                            }
                         }).catch( err => {
                             console.log(err);
                         })
                         return;
                     } else {
                         putJsonRequest('/mode/maintenance/faults/'+this.dialogFrom.operatorId,this.dialogFrom).then( res => {
-                            console.log(res);
+                            if ( res.data.code === 0) {
+                                this.getRecordList();
+                                this.dialogTableVisible = false;
+                                this.$message.success('修改成功！！！')
+                            } else {
+                                this.$message.error(res.data.code + res.data.msg);
+                            }
                         }).catch( err => {
                             console.log(err);
                         })
@@ -217,6 +272,9 @@ export default {
         },
         ChildSelected(val){
             this.dialogFrom.operatorId = val;
+        },
+        ChildDevices(val){
+            this.dialogFrom.deviceId = val.id;
         },
         // 每页数据条数
         showSizeChange(val){

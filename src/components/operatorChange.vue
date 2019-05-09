@@ -51,7 +51,7 @@ export default {
     },
     methods:{
         Choice(val, row){
-            // console.log(row.agentId);
+            console.log(row);
             this.dialogTableVisible = false;
             this.customerInput = row.name;
             this.$emit('lintenToChildSelected',row.agentId);

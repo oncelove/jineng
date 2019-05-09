@@ -50,9 +50,9 @@ const router = new Router({
                 // 巡检计划
                 { path: '/sys/plan', name: 'plan', component: () => import('./views/main/devopt/devoptPlan.vue') },
                 // 故障管理
-                { path: '/sys/123', name: 'fault', component: () => import('./views/main/devopt/devoptFault.vue') },
+                { path: '/sys/fault', name: 'fault', component: () => import('./views/main/devopt/devoptFault.vue') },
                 // 运维类型
-                { path: '/sys/456', name: 'type', component: () => import('./views/main/devopt/devoptType.vue') },
+                { path: '/sys/devoptType', name: 'devoptType', component: () => import('./views/main/devopt/devoptType.vue') },
                 
             ]
         },
