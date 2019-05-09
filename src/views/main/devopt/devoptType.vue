@@ -1,17 +1,12 @@
 <template>
     <div>
-        运维维修记录
+        运维类型
         <el-button @click="addNews">新增</el-button>
         <el-table :data="tableData" style="width: 100%"  class="table-box">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="operatorId" label="运维人员编号"></el-table-column>
-            <el-table-column prop="customerId" label="客户编号"></el-table-column>
-            <el-table-column prop="title" label="标题"></el-table-column>
-            <el-table-column prop="content" label="内容"></el-table-column>
-            <el-table-column prop="type" label="运维类型"></el-table-column>
-            <el-table-column prop="devices" label="硬件编号集"></el-table-column>
-            <el-table-column prop="stations" label="站点编号集"></el-table-column>
-            <el-table-column fixed="right" label="操作" width="100">
+            <el-table-column prop="id" label="id" width="100"></el-table-column>
+            <el-table-column prop="name" label="运维类型"></el-table-column>
+            <el-table-column fixed="right" label="操作" width="260">
                 <template slot-scope="scope">
                     <el-button
                         @click="handleClick(scope.$index,scope.row)"
@@ -30,35 +25,10 @@
             v-on:listenToCurrentChange="showCurrentChange"
         ></page>
 
-        <el-dialog title="用户信息" :visible.sync="dialogTableVisible">
+        <el-dialog title="运维类型" :visible.sync="dialogTableVisible">
             <el-form ref="dialogFrom" :model="dialogFrom" :rules="rules" label-width="100px">
-                <el-form-item label="运维人员编号">
-                    <el-input v-model="dialogFrom.operatorId" :disabled="dialogDisabled"></el-input>
-                </el-form-item>
-                <el-form-item label="客户编号">
-                    <operatorChange v-on:lintenToChildSelected="selectedOptions" :disabled="dialogDisabled" :agentId="dialogFrom.agentId"></operatorChange>
-                    <CustomerChange 
-                        :agentId="dialogFrom.agentId"
-                        v-on:lisenTochildCustomer="ChildCustomer"
-                        :disabled="dialogDisabled"
-                        :customerId="dialogFrom.customerId"
-                        :customerName="dialogFrom.customerName"
-                    ></CustomerChange>
-                </el-form-item>
-                <el-form-item label="标题">
-                    <el-input v-model="dialogFrom.title" :disabled="dialogDisabled"></el-input>
-                </el-form-item>
-                <el-form-item label="内容">
-                    <el-input v-model="dialogFrom.content" :disabled="dialogDisabled"></el-input>
-                </el-form-item>
-                <el-form-item label="运维类型">
-                    <el-input v-model="dialogFrom.type" :disabled="dialogDisabled"></el-input>
-                </el-form-item>
-                <el-form-item label="硬件编号集">
-                    <el-input v-model="dialogFrom.devices" :disabled="dialogDisabled"></el-input>
-                </el-form-item>
-                <el-form-item label="站点编号集">
-                    <el-input v-model="dialogFrom.stations" :disabled="dialogDisabled"></el-input>
+                <el-form-item label="运维名称">
+                    <el-input v-model="dialogFrom.name" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
                 <el-form-item v-if="dialogBtn">
                     <el-button type="primary" @click="onSubmit('dialogFrom')">保存</el-button>
@@ -91,24 +61,9 @@ export default {
             dialogBtn: false,
             dialogFrom:{
                 id:null,
-                agentId:null,
-                startTime:null,
-                customerName:null,
-                customerId:null,
-                cycle:null,
-                type:null,
+                name:null,
             },
             rules:null,
-
-            typeArr:[
-                {id:1,name:'智慧用电用户'},
-                {id:2,name:'配电房托管基础用户（线上托管）'},
-                {id:3,name:'配电房托管中级用户（线上加线下巡检）'},
-                {id:4,name:'配电房高级用户（线上线下巡检  年度试验和保养）'},
-                {id:5,name:'配电全托管用户（高级用户+现场专业值守人员）'},
-                {id:6,name:'能耗综合托管用户'},
-            ],
-            
 
             flag:null,
         }
@@ -122,39 +77,23 @@ export default {
                 cursor:cursor,
             };
 
-            getRequest('/mode/maintenance/plans',getData).then((res) => {
+            getRequest('/mode/maintenance/faultTypes',getData).then((res) => {
                 console.log(res);
                 if ( res.data.code === 0) {
-                    this.tableData = res.data.data.records;
+                    this.tableData = res.data.data;
                     this.totalCount = res.data.data.total;
-                    this.typeNameShow();
                 }
             }).catch((err) => {
                 console.log(err);
             });
         },
 
-        typeNameShow(){
-            this.typeArr.map( (val,i) => {
-                this.tableData.map( (value, index) => {
-                    if (value.type == val.id) {
-                        this.tableData[index].typeName = val.name;
-                    }
-                })
-            })
-        },
-
         getRecordPerson(rowID){
-            getRequest('/mode/maintenance/plans/'+rowID, this.dialogFrom).then( res => {
+            getRequest('/mode/maintenance/faultTypes/'+rowID, this.dialogFrom).then( res => {
                 console.log(res);
                 if ( res.data.code === 0) {
                     this.dialogFrom.id = res.data.data.id;
-                    this.dialogFrom.startTime = res.data.data.startTime;
-                    this.dialogFrom.customerName = res.data.data.customerName;
-                    this.dialogFrom.customerId = res.data.data.customerId;
-                    this.dialogFrom.cycle = res.data.data.cycle;
-                    this.dialogFrom.type = res.data.data.type;
-                    this.typeNameShow();
+                    this.dialogFrom.name = res.data.data.name;
                 } else {
                     this.$message.error(res.data.code + res.data.msg);
                 }
@@ -178,7 +117,7 @@ export default {
             this.getRecordPerson(row.id);
         },
         deleteClick(index, row){
-            deleteRequest('/mode/maintenance/plans/'+row.id).then( res => {
+            deleteRequest('/mode/maintenance/faultTypes/'+row.id).then( res => {
                 console.log(res);
                 if ( res.data.code === 0) {
                     this.$message.success('删除成功');
@@ -201,7 +140,7 @@ export default {
             this.$refs[formName].validate( (valid) => {
                 if (valid) {
                     if ( this.flag === 1) {
-                        postJsonRequest('/mode/maintenance/plans',this.dialogFrom).then( res => {
+                        postJsonRequest('/mode/maintenance/faultTypes',this.dialogFrom).then( res => {
                             this.dialogTableVisible = false;
                             if ( res.data.code === 0) {
                                 this.$message.success('添加成功');
@@ -214,7 +153,7 @@ export default {
                         })
                         return;
                     } else {
-                        putJsonRequest('/mode/maintenance/plans/'+this.dialogFrom.id,this.dialogFrom).then( res => {
+                        putJsonRequest('/mode/maintenance/faultTypes/'+this.dialogFrom.id,this.dialogFrom).then( res => {
                             this.dialogTableVisible = false;
                             if ( res.data.code === 0) {
                                 this.$message.success('修改成功');

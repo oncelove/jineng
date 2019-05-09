@@ -1,10 +1,10 @@
 <template>
     <div class="position">
-        <el-input v-model="customerInput" :disabled="noclick"></el-input>
-        <el-button @click="seeCustomer" class="seeCustomer" :disabled="dialogDisabled">查看运营商</el-button>
-        <el-dialog :visible.sync="dialogTableVisible" title="运营商信息" :modal-append-to-body='false'>
+        <el-input v-model="operatorInput" :disabled="noclick"></el-input>
+        <el-button @click="seeCustomer" class="seeCustomer" :disabled="dialogDisabled">查看运维人员</el-button>
+        <el-dialog :visible.sync="dialogTableVisible" title="运维人员信息" :modal-append-to-body='false'>
             <el-table :data="tableData" class="table-box">
-                <el-table-column prop="name" label="运营商名称"></el-table-column>
+                <el-table-column prop="name" label="运维人员名称"></el-table-column>
                 <el-table-column fixed="right" label="操作" width="100">
                     <template slot-scope="scope">
                         <el-button
@@ -29,21 +29,20 @@ import page from '@/components/page'
 import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axios.js'
 export default {
     components:{page},
-    props:['disabled','agentId'],
+    props:['disabled','operatorId'],
     watch:{
         disabled(val){
             this.dialogDisabled =  val;
         },
-        agentId(val){
-            console.log('运营商'+ val);
-            this.customerInput = val;
-        }
+        // operatorId(val){
+        //     this.operatorInput = val;
+        // }
     },
     data(){
         return {
             dialogTableVisible: false,
             tableData:[],
-            customerInput:'',
+            operatorInput: null,
             dialogDisabled:true,
             totalCount: 0,
             noclick: true,
@@ -51,10 +50,10 @@ export default {
     },
     methods:{
         Choice(val, row){
-            // console.log(row.agentId);
+            console.log(row);
             this.dialogTableVisible = false;
-            this.customerInput = row.name;
-            this.$emit('lintenToChildSelected',row.agentId);
+            this.operatorInput = row.name;
+            this.$emit('lintenToChildSelected',row.id);
         },
         getCustomersList(current, size){
             let limit = size || 10;
@@ -64,10 +63,10 @@ export default {
                 limit: limit,
                 customerId: this.customerId
             }
-            getRequest('/api/agent/select',getData).then( res => {
+            getRequest('/mode/maintenance/operators',getData).then( res => {
                 console.log(res);
                 if ( res.data.code === 0) {
-                    this.tableData = res.data.agentList;
+                    this.tableData = res.data.data.records;
                 } else {
                     this.$message.error(res.data.code + res.data.msg);
                 }

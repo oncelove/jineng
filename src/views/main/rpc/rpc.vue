@@ -52,6 +52,7 @@ export default {
             selectTime:null,
             showSelectTime: false,
             isShowDevices: false,
+            socketUrl:'ws://192.168.0.112:8085/rpc/websocket',
         }
     },
     methods:{
@@ -84,13 +85,34 @@ export default {
 
             postJsonRequest('/catch/rpc/send', postData).then((res) => {
                 if ( res.data.code === 0) {
-                    console.log(res.data.data)
+                    console.log(res.data.data);
+                    this.socket.onclose();
+                    this.getWebsocket(res.data.data.messageId);
                 } else {
                     this.$message.error(res.data.code + res.data.msg);
                 }
             }).catch((err) => {
                 console.log(err);
             });
+        },
+
+        getWebsocket(messageId){
+            if ( typeof(WebSocket)  == "undefined" ) {
+                this.$message.error('您的浏览器不支持websocket');
+                return;
+            }
+            this.socket = new WebSocket(this.socketUrl+'/rpc-'+messageId);
+            this.socket.onopen = () => { console.log('socket已链接')};
+            this.socket.onclose = () => { console.log('socket已关闭')};
+            this.socket.onerror = () => { console.log('socket链接错误')};
+            this.socket.onmessage = msg => { 
+                console.log(msg); 
+                this.changeOnMsg(msg.data);
+            };
+        },
+
+        changeOnMsg(data){
+            this.msg = data;
         },
 
         listenChild(val){

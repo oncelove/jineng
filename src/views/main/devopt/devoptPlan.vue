@@ -8,7 +8,7 @@
             <el-table-column prop="customerName" label="客户"></el-table-column>
             <el-table-column prop="cycle" label="巡检周期"></el-table-column>
             <el-table-column prop="typeName" label="计划类型"></el-table-column>
-            <el-table-column prop="type" label="计划类型"></el-table-column>
+            <!-- <el-table-column prop="type" label="计划类型"></el-table-column> -->
             <el-table-column prop="startTime" label="开始时间"></el-table-column>
             <el-table-column fixed="right" label="操作" width="100">
                 <template slot-scope="scope">

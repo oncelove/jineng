@@ -56,7 +56,7 @@ export default {
     },
     created(){
         this.dialogDisabled = this.disabled;
-        console.log(this.customerName);
+        // console.log(this.customerName);
         this.customerInput = this.customerName;
         // console.log(this.customerId);
     },

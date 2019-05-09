@@ -48,7 +48,11 @@ const router = new Router({
                 // 运维车辆
                 { path: '/sys/devoptCar', name: 'car', component: () => import('./views/main/devopt/devoptCar.vue') },
                 // 巡检计划
-                { path: '/sys/123', name: 'plan', component: () => import('./views/main/devopt/devoptPlan.vue') },
+                { path: '/sys/plan', name: 'plan', component: () => import('./views/main/devopt/devoptPlan.vue') },
+                // 故障管理
+                { path: '/sys/123', name: 'fault', component: () => import('./views/main/devopt/devoptFault.vue') },
+                // 运维类型
+                { path: '/sys/456', name: 'type', component: () => import('./views/main/devopt/devoptType.vue') },
                 
             ]
         },
