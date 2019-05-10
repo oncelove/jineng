@@ -10,7 +10,7 @@
             <el-table-column prop="typeName" label="运维类型"></el-table-column>
             <el-table-column prop="devices" label="硬件编号集"></el-table-column>
             <el-table-column prop="stations" label="站点编号集"></el-table-column>
-            <el-table-column fixed="right" label="操作" width="100">
+            <el-table-column fixed="right" label="操作" width="260">
                 <template slot-scope="scope">
                     <el-button
                         @click="handleClick(scope.$index,scope.row)"
@@ -20,6 +20,8 @@
                     >
                     <el-button type="text" size="small" @click="editClick(scope.$index,scope.row)">编辑</el-button>
                     <el-button type="text" size="small" @click="deleteClick(scope.$index,scope.row)">删除</el-button>
+                    <el-button type="text" size="small" @click="evaluate(scope.$index,scope.row)" v-if="!scope.row.feedbackId">评价</el-button>
+                    <el-button type="text" size="small" @click="handEvaluate(scope.$index,scope.row)" v-if="scope.row.feedbackId">查看评价</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -89,6 +91,24 @@
                 </el-form-item>
             </el-form>
         </el-dialog>
+
+        <el-dialog title=评价信息 :visible.sync="evaluateVisible">
+             <el-form ref="evaluateFrom" :model="evaluateFrom" label-width="100px">
+                <el-form-item label="维修单编号">
+                    <el-input v-model="evaluateFrom.sheetId" :disabled="noClick"></el-input>
+                </el-form-item>
+                <el-form-item label="评价内容">
+                    <el-input v-model="evaluateFrom.content" :disabled="dialogDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="评价等级">
+                    <el-rate v-model="evaluateFrom.level"></el-rate>
+                </el-form-item>
+                <el-form-item v-if="dialogBtn">
+                    <el-button type="primary" @click="evaluateSubmit">保存</el-button>
+                    <el-button @click="dialogTableVisible = false">取消</el-button>
+                </el-form-item>
+             </el-form>
+        </el-dialog>
     </div>
 </template>
 
@@ -139,6 +159,16 @@ export default {
             isShowDevices:false,
 
             flag:null,
+
+
+            evaluateVisible:false,
+            evaluateFrom:{
+                content:null,
+                sheetId:null,
+                type:0,
+                level:null,
+            },
+            noClick:true,
         }
     },
     methods:{
@@ -265,6 +295,50 @@ export default {
                 }
             });
         },
+
+
+        evaluate( index, row){
+            this.evaluateVisible = true;
+            this.dialogDisabled = false;
+            this.dialogBtn = true;
+            this.evaluateFrom.sheetId = row.id;
+            this.evaluateFrom.content = null;
+            this.evaluateFrom.level = null;
+        },
+        handEvaluate(index, row){
+            this.evaluateVisible = true;
+            this.dialogDisabled = true;
+            this.dialogBtn = false;
+            this.evaluateFrom.sheetId = row.id;
+            this.getEvaluate(row.feedbackId);
+        },
+        getEvaluate(feedbackId){
+            getRequest('/mode/maintenance/feedbacks/'+feedbackId).then( res => {
+                console.log(res);
+                if ( res.data.code === 0) {
+                    this.evaluateFrom.content = res.data.data.content;
+                    this.evaluateFrom.level = res.data.data.level;
+                }else{
+                    this.$message.error(res.data.code + res.data.msg);
+                }
+            })
+        },
+        evaluateSubmit(){
+            postJsonRequest('/mode/maintenance/feedbacks',this.evaluateFrom).then( res => {
+                console.log(res);
+                if ( res.data.code === 0) {
+                    this.evaluateVisible = false;
+                    this.$message.success('添加成功');
+                    this.getRecordList();
+                }else{
+                    this.$message.error(res.data.code + res.data.msg);
+                }
+            }).catch( err => {
+                console.log(err);
+            })
+        },
+
+
 
 
         childStation(val){

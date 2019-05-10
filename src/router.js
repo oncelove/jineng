@@ -49,7 +49,7 @@ const router = new Router({
                 { path: '/sys/devoptCar', name: 'car', component: () => import('./views/main/devopt/devoptCar.vue') },
                 // 巡检计划
                 { path: '/sys/plan', name: 'plan', component: () => import('./views/main/devopt/devoptPlan.vue') },
-                // 故障管理
+                // 维修管理
                 { path: '/sys/fault', name: 'fault', component: () => import('./views/main/devopt/devoptFault.vue') },
                 // 运维类型
                 { path: '/sys/devoptType', name: 'devoptType', component: () => import('./views/main/devopt/devoptType.vue') },
