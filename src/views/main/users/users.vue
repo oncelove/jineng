@@ -1,6 +1,6 @@
 <template>
     <div>
-        <ul class="top-search-box">
+        <!-- <ul class="top-search-box">
             <li class="active" v-for="(serchItem, index) in searchTextItem" :key="index">
                 <em>{{serchItem.codeText}}</em>
                 <div class="list-boxs" @click="itemShowFunc(index)">
@@ -15,12 +15,15 @@
             </li>
             <li class="operation">
                 <a href="javascript:;">查询</a>
-                <a href="javascript:;" @click="added">新增</a>
+                <a href="javascript:;">新增</a>
                 <a href="javascript:;">删除</a>
             </li>
-        </ul>
+        </ul> -->
+        <div class="filter-container">
+            <el-button @click="added" size="medium">新增</el-button>
+        </div>
         <el-table :data="tableData" style="width: 100%"  class="table-box">
-            <el-table-column type="selection" width="55"></el-table-column>
+            <!-- <el-table-column type="selection" width="55"></el-table-column> -->
             <el-table-column prop="username" label="用户名"></el-table-column>
             <el-table-column prop="email" label="邮箱"></el-table-column>
             <el-table-column prop="mobile" label="手机"></el-table-column>
@@ -31,16 +34,11 @@
                     <i v-else class="el-icon-check"></i>
                 </template>
             </el-table-column>
-            <el-table-column fixed="right" label="操作" width="100">
+            <el-table-column fixed="right" label="操作" width="260">
                 <template slot-scope="scope">
-                    <el-button
-                        @click="handleClick(scope.$index,scope.row)"
-                        type="text"
-                        size="small"
-                        >查看</el-button
-                    >
-                    <el-button type="text" size="small" @click="editClick(scope.$index,scope.row)">编辑</el-button>
-                    <el-button type="text" size="small" @click="deleteClick(scope.$index,scope.row)">删除</el-button>
+                    <el-button @click="handleClick(scope.$index,scope.row)" size="small" >查看</el-button>
+                    <el-button size="small" @click="editClick(scope.$index,scope.row)">编辑</el-button>
+                    <el-button size="small" @click="deleteClick(scope.$index,scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -93,7 +91,12 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="运营商" v-if="OperatorShow">
-                    <operatorChange v-on:lintenToChildSelected="selectedOptions" :disabled="dialogDisabled" :agentId="dialogFrom.agentId"></operatorChange>
+                    <operatorChange 
+                        v-on:lintenToChildSelected="selectedOptions" 
+                        :disabled="dialogDisabled" 
+                        :agentName="dialogFrom.agentName"
+                        :agentId="dialogFrom.agentId">
+                    </operatorChange>
                 </el-form-item>
                 <el-form-item label="是否查看全部数据" v-if="seeAllData" label-width="140px">
                     <el-radio-group v-model="dialogFrom.isAll" :disabled="dialogDisabled">
@@ -388,7 +391,8 @@ export default {
         },
 
         selectedOptions(val){
-            this.dialogFrom.agentId = val;
+            this.dialogFrom.agentName = val.name;
+            this.dialogFrom.agentId = val.agentId;
         },
         lisenTochildCustomer(val){
             this.dialogFrom.customerId = val.customerId;

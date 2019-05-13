@@ -1,6 +1,6 @@
 <template>
     <div>
-        <ul class="top-search-box">
+        <!-- <ul class="top-search-box">
             <li class="active" v-for="(serchItem, index) in searchTextItem" :key="index">
                 <em>{{serchItem.codeText}}</em>
                 <div class="list-boxs" @click="itemShowFunc(index)">
@@ -17,7 +17,10 @@
                 <a href="javascript:;">查询</a>
                 <a href="javascript:;" @click="addList">添加</a>
             </li>
-        </ul>
+        </ul> -->
+        <div class="filter-container">
+            <el-button @click="addList" size="medium">新增</el-button>
+        </div>
         <el-table :data="tableData" style="width: 100%"  class="table-box">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="产品编号"></el-table-column>

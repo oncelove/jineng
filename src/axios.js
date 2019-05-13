@@ -2,6 +2,7 @@ import axios from 'axios'
 import { Message } from 'element-ui'
 import Vue from 'vue'
 import baseUrl from './setBaseUrl'
+import router from './router'
 axios.defaults.baseURL = baseUrl;
 // loading框设置局部刷新，且所有请求完成后关闭loading框
 var loading;
@@ -48,19 +49,33 @@ axios.interceptors.response.use(response => {
         if(response.data.code === 401){
             localStorage.removeItem('authorization');
             localStorage.removeItem('userType');
-            Vue.$router.push({path:'/login'});
+            router.push({path:'/login'});
         }
     }
 
     if (response.status === 401) {
         localStorage.removeItem('authorization');
         localStorage.removeItem('userType');
-        Vue.$router.push('/login')
+        router.push('/login')
     }
     return response;
 }, error => {
     endLoading();
     console.log(error);
+    if ( error && error.response) {
+        switch ( error.response.status) {
+            case 400:
+                Message.error('错误请求')
+                break;
+            case 500:
+                Message.error({ message: '服务器被吃了⊙﹏⊙∥' })
+                break;
+            default:
+                Message.error(`连接错误${error.response.status}`)
+        }
+    } else {
+        Message.error('网络出现了问题，请稍后刷新重试');
+    }
     // if (!error.response.status) {
     //     return Promise.reject(error.data); // 返回接口返回的错误信息
     // }
@@ -125,6 +140,17 @@ export const deleteRequest = (url, params) => {
         data: params,
         headers: {
             'Content-Type': 'application/json',
+        },
+    });
+}
+// RequestBody => uploadPost
+export const uploadPostRequest = (url, params) => {
+    return axios({
+        method: 'post',
+        url: url,
+        data: params,
+        headers: {
+            'Content-Type': 'multipart/form-data',
         },
     });
 }

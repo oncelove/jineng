@@ -1,7 +1,9 @@
 <template>
     <div>
         巡检计划
-        <el-button @click="addNews">新增</el-button>
+        <div class="filter-container">
+            <el-button @click="addNews" size="medium">新增</el-button>
+        </div>
         <el-table :data="tableData" style="width: 100%"  class="table-box">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="巡检计划编号"></el-table-column>
@@ -35,7 +37,11 @@
                     <el-input v-model="dialogFrom.cycle" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
                 <el-form-item label="客户编号">
-                    <operatorChange v-on:lintenToChildSelected="selectedOptions" :disabled="dialogDisabled" :agentId="dialogFrom.agentId"></operatorChange>
+                    <operatorChange 
+                        v-on:lintenToChildSelected="selectedOptions" 
+                        :disabled="dialogDisabled" 
+                        :agentId="dialogFrom.agentId"
+                        :agentName="dialogFrom.agentName"></operatorChange>
                     <CustomerChange 
                         :agentId="dialogFrom.agentId"
                         v-on:lisenTochildCustomer="ChildCustomer"
@@ -243,7 +249,8 @@ export default {
             this.dialogFrom.customerId = val.customerId;
         },
         selectedOptions(val){
-            this.dialogFrom.agentId = val;
+            this.dialogFrom.agentName = val.name;
+            this.dialogFrom.agentId = val.agentId;
         },
         // 每页数据条数
         showSizeChange(val){

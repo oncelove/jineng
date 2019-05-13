@@ -1,6 +1,6 @@
 <template>
     <div>
-        <ul class="top-search-box">
+        <!-- <ul class="top-search-box">
             <li class="active" v-for="(serchItem, index) in searchTextItem" :key="index">
                 <em>{{serchItem.codeText}}</em>
                 <div class="list-boxs" @click="itemShowFunc(index)">
@@ -17,9 +17,11 @@
                 <a href="javascript:;">查询</a>
                 <a href="javascript:;" @click="added">新增</a>
                 <a href="javascript:;">删除</a>
-                <!-- <a href="javascript:;" @click="recovery">恢复数据</a> -->
             </li>
-        </ul>
+        </ul> -->
+        <div class="filter-container">
+            <el-button @click="added" size="medium">新增</el-button>
+        </div>
         <el-table :data="tableData" style="width: 100%"  class="table-box">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column fixed prop="agentId" label="极能或运营商id"></el-table-column>
@@ -33,16 +35,11 @@
             <el-table-column prop="latitude" label="纬度"></el-table-column>
             <el-table-column prop="longitude" label="经度"></el-table-column>
             <el-table-column prop="description" label="描述"></el-table-column>
-            <el-table-column fixed="right" label="操作" width="100">
+            <el-table-column fixed="right" label="操作" width="260">
                 <template slot-scope="scope">
-                    <el-button
-                        @click="handleClick(scope.$index,scope.row)"
-                        type="text"
-                        size="small"
-                        >查看</el-button
-                    >
-                    <el-button type="text" size="small" @click="editClick(scope.$index,scope.row)">编辑</el-button>
-                    <el-button type="text" size="small" @click="deleteClick(scope.$index,scope.row)">删除</el-button>
+                    <el-button @click="handleClick(scope.$index,scope.row)" size="small">查看</el-button>
+                    <el-button size="small" @click="editClick(scope.$index,scope.row)">编辑</el-button>
+                    <el-button size="small" @click="deleteClick(scope.$index,scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <ul class="top-search-box">
+        <!-- <ul class="top-search-box">
             <li class="active" v-for="(serchItem, index) in searchTextItem" :key="index">
                 <em>{{serchItem.codeText}}</em>
                 <div class="list-boxs" @click="itemShowFunc(index)">
@@ -18,7 +18,10 @@
                 <a href="javascript:;" @click="added">新增</a>
                 <a href="javascript:;">删除</a>
             </li>
-        </ul>
+        </ul> -->
+        <div class="filter-container">
+            <el-button @click="added" size="medium">新增</el-button>
+        </div>
         <el-table :data="tableData" style="width: 100%"  class="table-box">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="documentName" label="文档名称"></el-table-column>
@@ -26,36 +29,47 @@
             <el-table-column prop="customerName" label="上传者"></el-table-column>
             <el-table-column prop="createTime" label="创建时间"></el-table-column>
             <el-table-column prop="updateTime" label="更新时间"></el-table-column>
-            <el-table-column fixed="right" label="操作" width="100">
+            <el-table-column fixed="right" label="操作" width="260">
                 <template slot-scope="scope">
-                    <el-button
-                        @click="handleClick(scope.$index,scope.row)"
-                        type="text"
-                        size="small"
-                        >查看</el-button
-                    >
-                    <el-button type="text" size="small" @click="editClick(scope.$index,scope.row)">编辑</el-button>
-                    <el-button type="text" size="small" @click="deleteClick(scope.$index,scope.row)">删除</el-button>
+                    <el-button @click="handleClick(scope.$index,scope.row)" size="small" >查看</el-button>
+                    <el-button size="small" @click="editClick(scope.$index,scope.row)">编辑</el-button>
+                    <el-button size="small" @click="deleteClick(scope.$index,scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
-        <page></page>
+        <page
+            :totalCount="totalCount"
+            v-on:listenToSizeChange="showSizeChange"
+            v-on:listenToCurrentChange="showCurrentChange"
+        ></page>
         <el-dialog title="档案管理信息" :visible.sync="dialogTableVisible">
             <el-form ref="dialogFrom" :model="dialogFrom" label-width="80px">
+                <el-form-item label="运营商编号">
+                    <operatorChange 
+                        v-on:lintenToChildSelected="selectedOptions" 
+                        :disabled="dialogDisabled"
+                        :agentName="dialogFrom.agentName"
+                        :agentId="dialogFrom.agentId">
+                    </operatorChange>
+                </el-form-item>
+                <el-form-item label="客户名称">
+                    <!-- <el-input v-model="dialogFrom.customerId" :disabled="dialogDisabled"></el-input> -->
+                    <CustomerChange 
+                        :agentId="dialogFrom.agentId"
+                        v-on:lisenTochildCustomer="ChildCustomer"
+                        :disabled="dialogDisabled"
+                        :customerId="dialogFrom.customerId"
+                        :customerName="dialogFrom.customerName"
+                    ></CustomerChange>
+                </el-form-item>
                 <el-form-item label="文档名称">
                     <el-input v-model="dialogFrom.documentName" :disabled="dialogDisabled"></el-input>
                 </el-form-item>
-                <el-form-item label="文档属性">
-                    <el-input v-model="dialogFrom.documentName" :disabled="dialogDisabled"></el-input>
+                <el-form-item label="文档" v-if="uploadShow">
+                    <input id="uploader" type="file" name="file" @change="upload10" />
                 </el-form-item>
                 <el-form-item label="文档地址">
-                    <el-input v-model="dialogFrom.ossUrl" :disabled="dialogDisabled"></el-input>
-                </el-form-item>
-                <el-form-item label="文档" v-if="uploadShow">
-                    <input type="file" id="pic">
-                    <el-upload :action="uploadActionUrl">
-                        <el-button size="small" type="primary">点击上传</el-button>
-                    </el-upload>
+                    <el-input v-model="dialogFrom.ossUrl" :disabled="noclick"></el-input>
                 </el-form-item>
                 <el-form-item label="文件类型">
                     <el-radio-group v-model="dialogFrom.documentType" :disabled="dialogDisabled">
@@ -74,9 +88,11 @@
 <script>
 import page from '@/components/page'
 import searItemsBox from '@/components/searItemsBox'
-import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axios.js'
+import operatorChange from '@/components/operatorChange'
+import CustomerChange from '@/components/CustomerChange'
+import {getRequest, putJsonRequest, postJsonRequest, deleteRequest, uploadPostRequest} from '@/axios.js'
 export default {
-    components:{page,searItemsBox},
+    components:{page,searItemsBox, CustomerChange, operatorChange},
     data() {
         return {
             tableData:[],
@@ -84,6 +100,7 @@ export default {
             dialogDisabled: false,
             dialogBtn: false,
             searItemShow: false,
+            noclick: true,
             activeIndex: '',
             searchTextItem:[
                 {id:1,codeText:'状态',selectText:'在线'},
@@ -99,26 +116,36 @@ export default {
                 customerId:'',
                 customerName:'',
                 documentId:'',
+                agentId: null,
             },
+            totalCount:null,
             fileType:[
                 {id:1,name:'合同'},
                 {id:2,name:'附件'},
                 {id:3,name:'报告'},
                 {id:4,name:'其它'},
             ],
+            flag:null,
             uploadShow:false,// 文件上传是否可见
-            uploadActionUrl:'http://192.168.0.112:8080/commonservice-system/sys/oss/upload'
+            uploadActionUrl:'/api/sys/oss/upload',
         }
     },
     created() {
         this.getDocumentsList();
     },
     methods: {
-        getDocumentsList(){
-            getRequest('/api/documents').then( res => {
-                console.log(res);
+        getDocumentsList(current,size){
+            let limit = size || 10;
+            let cursor = current || 1;
+            let getData = {
+                limit:limit,
+                cursor:cursor,
+            };
+            getRequest('/api/documents',getData).then( res => {
+                // console.log(res);
                 if (res.data.code === 0) {
                     this.tableData = res.data.page.list;
+                    this.totalCount = res.data.page.totalCount;
                 } else {
                     this.$message.error(res.data.code+res.data.msg);
                 }
@@ -138,8 +165,8 @@ export default {
             this.dialogDisabled = true;
             this.dialogBtn = false;
             this.uploadShow = false;
+            Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
             this.getDetails(row);
-            console.log(index,row);
         },
         itemShowFunc(index){
             this.activeIndex = index;
@@ -153,44 +180,111 @@ export default {
             this.dialogTableVisible = true;
             this.dialogDisabled = false;
             this.dialogBtn = true;
-            console.log(index,row)
             this.uploadShow = true;
+            this.flag = 2;
+            Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
             this.getDetails(row);
         },
         deleteClick(index,row){
-            this.dialogTableVisible = true;
-            console.log(index,row)
+            deleteRequest('/api/documents/'+row.documentId).then( res => {
+                if ( res.data.code === 0) {
+                    this.$message.success('删除成功');
+                    this.getDocumentsList();
+                } else {
+                    this.$message.error( res.data.code + res.data.msg );
+                }
+            })
         },
         added(){
             this.dialogDisabled = false;
             this.dialogBtn = true;
             this.dialogTableVisible = true;
             this.uploadShow = true;
+            this.flag = 1;
+        },
+        upload10(e) {
+            const formData = new FormData();
+            // this.img10 = e.target.files[0];
+            formData.append("upload_type", 1);
+            if (e.target.files[0]) {
+                if (
+                    !e.target.value.match(
+                        /\.png|\.jpg|\.jpeg|\.gif|\.bmp|\.PNG|\.JPG|\.JPEG|\.GIF|\.BMP/g
+                    )
+                ) {
+                    return this.$message({
+                        message: "图片格式不正确！",
+                        type: "error",
+                        duration: 1000
+                    });
+                }
+                formData.append("file", e.target.files[0]);
+                uploadPostRequest(`/api/sys/oss/upload`, formData).then(res => {
+                    if ( res.data.code === 0) {
+                        this.dialogFrom.ossUrl = res.data.url;
+                    } else {
+                        this.$message.error(res.data.code + res.data.msg);
+                    }
+                });
+            }
         },
         // 保存修改内容
         onSubmit(formName){
             this.$refs[formName].validate( (valid) => {
                 if (valid) {
-                    putJsonRequest('/api/documents/'+ this.dialogFrom.documentId, this.dialogFrom).then( res => {
-                        if (res.data.code === 0) {
-                            this.dialogTableVisible = false;
-                            this.$message({
-                                message: res.data.msg,
-                                type: 'success'
-                            });
-                            this.getDocumentsList();
-                        } else {
-                            this.$message.error(res.data.code+res.data.msg);
-                        }
-                    }).catch( err => {
-                        console.log(err);
-                    })
+                    if (this.flag === 1){
+                        postJsonRequest('/api/documents/',this.dialogFrom).then( res => {
+                            if (res.data.code === 0) {
+                                this.dialogTableVisible = false;
+                                this.$message.success('添加成功');
+                                this.getDocumentsList();
+                            } else {
+                                this.$message.error(res.data.code + res.data.msg);
+                            }
+                        })
+                    }
+
+                    if ( this.flag === 2 ) {
+                        putJsonRequest('/api/documents/'+ this.dialogFrom.documentId, this.dialogFrom).then( res => {
+                            if (res.data.code === 0) {
+                                this.dialogTableVisible = false;
+                                this.$message({
+                                    message: res.data.msg,
+                                    type: 'success'
+                                });
+                                this.getDocumentsList();
+                            } else {
+                                this.$message.error(res.data.code+res.data.msg);
+                            }
+                        }).catch( err => {
+                            console.log(err);
+                        })
+                    }
+                    
                 } else {
                     this.$message.error('验证失败');
                     return false;
                 }
             })
-        }
+        },
+        // 选择运营商
+        selectedOptions(val){
+            this.dialogFrom.agentName = val.name;
+            this.dialogFrom.agentId = val.agentId;
+        },
+        // 客户id
+        ChildCustomer(val){
+            this.dialogFrom.customerId = val.customerId;
+            this.dialogFrom.customerName = val.customerName;
+        },
+        // 每页数据条数
+        showSizeChange(val){
+            this.getRecordList('',val);
+        },
+        // 当前页数
+        showCurrentChange(val){
+            this.getRecordList(val);
+        },
     },
 }
 </script>

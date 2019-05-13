@@ -1,7 +1,9 @@
 <template>
     <div>
         运维人员
-        <el-button @click="addNews">新增</el-button>
+        <div class="filter-container">
+            <el-button @click="addNews" size="medium">新增</el-button>
+        </div>
         <el-table :data="tableData" style="width: 100%"  class="table-box">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="name" label="运维人员"></el-table-column>
@@ -34,7 +36,12 @@
                 </el-form-item>
                 <el-form-item label="运营商编号">
                     <!-- <el-input v-model="dialogFrom.agentId" :disabled="dialogDisabled"></el-input> -->
-                    <operatorChange v-on:lintenToChildSelected="selectedOptions" :disabled="dialogDisabled" :agentId="dialogFrom.agentId"></operatorChange>
+                    <operatorChange 
+                        v-on:lintenToChildSelected="selectedOptions" 
+                        :disabled="dialogDisabled" 
+                        :agentId="dialogFrom.agentId"
+                        :agentName="dialogFrom.agentName">
+                    </operatorChange>
                 </el-form-item>
                 <el-form-item label="职位类型">
                     <el-input v-model="dialogFrom.position" :disabled="dialogDisabled"></el-input>
@@ -201,7 +208,8 @@ export default {
 
 
         selectedOptions(val){
-            this.dialogFrom.agentId = val;
+            this.dialogFrom.agentName = val.name;
+            this.dialogFrom.agentId = val.agentId;
         },
         // 每页数据条数
         showSizeChange(val){

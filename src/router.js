@@ -53,7 +53,8 @@ const router = new Router({
                 { path: '/sys/fault', name: 'fault', component: () => import('./views/main/devopt/devoptFault.vue') },
                 // 运维类型
                 { path: '/sys/devoptType', name: 'devoptType', component: () => import('./views/main/devopt/devoptType.vue') },
-                
+                { path: '/111', name: '111', component: () => import('./views/main/stations/stationsChart.vue') },
+                { path: '/123', name: '123', component: () => import('./views/main/onceChart/onceChart.vue') },
             ]
         },
         {

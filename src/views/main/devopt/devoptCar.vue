@@ -1,7 +1,9 @@
 <template>
     <div>
         运维车辆
-        <el-button @click="addNews">新增</el-button>
+        <div class="filter-container">
+            <el-button @click="addNews" size="medium">新增</el-button>
+        </div>
         <el-table :data="tableData" style="width: 100%"  class="table-box">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="车辆编号"></el-table-column>
@@ -32,7 +34,12 @@
         <el-dialog title="用户信息" :visible.sync="dialogTableVisible">
             <el-form ref="dialogFrom" :model="dialogFrom" :rules="rules" label-width="100px">
                 <el-form-item label="运营商编号">
-                    <operatorChange v-on:lintenToChildSelected="selectedOptions" :disabled="dialogDisabled" :agentId="dialogFrom.agentId"></operatorChange>
+                    <operatorChange 
+                        v-on:lintenToChildSelected="selectedOptions" 
+                        :disabled="dialogDisabled" 
+                        :agentId="dialogFrom.agentId"
+                        :agentName="dialogFrom.agentName">
+                    </operatorChange>
                 </el-form-item>
                 <el-form-item label="车牌号">
                     <el-input v-model="dialogFrom.license" :disabled="dialogDisabled"></el-input>
@@ -206,7 +213,8 @@ export default {
 
 
         selectedOptions(val){
-            this.dialogFrom.agentId = val;
+            this.dialogFrom.agentName = val.name;
+            this.dialogFrom.agentId = val.agentId;
         },
         // 每页数据条数
         showSizeChange(val){

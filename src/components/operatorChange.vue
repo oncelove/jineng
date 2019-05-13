@@ -29,13 +29,17 @@ import page from '@/components/page'
 import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axios.js'
 export default {
     components:{page},
-    props:['disabled','agentId'],
+    props:['disabled','agentId','agentName'],
     watch:{
         disabled(val){
             this.dialogDisabled =  val;
         },
         agentId(val){
-            console.log('运营商'+ val);
+            console.log('运营商id'+ val);
+            this.customerInput = val;
+        },
+        agentName(val){
+            console.log('运营商name'+ val);
             this.customerInput = val;
         }
     },
@@ -54,7 +58,7 @@ export default {
             console.log(row);
             this.dialogTableVisible = false;
             this.customerInput = row.name;
-            this.$emit('lintenToChildSelected',row.agentId);
+            this.$emit('lintenToChildSelected',row);
         },
         getCustomersList(current, size){
             let limit = size || 10;

@@ -1,7 +1,9 @@
 <template>
     <div>
         运维类型
-        <el-button @click="addNews">新增</el-button>
+        <div class="filter-container">
+            <el-button @click="addNews" size="medium">新增</el-button>
+        </div>
         <el-table :data="tableData" style="width: 100%"  class="table-box">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="id" width="100"></el-table-column>

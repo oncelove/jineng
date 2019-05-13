@@ -1,7 +1,9 @@
 <template>
     <div>
         维修管理
-        <el-button @click="addNews">新增</el-button>
+        <div class="filter-container">
+            <el-button @click="addNews" size="medium">新增</el-button>
+        </div>
         <el-table :data="tableData" style="width: 100%"  class="table-box">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="故障单编号"></el-table-column>
@@ -38,7 +40,12 @@
         <el-dialog title="用户信息" :visible.sync="dialogTableVisible">
             <el-form ref="dialogFrom" :model="dialogFrom" :rules="rules" label-width="100px">
                 <el-form-item label="运营商编号">
-                    <operatorChange v-on:lintenToChildSelected="selectedOptions" :disabled="dialogDisabled" :agentId="dialogFrom.agentId"></operatorChange>
+                    <operatorChange 
+                        v-on:lintenToChildSelected="selectedOptions" 
+                        :disabled="dialogDisabled" 
+                        :agentId="dialogFrom.agentId"
+                        :agentName="dialogFrom.agentName">
+                    </operatorChange>
                 </el-form-item>
                 <el-form-item label="运维人员编号">
                     <devoptPersonChange :disabled="dialogDisabled" :operatorId="dialogFrom.operatorId" v-on:lintenToChildSelected="ChildSelected"></devoptPersonChange>
@@ -378,7 +385,8 @@ export default {
             this.dialogFrom.customerId = val.customerId;
         },
         selectedOptions(val){
-            this.dialogFrom.agentId = val;
+            this.dialogFrom.agentName = val.name;
+            this.dialogFrom.agentId = val.agentId;
         },
         ChildSelected(val){
             this.dialogFrom.operatorId = val;

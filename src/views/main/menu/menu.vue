@@ -1,6 +1,6 @@
 <template>
     <div>
-        <ul class="top-search-box">
+        <!-- <ul class="top-search-box">
             <li class="active" v-for="(serchItem, index) in searchTextItem" :key="index">
                 <em>{{serchItem.codeText}}</em>
                 <div class="list-boxs" @click="itemShowFunc(index)">
@@ -16,9 +16,11 @@
             <li class="operation">
                 <a href="javascript:;">查询</a>
                 <a href="javascript:;" @click="addDialogShow('','',3)">添加</a>
-                <!-- <a href="javascript:;">删除</a> -->
             </li>
-        </ul>
+        </ul> -->
+        <div class="filter-container">
+            <el-button @click="addDialogShow('','',3)" size="medium">新增</el-button>
+        </div>
         <el-tree
             empty-text="暂无数据"
             ref="tree"
