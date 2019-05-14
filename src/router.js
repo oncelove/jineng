@@ -11,56 +11,57 @@ const router = new Router({
         {
             path: '/',
             // name: 'index',
-            component: () => import('./views/layout/index.vue'),
+            // component: () => import('./views/layout/index.vue'),
+            component: (resolve) => require(['@/views/layout/index.vue'],resolve),
             children:[
                 // 首页
-                {path:'/',name:'indexMain',component: () => import('./views/homepage/homepage.vue')},
+                {path:'/',name:'indexMain',component: (resolve) => require(['@/views/homepage/homepage.vue'],resolve)},
                 // 用户管理列表
-                {path: '/sys/users',name:'users',component: () => import('./views/main/users/users.vue')},
+                {path: '/sys/users',name:'users',component: (resolve) => require(['@/views/main/users/users.vue'],resolve)},
                 // 部门管理列表
-                {path: '/sys/dept',name:'list',component: () => import('./views/main/department/list.vue')},
+                {path: '/sys/dept',name:'list',component: (resolve) => require(['@/views/main/department/list.vue'],resolve)},
                 // 角色管理列表
-                {path: '/sys/role',name:'roles',component: () => import('./views/main/roles/roles.vue')},
+                {path: '/sys/role',name:'roles',component: (resolve) => require(['@/views/main/roles/roles.vue'],resolve)},
                 // 菜单管理列表
-                {path: '/sys/menu',name:'menu',component: () => import('./views/main/menu/menu.vue')},
+                {path: '/sys/menu',name:'menu',component: (resolve) => require(['@/views/main/menu/menu.vue'],resolve)},
                 // 运营商管理
-                {path: '/sys/agent',name:'agent',component: () => import('./views/main/agent/agent.vue')},
+                {path: '/sys/agent',name:'agent',component: (resolve) => require(['@/views/main/agent/agent.vue'],resolve)},
                 // 配置管理
-                {path: '/sys/config',name:'config',component: () => import('./views/main/config/config.vue')},
+                {path: '/sys/config',name:'config',component: (resolve) => require(['@/views/main/config/config.vue'],resolve)},
                 // 客户管理
-                {path: '/sys/customer',name:'Customer',component: () => import('./views/main/Customer/Customer.vue')},
+                {path: '/sys/customer',name:'Customer',component: (resolve) => require(['@/views/main/Customer/Customer.vue'],resolve)},
                 // 档案管理
-                { path: '/sys/document', name: 'archives', component: () => import('./views/main/Customer/archives.vue') },
+                { path: '/sys/document', name: 'archives', component: (resolve) => require(['@/views/main/Customer/archives.vue'],resolve) },
                 // 报警列表
-                {path: '/deviceserr',name:'archideviceserrves',component: () => import('./views/main/devicesErr/errList.vue')},
+                {path: '/deviceserr',name:'archideviceserrves',component: (resolve) => require(['@/views/main/devicesErr/errList.vue'],resolve)},
                 // rpc
-                {path: '/rpc',name:'rpc',component: () => import('./views/main/rpc/rpc.vue')},
+                {path: '/rpc',name:'rpc',component: (resolve) => require(['@/views/main/rpc/rpc.vue'],resolve)},
                 // 站点管理
-                {path: '/sys/stations',name:'stations',component: () => import('./views/main/stations/stations.vue')},
+                {path: '/sys/stations',name:'stations',component: (resolve) => require(['@/views/main/stations/stations.vue'],resolve)},
                 //产品管理
-                {path: '/sys/products',name:'products',component: () => import('./views/main/products/products.vue')},
+                {path: '/sys/products',name:'products',component: (resolve) => require(['@/views/main/products/products.vue'],resolve)},
                 //设备管理
-                { path: '/sys/equipments', name: 'equipments', component: () => import('./views/main/equipments/equipments.vue') },
+                { path: '/sys/equipments', name: 'equipments', component: (resolve) => require(['@/views/main/equipments/equipments.vue'],resolve) },
                 // 维修记录
-                { path: '/sys/record', name: 'record', component: () => import('./views/main/devopt/record.vue') },
+                { path: '/sys/record', name: 'record', component: (resolve) => require(['@/views/main/devopt/record.vue'],resolve) },
                 // 维修人员
-                { path: '/sys/devoptPerson', name: 'person', component: () => import('./views/main/devopt/devoptPerson.vue') },
+                { path: '/sys/devoptPerson', name: 'person', component: (resolve) => require(['@/views/main/devopt/devoptPerson.vue'],resolve) },
                 // 运维车辆
-                { path: '/sys/devoptCar', name: 'car', component: () => import('./views/main/devopt/devoptCar.vue') },
+                { path: '/sys/devoptCar', name: 'car', component: (resolve) => require(['@/views/main/devopt/devoptCar.vue'],resolve) },
                 // 巡检计划
-                { path: '/sys/plan', name: 'plan', component: () => import('./views/main/devopt/devoptPlan.vue') },
+                { path: '/sys/plan', name: 'plan', component: (resolve) => require(['@/views/main/devopt/devoptPlan.vue'],resolve) },
                 // 维修管理
-                { path: '/sys/fault', name: 'fault', component: () => import('./views/main/devopt/devoptFault.vue') },
+                { path: '/sys/fault', name: 'fault', component: (resolve) => require(['@/views/main/devopt/devoptFault.vue'],resolve) },
                 // 运维类型
-                { path: '/sys/devoptType', name: 'devoptType', component: () => import('./views/main/devopt/devoptType.vue') },
-                { path: '/111', name: '111', component: () => import('./views/main/stations/stationsChart.vue') },
-                { path: '/123', name: '123', component: () => import('./views/main/onceChart/onceChart.vue') },
+                { path: '/sys/devoptType', name: 'devoptType', component: (resolve) => require(['@/views/main/devopt/devoptType.vue'],resolve) },
+                { path: '/111', name: '111', component: (resolve) => require(['@/views/main/stations/stationsChart.vue'],resolve) },
+                { path: '/123', name: '123', component: (resolve) => require(['@/views/main/onceChart/onceChart.vue'],resolve) },
             ]
         },
         {
             path: '/login',
             name: 'login',
-            component: () => import('./views/login/login.vue')
+            component: (resolve) => require(['./views/login/login.vue'],resolve)
         }
     ]
 })

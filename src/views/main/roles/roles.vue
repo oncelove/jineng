@@ -19,7 +19,7 @@
             </li>
         </ul> -->
         <div class="filter-container">
-            <el-button @click="addList" size="medium">新增</el-button>
+            <el-button @click="addList" size="medium" v-if="permissionsBox.addBtn">新增</el-button>
         </div>
         <el-table :data="tableData" style="width: 100%"  class="table-box">
             <el-table-column type="selection" width="55"></el-table-column>
@@ -41,12 +41,14 @@
                         type="primary"
                         plain 
                         size="mini"
+                        v-if="permissionsBox.updateBtn"
                         @click="() => addDialogShow(scope.$index,scope.row,2)">
                         更新
                     </el-button>
                     <el-button
                         type="danger"
                         size="mini"
+                        v-if="permissionsBox.deleteBtn"
                         @click="() => remove(scope.$index,scope.row)">
                         删除
                     </el-button>
@@ -137,6 +139,7 @@ import page from '@/components/page'
 import searItemsBox from '@/components/searItemsBox'
 import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axios.js'
 import rules from '@/tool/rules.js'
+import { power } from '@/tool/power.js'
 
 export default {
     components:{page, searItemsBox},
@@ -197,10 +200,12 @@ export default {
 
             // 站点
             dialogStationVisible:false,
+            permissionsBox:null,
             
         }
     },
     created() {
+        this.permissionsBox = power(this,'sys:roles:info','sys:roles:add','sys:roles:delete','sys:roles:update');
         this.getRolesList();
         this.rules = rules;
         let constUserType = this.$store.state.usersList.userType;

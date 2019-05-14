@@ -19,7 +19,7 @@
             </li>
         </ul> -->
         <div class="filter-container">
-            <el-button @click="addList" size="medium">新增</el-button>
+            <el-button @click="addList" size="medium" v-if="permissionsBox.addBtn">新增</el-button>
         </div>
         <el-table :data="tableData" style="width: 100%"  class="table-box">
             <el-table-column type="selection" width="55"></el-table-column>
@@ -51,12 +51,14 @@
                         type="primary"
                         plain 
                         size="mini"
+                        v-if="permissionsBox.updateBtn"
                         @click="() => addDialogShow(scope.$index,scope.row,2)">
                         更新
                     </el-button>
                     <el-button
                         type="danger"
                         size="mini"
+                        v-if="permissionsBox.deleteBtn"
                         @click="() => remove(scope.$index,scope.row)">
                         删除
                     </el-button>
@@ -107,6 +109,7 @@ import searItemsBox from '@/components/searItemsBox'
 import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axios.js'
 import rules from '@/tool/rules.js'
 import { mapMutations } from 'vuex';
+import { power } from '@/tool/power.js'
 export default {
     components:{page, searItemsBox},
     data() {
@@ -148,10 +151,13 @@ export default {
             stationShow:false,
 
             noClick:true,
+
+            permissionsBox:null,
             
         }
     },
     created() {
+        this.permissionsBox = power(this,'sys:products:info','sys:products:add','sys:products:delete','sys:products:update');
         this.getProsList();
         this.rules = rules;
     },

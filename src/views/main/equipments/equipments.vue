@@ -19,7 +19,7 @@
             </li>
         </ul> -->
         <div class="filter-container">
-            <el-button @click="addList" size="medium">新增</el-button>
+            <el-button @click="addList" size="medium" v-if="permissionsBox.addBtn">新增</el-button>
         </div>
         <el-table :data="tableData" style="width: 100%" :stripe="true" class="table-box">
             <el-table-column type="selection" width="55"></el-table-column>
@@ -47,12 +47,14 @@
                         type="primary"
                         plain 
                         size="mini"
+                        v-if="permissionsBox.updateBtn"
                         @click="() => addDialogShow(scope.$index,scope.row,2)">
                         更新
                     </el-button>
                     <el-button
                         type="danger"
                         size="mini"
+                        v-if="permissionsBox.deleteBtn"
                         @click="() => remove(scope.$index,scope.row)">
                         删除
                     </el-button>
@@ -143,6 +145,7 @@ import productChange from '@/components/productChange'
 import searItemsBox from '@/components/searItemsBox'
 import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axios.js'
 import rules from '@/tool/rules.js'
+import { power } from '@/tool/power.js'
 
 export default {
     components:{page, searItemsBox, stationChange, productChange},
@@ -202,11 +205,14 @@ export default {
                 {id:23,name:'环境传感器'},
                 {id:24,name:'摄像头'},
                 {id:25,name:'断电报警器'}
-            ]
+            ],
+
+            permissionsBox:null,
             
         }
     },
     created() {
+        this.permissionsBox = power(this,'sys:equipments:info','sys:equipments:add','sys:equipments:delete','sys:equipments:update');
         this.getEqusList();
         this.rules = rules;
     },

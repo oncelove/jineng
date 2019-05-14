@@ -20,7 +20,7 @@
             </li>
         </ul> -->
         <div class="filter-container">
-            <el-button @click="added" size="medium">新增</el-button>
+            <el-button @click="added" size="medium" v-if="permissionsBox.addBtn">新增</el-button>
         </div>
         <el-table :data="tableData" style="width: 100%"  class="table-box">
             <el-table-column type="selection" width="55"></el-table-column>
@@ -32,8 +32,8 @@
             <el-table-column fixed="right" label="操作" width="260">
                 <template slot-scope="scope">
                     <el-button @click="handleClick(scope.$index,scope.row)" size="small" >查看</el-button>
-                    <el-button size="small" @click="editClick(scope.$index,scope.row)">编辑</el-button>
-                    <el-button size="small" @click="deleteClick(scope.$index,scope.row)">删除</el-button>
+                    <el-button size="small" @click="editClick(scope.$index,scope.row)" v-if="permissionsBox.updateBtn">编辑</el-button>
+                    <el-button size="small" @click="deleteClick(scope.$index,scope.row)" v-if="permissionsBox.deleteBtn">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -91,6 +91,7 @@ import searItemsBox from '@/components/searItemsBox'
 import operatorChange from '@/components/operatorChange'
 import CustomerChange from '@/components/CustomerChange'
 import {getRequest, putJsonRequest, postJsonRequest, deleteRequest, uploadPostRequest} from '@/axios.js'
+import { power } from '@/tool/power.js'
 export default {
     components:{page,searItemsBox, CustomerChange, operatorChange},
     data() {
@@ -128,9 +129,11 @@ export default {
             flag:null,
             uploadShow:false,// 文件上传是否可见
             uploadActionUrl:'/api/sys/oss/upload',
+            permissionsBox:null,
         }
     },
     created() {
+        this.permissionsBox = power(this,'sys:documents:info','sys:documents:add','sys:documents:delete','sys:documents:update');
         this.getDocumentsList();
     },
     methods: {

@@ -2,7 +2,7 @@
     <div>
         运维类型
         <div class="filter-container">
-            <el-button @click="addNews" size="medium">新增</el-button>
+            <el-button @click="addNews" size="medium" v-if="permissionsBox.addBtn">新增</el-button>
         </div>
         <el-table :data="tableData" style="width: 100%"  class="table-box">
             <el-table-column type="selection" width="55"></el-table-column>
@@ -16,8 +16,8 @@
                         size="small"
                         >查看</el-button
                     >
-                    <el-button type="text" size="small" @click="editClick(scope.$index,scope.row)">编辑</el-button>
-                    <el-button type="text" size="small" @click="deleteClick(scope.$index,scope.row)">删除</el-button>
+                    <el-button type="text" size="small" @click="editClick(scope.$index,scope.row)" v-if="permissionsBox.updateBtn">编辑</el-button>
+                    <el-button type="text" size="small" @click="deleteClick(scope.$index,scope.row)" v-if="permissionsBox.deleteBtn">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -49,6 +49,7 @@ import page from '@/components/page'
 import rules from '@/tool/rules.js'
 import operatorChange from '@/components/operatorChange'
 import CustomerChange from '@/components/CustomerChange'
+import { power } from '@/tool/power.js'
 
 export default {
     components:{page, CustomerChange, operatorChange},
@@ -68,7 +69,12 @@ export default {
             rules:null,
 
             flag:null,
+
+            permissionsBox:null,
         }
+    },
+    created(){
+        this.permissionsBox = power(this,'sys:devoptType:info','sys:devoptType:add','sys:devoptType:delete','sys:devoptType:update');
     },
     methods:{
         getRecordList(current,size){

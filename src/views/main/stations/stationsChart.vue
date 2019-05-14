@@ -2,7 +2,7 @@
     <div>
         站点设计图
         <div class="filter-container">
-            <el-button @click="addNews" size="medium">新增</el-button>
+            <el-button @click="addNews" size="medium" v-if="permissionsBox.addBtn">新增</el-button>
         </div>
         <el-table :data="tableData" style="width: 100%">
             <el-table-column type="selection" width="55"></el-table-column>
@@ -19,8 +19,8 @@
                         size="small"
                         >查看</el-button
                     >
-                    <el-button type="text" size="small" @click="editClick(scope.$index,scope.row)">编辑</el-button>
-                    <el-button type="text" size="small" @click="deleteClick(scope.$index,scope.row)">删除</el-button>
+                    <el-button type="text" size="small" @click="editClick(scope.$index,scope.row)" v-if="permissionsBox.updateBtn">编辑</el-button>
+                    <el-button type="text" size="small" @click="deleteClick(scope.$index,scope.row)" v-if="permissionsBox.deleteBtn">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -59,6 +59,7 @@
 import {getRequest, putJsonRequest, postJsonRequest, deleteRequest, uploadPostRequest} from '@/axios.js'
 import page from '@/components/page'
 import stationChange from '@/components/stationChange'
+import { power } from '@/tool/power.js'
 export default {
     components:{page, stationChange},
     data(){
@@ -76,6 +77,7 @@ export default {
                 description:null,
             },
             flag:null,
+            permissionsBox:null,
         }
     },
     methods:{
@@ -187,6 +189,7 @@ export default {
         },
     },
     created(){
+        this.permissionsBox = power(this,'sys:stationChart:info','sys:stationChart:add','sys:stationChart:delete','sys:stationChart:update');
         this.getList();
     }
 }

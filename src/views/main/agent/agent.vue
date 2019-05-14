@@ -19,7 +19,7 @@
             </li>
         </ul> -->
         <div class="filter-container">
-            <el-button @click="added" size="medium">新增</el-button>
+            <el-button @click="added" size="medium" v-if="permissionsBox.addBtn">新增</el-button>
         </div>
         <el-row :gutter="20" class="agentsBox">
             <el-col :span="10">
@@ -51,7 +51,7 @@
                                 查看
                             </el-button>
                             <el-button
-                                v-if="data.type != 2"
+                                v-if="data.type != 2 ||  permissionsBox.updateBtn"
                                 type="primary"
                                 plain 
                                 size="mini"
@@ -61,6 +61,7 @@
                             <el-button
                                 type="danger"
                                 size="mini"
+                                v-if="permissionsBox.deleteBtn"
                                 @click="() => remove(node, data)">
                                 删除
                             </el-button>
@@ -158,6 +159,7 @@ import page from '@/components/page'
 import searItemsBox from '@/components/searItemsBox'
 import userCheckbox from '@/components/userCheckbox'
 import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axios.js'
+import { power } from '@/tool/power.js'
 export default {
     components:{page,searItemsBox,userCheckbox},
     data() {
@@ -212,9 +214,11 @@ export default {
                 label: 'name',
                 children: 'children'
             },
+            permissionsBox:null,
         }
     },
     created() {
+        this.permissionsBox = power(this,'sys:agent:info','sys:agent:add','sys:agent:delete','sys:agent:update');
         this.getAgentList();
     },
     methods: {

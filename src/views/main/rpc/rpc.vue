@@ -40,6 +40,7 @@
 
 <script>
 import devicesDisLog from '@/components/devicesChange'
+import { power } from '@/tool/power.js'
 import { postJsonRequest } from '../../../axios';
 export default {
     components:{devicesDisLog},
@@ -53,7 +54,11 @@ export default {
             showSelectTime: false,
             isShowDevices: false,
             socketUrl:'ws://192.168.0.112:8085/rpc/websocket',
+            permissionsBox:null,
         }
+    },
+    created(){
+        this.permissionsBox = power(this,'sys:rpc:info','sys:rpc:add','sys:rpc:delete','sys:rpc:update');
     },
     methods:{
         changeSelect(val){

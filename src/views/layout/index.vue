@@ -44,8 +44,10 @@ export default {
     methods:{
         getMenus(){
             getRequest('/api/menus/nav').then(res => {
+                console.log(res);
                 if (res.data.code === 0) {
                     this.menuList = res.data.menuList;
+                    this.$store.commit('changePower',res.data.permissions);
                 } else {
                     this.$message.error(res.data.code,res.data.msg);
                 }

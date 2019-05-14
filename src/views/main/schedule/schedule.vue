@@ -36,7 +36,7 @@
                         size="small"
                         >查看</el-button
                     >
-                    <el-button type="text" size="small">编辑</el-button>
+                    <el-button type="text" size="small" v-if="permissionsBox.updateBtn">编辑</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -55,6 +55,7 @@
 import page from '@/components/page'
 import searItemsBox from '@/components/searItemsBox'
 import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axios.js'
+import { power } from '@/tool/power.js'
 export default {
     components:{page,searItemsBox},
     data() {
@@ -70,10 +71,12 @@ export default {
                 {id:3,codeText:'监测类型',selectText:'环境监测'},
                 {id:4,codeText:'用户类型',selectText:'医院'},
                 {id:5,codeText:'用户星级',selectText:'一星'}
-            ]
+            ],
+            permissionsBox:null,
         }
     },
     created() {
+        this.permissionsBox = power(this,'sys:schedule:info','sys:schedule:add','sys:schedule:delete','sys:schedule:update');
         getRequest('/api/sys/config/list').then( res => {
             console.log(res);
             this.tableData = res.data.page.list;

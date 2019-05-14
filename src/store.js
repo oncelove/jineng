@@ -12,6 +12,7 @@ export default new Vuex.Store({
         departmentArray:null, // 部门列表
         usersList:null, // 登录后，用户保存的集合
         dialogTableVisible:false, // 显示弹窗
+        permissions:null,
     },
     getters: {
         enterShowNav: state => {
@@ -45,6 +46,10 @@ export default new Vuex.Store({
         },
         changeDialogTableVisible(state, data){
             state.dialogTableVisible = data;
+        },
+        // 权限
+        changePower(state, list){
+            state.permissions = list;
         }
 
     },

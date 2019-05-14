@@ -19,7 +19,7 @@
             </li>
         </ul> -->
         <div class="filter-container">
-            <el-button @click="added" size="medium">新增</el-button>
+            <el-button @click="added" size="medium" v-if="permissionsBox.addBtn">新增</el-button>
         </div>
         <el-table :data="tableData" style="width: 100%">
             <el-table-column type="selection" width="55"></el-table-column>
@@ -39,8 +39,8 @@
                         size="small"
                         >查看</el-button
                     >
-                    <el-button type="text" size="small" @click="editClick(scope.$index,scope.row)">编辑</el-button>
-                    <el-button type="text" size="small" @click="deleteClick(scope.$index,scope.row)">删除</el-button>
+                    <el-button type="text" size="small" @click="editClick(scope.$index,scope.row)" v-if="permissionsBox.updateBtn">编辑</el-button>
+                    <el-button type="text" size="small" @click="deleteClick(scope.$index,scope.row)" v-if="permissionsBox.deleteBtn">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -96,6 +96,7 @@ import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axio
 import page from '@/components/page'
 import searItemsBox from '@/components/searItemsBox'
 import rules from '@/tool/rules'
+import { power } from '@/tool/power.js'
 import CustomerChange from '@/components/CustomerChange'
 export default {
     components:{page, searItemsBox, CustomerChange},
@@ -142,6 +143,7 @@ export default {
             editId:0,
 
             agentId:null,
+            permissionsBox:null,
         }
     },
     methods:{
@@ -286,6 +288,7 @@ export default {
         }
     },
     created() {
+        this.permissionsBox = power(this,'sys:stations:info','sys:stations:add','sys:stations:delete','sys:stations:update');
         this.getList();
         this.rules = rules;
     },

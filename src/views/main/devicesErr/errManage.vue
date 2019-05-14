@@ -25,12 +25,14 @@
                         type="primary"
                         plain 
                         size="mini"
+                        v-if="permissionsBox.updateBtn"
                         @click="() => addDialogShow(scope.$index,scope.row,2)">
                         更新
                     </el-button>
                     <el-button
                         type="danger"
                         size="mini"
+                        v-if="permissionsBox.deleteBtn"
                         @click="() => remove(scope.$index,scope.row)">
                         删除
                     </el-button>
@@ -41,13 +43,16 @@
 </template>
 
 <script>
+import { power } from '@/tool/power.js'
 export default {
     data(){
         return{
-
+            permissionsBox:null,
         }
     },
-
+    created(){
+        this.permissionsBox = power(this,'sys:errManage:info','sys:errManage:add','sys:errManage:delete','sys:errManage:update');
+    },
     methods:{
         getErrMessgae(){
             

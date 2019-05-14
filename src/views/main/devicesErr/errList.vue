@@ -20,11 +20,16 @@
 
 <script>
 import {getRequest} from '@/axios.js'
+import { power } from '@/tool/power.js'
 export default {
     data(){
         return{
             tableData:[],
+            permissionsBox:null,
         }
+    },
+    created(){
+        this.permissionsBox = power(this,'sys:errList:info','sys:errList:add','sys:errList:delete','sys:errList:update');
     },
     mounted(){
         this.getDevicesList();

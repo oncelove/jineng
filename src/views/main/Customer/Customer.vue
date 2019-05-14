@@ -20,7 +20,7 @@
             </li>
         </ul> -->
         <div class="filter-container">
-            <el-button @click="added" size="medium">新增</el-button>
+            <el-button @click="added" size="medium" v-if="permissionsBox.addBtn">新增</el-button>
         </div>
         <el-table :data="tableData" style="width: 100%"  class="table-box">
             <el-table-column type="selection" width="55"></el-table-column>
@@ -38,8 +38,8 @@
             <el-table-column fixed="right" label="操作" width="260">
                 <template slot-scope="scope">
                     <el-button @click="handleClick(scope.$index,scope.row)" size="small">查看</el-button>
-                    <el-button size="small" @click="editClick(scope.$index,scope.row)">编辑</el-button>
-                    <el-button size="small" @click="deleteClick(scope.$index,scope.row)">删除</el-button>
+                    <el-button size="small" @click="editClick(scope.$index,scope.row)" v-if="permissionsBox.updateBtn">编辑</el-button>
+                    <el-button size="small" @click="deleteClick(scope.$index,scope.row)" v-if="permissionsBox.deleteBtn">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -104,6 +104,7 @@ import searItemsBox from '@/components/searItemsBox'
 import rules from '@/tool/rules'
 // import {clearValidate} from '@/tool/clearValidate'
 import {getRequest, putJsonRequest, postJsonRequest, deleteRequest} from '@/axios.js'
+import { power } from '@/tool/power.js'
 export default {
     components:{page,searItemsBox},
     data() {
@@ -146,9 +147,11 @@ export default {
             },
             // 总条数
             totalCount:null,
+            permissionsBox:null,
         }
     },
     created() {
+        this.permissionsBox = power(this,'sys:Customer:info','sys:Customer:add','sys:Customer:delete','sys:Customer:update');
         this.getCustomerList();
         this.rules = rules;
     },
