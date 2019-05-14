@@ -28,7 +28,7 @@ export default {
             this.dialogDisabled = val;
         },
         userchecked(val){
-            console.log(val);
+            // console.log(val);
             this.roleIdList = val;
         }
     },
@@ -45,7 +45,7 @@ export default {
                 this.rolesArray = this.$store.state.roleNames;
             } else {
                 getRequest('/api/roles/select').then( res => {
-                    console.log(res);
+                    // console.log(res);
                     if (res.data.code === 0) {
                         let rolesArray = [];
                         res.data.list.map( (val, index) => {

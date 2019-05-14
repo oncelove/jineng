@@ -219,8 +219,13 @@ export default {
             };
             getRequest('/api/roles',getData).then( res => {
                 console.log(res);
-                this.tableData = res.data.page.list;
-                this.totalCount = res.data.page.totalCount;
+                if ( res.data.code === 0) {
+                    this.tableData = res.data.page.list;
+                    this.totalCount = res.data.page.totalCount;
+                } else {
+                    this.$message.error( res.data.code + res.data.msg );
+                }
+                
             }).catch( err => {
                 console.log(err);
             })
@@ -228,7 +233,7 @@ export default {
 
         getRolesMsg(roleId){
             getRequest('/api/roles/'+roleId).then( res => {
-                console.log(res);
+                // console.log(res);
                 if (res.data.code === 0) {
                     this.dialogFrom.roleId = res.data.role.roleId;
                     this.dialogFrom.roleName = res.data.role.roleName;
@@ -292,7 +297,7 @@ export default {
             this.dialogMenusVisible = true;
             this.menusData = [];
             getRequest('/api/menus').then( res => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code == 0) {
                     this.menusData = res.data.menuList;
                 }else {
@@ -343,10 +348,9 @@ export default {
             this.$refs[formName].validate( (valid) => {
                 if (valid) {
                     this.dialogTableVisible = false;
-                    console.log(this.dialogFrom);
                     if ( this.flag === 1) {
                         postJsonRequest('/api/roles',this.dialogFrom).then( res => {
-                            console.log(res);
+                            // console.log(res);
                             if ( res.data.code === 0) {
                                 this.$notify.success({
                                     message:'添加成功',
@@ -388,12 +392,10 @@ export default {
 
         // 每页数据条数
         showSizeChange(val){
-            console.log(val);
             this.getRolesList('',val);
         },
         // 当前页数
         showCurrentChange(val){
-            console.log(val);
             this.getRolesList(val);
         }
     },

@@ -160,11 +160,16 @@ export default {
                 limit:limit,
                 cursor:cursor,
             }
-            console.log(current,getData)
+            // console.log(current,getData)
             getRequest('/api/customers',getData).then( res => {
-                console.log(res);
-                this.tableData = res.data.page.list;
-                this.totalCount = res.data.page.totalCount;
+                // console.log(res);
+                if ( res.data.code === 0) {
+                    this.tableData = res.data.page.list;
+                    this.totalCount = res.data.page.totalCount;
+                }else{
+                    this.$message.error(res.data.code + res.data.msg);
+                }
+                
                 // console.log( this.tableData);
             }).catch( err => {
                 console.log(err);
@@ -178,7 +183,7 @@ export default {
             this.getAgent(agentId);
             
             getRequest('/api/customers/'+ id).then( res => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code === 0 ){
                     this.dialogFrom.customerName = res.data.customer.customerName;
                     this.dialogFrom.customerType = res.data.customer.customerType;
@@ -200,7 +205,7 @@ export default {
             this.dialogDisabled = true;
             this.dialogBtn = false;
             this.getCustomers(row.customerId,row.agentId);
-            console.log(index,row);
+            // console.log(index,row);
         },
         itemShowFunc(index){
             this.activeIndex = index;
@@ -223,7 +228,7 @@ export default {
             this.selectedOptions = [];
             this.selectedOptions.push(agentId);
             getRequest('/api/agent/select').then( res => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code === 0) {
                     this.options = res.data.agentList;
                     this.options.map( (val, index) => {
@@ -239,7 +244,6 @@ export default {
             })
         },
         handleChange(nowval){
-            console.log(nowval);
             this.dialogFrom.agentId = nowval[0];
         },
             // 编辑按钮
@@ -251,7 +255,6 @@ export default {
         },
         // 删除按钮点击
         deleteClick(index,row){
-            console.log(index,row);
             deleteRequest('/api/customers/' + row.customerId).then( res => {
                 if (res.data.code === 0) {
                     this.$message({
@@ -271,9 +274,7 @@ export default {
             this.$refs[formName].validate( (valid) => {
                 if (valid) {
                     if ( this.source ) {
-                        console.log(this.dialogFrom);
                         postJsonRequest('/api/customers',this.dialogFrom).then( res => {
-                            console.log(res);
                             if (res.data.code === 0) {
                                 this.dialogTableVisible = false;
                                 this.$message({
@@ -289,23 +290,12 @@ export default {
                         })
                     } else {
                         putJsonRequest('/api/customers/'+ this.dialogFrom.customerId,this.dialogFrom).then( res => {
-                            console.log(res.data.code);
                             if (res.data.code === 0 ) {
                                 this.dialogTableVisible = false;
                                 this.getCustomerList();
                             }else{
                                 this.$message.error(res.data.code+res.data.msg);
                             }
-                            // if (res.data.code === 0) {
-                            //     this.dialogTableVisible = false;
-                            //     this.$message({
-                            //         message: res.data.msg,
-                            //         type: 'success'
-                            //     });
-                            //     this.getCustomerList();
-                            // } else {
-                            //     this.$message.error(res.data.code+res.data.msg);
-                            // }
                         }).catch( err => {
                             this.$message.error(err);
                         })
@@ -339,12 +329,10 @@ export default {
         },
         // 每页数据条数
         showSizeChange(val){
-            console.log(val);
             this.getCustomerList('',val);
         },
         // 当前页数
         showCurrentChange(val){
-            console.log(val);
             this.getCustomerList(val);
         }
     },

@@ -35,11 +35,11 @@ export default {
             this.dialogDisabled =  val;
         },
         agentId(val){
-            console.log('运营商id'+ val);
+            // console.log('运营商id'+ val);
             this.customerInput = val;
         },
         agentName(val){
-            console.log('运营商name'+ val);
+            // console.log('运营商name'+ val);
             this.customerInput = val;
         }
     },
@@ -55,7 +55,6 @@ export default {
     },
     methods:{
         Choice(val, row){
-            console.log(row);
             this.dialogTableVisible = false;
             this.customerInput = row.name;
             this.$emit('lintenToChildSelected',row);
@@ -69,7 +68,6 @@ export default {
                 customerId: this.customerId
             }
             getRequest('/api/agent/select',getData).then( res => {
-                console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.agentList;
                 } else {
@@ -85,12 +83,10 @@ export default {
         },
         // 每页数据条数
         showSizeChange(val){
-            console.log(val);
             this.getCustomersList('',val);
         },
         // 当前页数
         showCurrentChange(val){
-            console.log(val);
             this.getCustomersList(val);
         },
     },

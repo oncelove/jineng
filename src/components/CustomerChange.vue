@@ -82,7 +82,7 @@ export default {
         },
 
         seeCustomer(){
-            console.log(this.agentId);
+            // console.log(this.agentId);
             if (this.agentId) {
                 this.dialogTableVisible = true;
                 this.getCustomersList();
@@ -100,12 +100,12 @@ export default {
 
         // 每页数据条数
         showSizeChange(val){
-            console.log(val);
+            // console.log(val);
             this.getCustomersList('',val);
         },
         // 当前页数
         showCurrentChange(val){
-            console.log(val);
+            // console.log(val);
             this.getCustomersList(val);
         },
     }

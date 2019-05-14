@@ -160,7 +160,7 @@ export default {
     methods: {
         getMenusList(){
             getRequest('/api/menus').then( res => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code == 0) {
                     this.treeData = res.data.menuList;
                     
@@ -182,9 +182,7 @@ export default {
         // 树结构
         //新增
         addDialogShow(node,data,flag) {
-            console.log(flag)
             Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
-            console.log(this.dialogFrom);
             this.dialogTableVisible = true;
             this.flag = flag;
 
@@ -229,9 +227,8 @@ export default {
                     
                     // 编辑
                     if ( this.flag === 2 ) {
-                        console.log(this.dialogFrom);
                         putJsonRequest('/api/menus/'+this.dialogFrom.menuId,this.dialogFrom).then( res => {
-                            console.log(res);
+                            // console.log(res);
                             this.dialogTableVisible = false;
                             if (res.data.code == 0) {
                                 this.getMenusList();
@@ -249,9 +246,8 @@ export default {
                         return;
                     }
                     // 添加
-                    console.log(this.dialogFrom);
                     postJsonRequest('/api/menus',this.dialogFrom).then( res => {
-                        console.log(res);
+                        // console.log(res);
                         this.dialogTableVisible = false;
                         if (res.data.code == 0) {
                             this.getMenusList();
@@ -272,7 +268,7 @@ export default {
         },
         remove(node, data) {
             deleteRequest('/api/menus/'+data.menuId).then( res => {
-                console.log(res)
+                // console.log(res)
                 if (res.data.code == 0) {
                     this.getMenusList();
                     this.$message({

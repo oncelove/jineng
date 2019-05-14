@@ -86,7 +86,6 @@ export default {
                 limit: limit,
             }
             getRequest('/test/devices',getData).then( res => {
-                console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;
                     this.totalCount = res.data.data.total;
@@ -116,7 +115,6 @@ export default {
         },
 
         Choice(index, row){
-            console.log(row);
             this.devicesInput = row.id;
             this.$emit('listToChildDevices',row);
             this.dialogTableVisible = false;
@@ -128,12 +126,10 @@ export default {
 
         // 每页数据条数
         showSizeChange(val){
-            console.log(val);
             this.getDevicesList('',val);
         },
         // 当前页数
         showCurrentChange(val){
-            console.log(val);
             this.getDevicesList(val);
         },
     }

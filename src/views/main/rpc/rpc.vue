@@ -81,11 +81,8 @@ export default {
                 }
             }
 
-            console.log(postData);
-
             postJsonRequest('/catch/rpc/send', postData).then((res) => {
                 if ( res.data.code === 0) {
-                    console.log(res.data.data);
                     this.socket.onclose();
                     this.getWebsocket(res.data.data.messageId);
                 } else {
@@ -106,7 +103,7 @@ export default {
             this.socket.onclose = () => { console.log('socket已关闭')};
             this.socket.onerror = () => { console.log('socket链接错误')};
             this.socket.onmessage = msg => { 
-                console.log(msg); 
+                // console.log(msg); 
                 this.changeOnMsg(msg.data);
             };
         },
@@ -116,7 +113,6 @@ export default {
         },
 
         listenChild(val){
-            console.log(val);
             this.devicesName =val.name;
             this.devicesId = val.id;
         },

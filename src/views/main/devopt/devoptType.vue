@@ -80,10 +80,12 @@ export default {
             };
 
             getRequest('/mode/maintenance/faultTypes',getData).then((res) => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data;
                     this.totalCount = res.data.data.total;
+                }else{
+                    this.$message.error(res.data.code + res.data.msg)
                 }
             }).catch((err) => {
                 console.log(err);
@@ -92,7 +94,7 @@ export default {
 
         getRecordPerson(rowID){
             getRequest('/mode/maintenance/faultTypes/'+rowID, this.dialogFrom).then( res => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code === 0) {
                     this.dialogFrom.id = res.data.data.id;
                     this.dialogFrom.name = res.data.data.name;
@@ -120,7 +122,7 @@ export default {
         },
         deleteClick(index, row){
             deleteRequest('/mode/maintenance/faultTypes/'+row.id).then( res => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code === 0) {
                     this.$message.success('删除成功');
                 }else {

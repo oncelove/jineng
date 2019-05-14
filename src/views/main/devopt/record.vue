@@ -184,7 +184,7 @@ export default {
             };
 
             getRequest('/mode/maintenance/records',getData).then((res) => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;
                     this.totalCount = res.data.data.total;
@@ -209,7 +209,7 @@ export default {
 
         getRecordPerson(rowID){
             getRequest('/mode/maintenance/records/'+rowID, this.dialogFrom).then( res => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code === 0) {
                     this.dialogFrom.id = res.data.data.id;
                     this.dialogFrom.content = res.data.data.content;
@@ -244,7 +244,7 @@ export default {
         },
         deleteClick(index, row){
             deleteRequest('/mode/maintenance/records/'+row.id).then( res => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code === 0) {
                     this.$message.success('删除成功');
                 }else {
@@ -266,7 +266,7 @@ export default {
             this.$refs[formName].validate( (valid) => {
                 if (valid) {
                     if ( this.flag === 1) {
-                        console.log(this.dialogFrom);
+                        // console.log(this.dialogFrom);
                         postJsonRequest('/mode/maintenance/records',this.dialogFrom).then( res => {
                             this.dialogTableVisible = false;
                             if ( res.data.code === 0) {
@@ -317,7 +317,7 @@ export default {
         },
         getEvaluate(feedbackId){
             getRequest('/mode/maintenance/feedbacks/'+feedbackId).then( res => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code === 0) {
                     this.evaluateFrom.content = res.data.data.content;
                     this.evaluateFrom.level = res.data.data.level;
@@ -328,7 +328,7 @@ export default {
         },
         evaluateSubmit(){
             postJsonRequest('/mode/maintenance/feedbacks',this.evaluateFrom).then( res => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code === 0) {
                     this.evaluateVisible = false;
                     this.$message.success('添加成功');
@@ -345,15 +345,12 @@ export default {
 
 
         childStation(val){
-            console.log(val);
             this.dialogFrom.stations = val.id;
         },
         childOperators(val){
-            console.log(val);
             this.dialogFrom.operators = val;
         },
         ChildDevices(val){
-            console.log(val);
             this.dialogFrom.devices = val.id;
         },
         ChildCustomer(val){

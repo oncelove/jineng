@@ -223,7 +223,6 @@ export default {
             getRequest('/api/agent').then( res => {
                 // console.log(res);
                 this.treeData = res.data.agentList;
-                // console.log( this.tableData);
             }).catch( err => {
                 console.log(err);
             })
@@ -233,7 +232,6 @@ export default {
             this.dialogTableVisible = true;
             this.dialogData = [];
             this.dialogData.push(row);
-            console.log(index,row);
         },
         itemShowFunc(index){
             this.activeIndex = index;
@@ -323,20 +321,17 @@ export default {
         },
 
         transfer(node, data){
-            console.log(data);
             this.transferVisible = true;
             this.transferDisabled = false;
             this.userCheckbox = [];
             // this.transferOptions
             getRequest('/api/customers?agentId='+data.agentId).then( res => {
-                console.log(res);
                 this.transferOptions = res.data.page.list;
             }).catch( err => {
                 console.log(err);
             });
 
             getRequest('/api/agent/select').then( res => {
-                console.log(res);
                 if ( res.data.code === 0) {
                     this.options = res.data.agentList;
                 } else {
@@ -359,7 +354,6 @@ export default {
                 agentId: this.selectedOptions[0],
                 roleIds: this.roleIdList
             }
-            console.log(postData);
             postJsonRequest('/api/agent/transfer',postData).then( res => {
                 console.log(res);
             }).catch(err => {
@@ -377,7 +371,6 @@ export default {
         },
 
         showUserChange(val){
-            console.log(val);
             this.roleIdList = val;
         }
     },

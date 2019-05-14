@@ -50,7 +50,6 @@ export default {
     },
     methods:{
         Choice(val, row){
-            console.log(row);
             this.dialogTableVisible = false;
             this.operatorInput = row.name;
             this.$emit('lintenToChildSelected',row.id);
@@ -64,7 +63,6 @@ export default {
                 customerId: this.customerId
             }
             getRequest('/mode/maintenance/operators',getData).then( res => {
-                console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;
                 } else {
@@ -80,12 +78,10 @@ export default {
         },
         // 每页数据条数
         showSizeChange(val){
-            console.log(val);
             this.getCustomersList('',val);
         },
         // 当前页数
         showCurrentChange(val){
-            console.log(val);
             this.getCustomersList(val);
         },
     },

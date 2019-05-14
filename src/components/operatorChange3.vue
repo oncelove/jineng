@@ -42,7 +42,6 @@ export default {
             this.selectedOptions[0] = this.agentId; 
         }, 500);
         getRequest('/api/agent/select').then( res => {
-            console.log(res);
             if ( res.data.code === 0) {
                 this.options = res.data.agentList;
             } else {

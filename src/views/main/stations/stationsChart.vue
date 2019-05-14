@@ -101,7 +101,7 @@ export default {
         },
         getListMsg(id){
             getRequest(`/test/diagrams/${id}`).then( res => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code === 0) {
                     this.dialogFrom.id = res.data.data.id;
                     this.dialogFrom.stationId = res.data.data.stationId;
@@ -137,7 +137,7 @@ export default {
         },
         deleteClick(index,row){
             deleteRequest(`/test/diagrams/${row.id}`).then( res => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code === 0) {
                     this.$message.success('删除成功！！！');
                     this.getList();
@@ -179,12 +179,10 @@ export default {
         },
         // 每页数据条数
         showSizeChange(val){
-            console.log(val);
             this.getList('',val);
         },
         // 当前页数
         showCurrentChange(val){
-            console.log(val);
             this.getList(val);
         },
     },

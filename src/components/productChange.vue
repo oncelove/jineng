@@ -57,7 +57,6 @@ export default {
     },
     created(){
         this.dialogDisabled = this.disabled;
-        console.log(this.productId);
         this.customerInput = this.productId;
     },
     methods:{
@@ -69,7 +68,6 @@ export default {
                 limit: limit,
             }
             getRequest('/test/products',getData).then( res => {
-                console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;
                     this.totalCount = res.data.data.total;
@@ -94,12 +92,10 @@ export default {
 
         // 每页数据条数
         showSizeChange(val){
-            console.log(val);
             this.getProductList('',val);
         },
         // 当前页数
         showCurrentChange(val){
-            console.log(val);
             this.getProductList(val);
         },
     }

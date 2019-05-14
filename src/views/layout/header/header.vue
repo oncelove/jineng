@@ -61,7 +61,10 @@ export default {
     },
     mounted(){
         this.connentSocket();
-        this.getErrNumbers();
+        
+        this.$nextTick( () => {
+            this.getErrNumbers();
+        })
     },
     methods:{
         handleCommand(command){
@@ -85,7 +88,8 @@ export default {
         },
 
         getErrNumbers(){
-            getRequest('/catch/deviceWarning/total').then( res => {
+            // console.log(this.$store.state.usersList.userId);
+            getRequest(`/catch/deviceWarning/total?userId=${this.$store.state.usersList.userId}`).then( res => {
                 if ( res.data.code === 0) {
                     this.errNumbers = res.data.data;
                 } else {

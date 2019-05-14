@@ -133,11 +133,13 @@ export default {
             };
 
             getRequest('/mode/maintenance/plans',getData).then((res) => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;
                     this.totalCount = res.data.data.total;
                     this.typeNameShow();
+                }else{
+                    this.$message.error(res.data.code + res.data.msg)
                 }
             }).catch((err) => {
                 console.log(err);
@@ -156,7 +158,7 @@ export default {
 
         getRecordPerson(rowID){
             getRequest('/mode/maintenance/plans/'+rowID, this.dialogFrom).then( res => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code === 0) {
                     this.dialogFrom.id = res.data.data.id;
                     this.dialogFrom.startTime = res.data.data.startTime;
@@ -189,7 +191,7 @@ export default {
         },
         deleteClick(index, row){
             deleteRequest('/mode/maintenance/plans/'+row.id).then( res => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code === 0) {
                     this.$message.success('删除成功');
                 }else {

@@ -222,9 +222,7 @@ export default {
                 if(valid){
                     // 编辑
                     if ( this.flag === 2 ) {
-                        console.log(this.dialogFrom);
                         putJsonRequest('/api/departments/'+this.dialogFrom.departmentId,this.dialogFrom).then( res => {
-                            console.log(res);
                             this.dialogTableVisible = false;
                             if (res.data.code == 0) {
                                 this.$notify.success({
@@ -242,7 +240,6 @@ export default {
                     }
                     // 新增
                     postJsonRequest('/api/departments',this.dialogFrom).then( res => {
-                        console.log(res);
                         this.dialogTableVisible = false;
                         if (res.data.code == 0) {
                             this.$notify.success({
@@ -264,7 +261,6 @@ export default {
         },
         remove(node, data) {
             deleteRequest('/api/departments/'+data.departmentId).then( res => {
-                console.log(res)
                 if (res.data.code == 0) {
                     this.getDepartmentsList();
                     this.$message({

@@ -114,7 +114,7 @@ export default {
                 'time': _this.ruleForm.time
             }
             postRequest('/api/sys/login',postData).then( res => {
-                console.log(res);
+                // console.log(res);
                 if( res.data.code === 0){
                     _this.$cookies.set('token',res.data.token);
                     _this.userToken = res.data.token;

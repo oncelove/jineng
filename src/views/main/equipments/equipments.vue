@@ -220,7 +220,7 @@ export default {
                 cursor:cursor,
             };
             getRequest('/test/devices',getData).then( res => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;
                     this.totalCount = res.data.data.total;
@@ -245,7 +245,7 @@ export default {
 
         getEqusMsg(roleId){
             getRequest('/test/devices/'+roleId).then( res => {
-                console.log(res);
+                // console.log(res);
                 if (res.data.code === 0) {
                     this.dialogFrom.id = res.data.data.id;
                     this.dialogFrom.productId = res.data.data.productId;
@@ -282,7 +282,6 @@ export default {
                 this.dialogBtn = true;
                 this.dialogMenusBtn = true;
             }
-            console.log(row);
             this.getEqusMsg(row.id);
         },
 
@@ -322,10 +321,9 @@ export default {
             this.$refs[formName].validate( (valid) => {
                 if (valid) {
                     this.dialogTableVisible = false;
-                    console.log(this.dialogFrom);
                     if ( this.flag === 1) {
                         postJsonRequest('/test/devices',this.dialogFrom).then( res => {
-                            console.log(res);
+                            // console.log(res);
                             if ( res.data.code === 0) {
                                 this.$notify.success({
                                     message:'添加成功',
@@ -367,22 +365,18 @@ export default {
 
         // 每页数据条数
         showSizeChange(val){
-            console.log(val);
             this.getEqusList('',val);
         },
         // 当前页数
         showCurrentChange(val){
-            console.log(val);
             this.getEqusList(val);
         },
 
         childStation(val){
-            console.log(val);
             this.dialogFrom.stationId = val.id;
         },
 
         childProduct(val){
-            console.log(val);
             this.dialogFrom.productId = val.id;
         }
 

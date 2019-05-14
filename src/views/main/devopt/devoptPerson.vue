@@ -109,10 +109,11 @@ export default {
             };
 
             getRequest('/mode/maintenance/operators',getData).then((res) => {
-                console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;
                     this.totalCount = res.data.data.total;
+                }else{
+                    this.$message.error(res.data.code + res.data.msg)
                 }
             }).catch((err) => {
                 console.log(err);
@@ -123,7 +124,7 @@ export default {
 
         getRecordPerson(rowID){
             getRequest('/mode/maintenance/operators/'+rowID).then( res => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code === 0) {
                     this.dialogFrom.name = res.data.data.name;
                     this.dialogFrom.phone = res.data.data.phone;
@@ -152,7 +153,7 @@ export default {
         },
         deleteClick(index, row){
             deleteRequest('/mode/maintenance/operators/'+row.id).then( res => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code === 0) {
                     this.$message.success('删除成功！！！')
                 } else {
@@ -174,7 +175,7 @@ export default {
                 if (valid) {
                     if ( this.flag === 1) {
                         postJsonRequest('/mode/maintenance/operators',this.dialogFrom).then( res => {
-                            console.log(res);
+                            // console.log(res);
                             if ( res.data.code === 0) {
                                 this.$message.success('添加成功');
                                 this.dialogTableVisible = false;

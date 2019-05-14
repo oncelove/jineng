@@ -233,7 +233,7 @@ export default {
             }
             // this.getUserType();
             getRequest('/api/users/'+ userId).then( res => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code === 0 ) {
                     this.dialogFrom.username = res.data.user.username;
                     this.dialogFrom.mobile = res.data.user.mobile;

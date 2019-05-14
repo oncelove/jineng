@@ -155,7 +155,7 @@ export default {
             }
 
             getRequest('/test/stations',getData).then( res => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;
                     this.totalCount = res.data.data.total;
@@ -172,7 +172,6 @@ export default {
             this.getAgentId();
             getRequest('/test/stations/'+id).then( res => {
                 if ( res.data.code === 0 ) {
-                    console.log(res.data.data)
                     this.dialogFrom.id = res.data.data.id;
                     this.dialogFrom.customerId = res.data.data.customerId;
                     this.dialogFrom.name = res.data.data.name;
@@ -182,7 +181,6 @@ export default {
                     this.dialogFrom.lat = res.data.data.lat;
                     this.dialogFrom.description = res.data.data.description;
                     this.dialogFrom.customerName = res.data.data.customerName;
-                    console.log(this.dialogFrom);
                 } else {
                     this.$message.error(res.data.code + res.data.msg);
                 }
@@ -199,7 +197,7 @@ export default {
             this.getAgentId();
         },
         getAgentId(){
-            console.log(this.$store.state.usersList);
+            // console.log(this.$store.state.usersList);
             if ( this.$store.state.usersList ) {
                 // this.agentId = this.$store.state.usersList.agentId;
                 this.agentId = 31;
@@ -220,7 +218,6 @@ export default {
             })
         },
         editClick(index, row){
-            console.log(row);
             this.dialogBtn = true;
             this.dialogDisabled = false;
             this.seeList(row.id);
@@ -228,7 +225,6 @@ export default {
             this.editId = row.id;
         },
         handleClick(row) {
-            console.log(row);
             this.dialogBtn = false;
             this.dialogDisabled = true;
             this.seeList(row.id)
@@ -238,7 +234,7 @@ export default {
                 if (valid) {
                     if ( this.whileAdd ) {
                         postJsonRequest('/test/stations',this.dialogFrom).then( res => {
-                            console.log(res);
+                            // console.log(res);
                             if ( res.data.code === 0) {
                                 this.getList();
                             } else {
@@ -277,12 +273,10 @@ export default {
         // 分页的
         // 每页数据条数
         showSizeChange(val){
-            console.log(val);
             this.getList('',val);
         },
         // 当前页数
         showCurrentChange(val){
-            console.log(val);
             this.getList(val);
         },
 

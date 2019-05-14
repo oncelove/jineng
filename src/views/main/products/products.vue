@@ -168,7 +168,7 @@ export default {
                 cursor:cursor,
             };
             getRequest('/test/products',getData).then( res => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;
                 } else {
@@ -181,7 +181,7 @@ export default {
 
         getProsMsg(roleId){
             getRequest('/test/products/'+roleId).then( res => {
-                console.log(res);
+                // console.log(res);
                 if (res.data.code === 0) {
                     this.dialogFrom.id = res.data.data.id;
                     this.dialogFrom.name = res.data.data.name;
@@ -198,8 +198,6 @@ export default {
         },
 
         addDialogShow(index,row,flag){
-            console.log(index);
-            console.log(row);
             this.dialogTableVisible = true;
             Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
             this.flag = flag;
@@ -257,7 +255,6 @@ export default {
             this.$refs[formName].validate( (valid) => {
                 if (valid) {
                     this.dialogTableVisible = false;
-                    console.log(this.dialogFrom);
                     if ( this.flag === 1) {
                         postJsonRequest('/test/products',this.dialogFrom).then( res => {
                             if ( res.data.code === 0) {
@@ -275,7 +272,7 @@ export default {
                         return;
                     }
                     putJsonRequest('/test/products/'+this.dialogFrom.id,this.dialogFrom).then( res => {
-                        console.log(res);
+                        // console.log(res);
                         if ( res.data.code === 0) {
                             this.$notify.success({
                                 message:'更新成功',
@@ -302,12 +299,10 @@ export default {
 
         // 每页数据条数
         showSizeChange(val){
-            console.log(val);
             this.getProsList('',val);
         },
         // 当前页数
         showCurrentChange(val){
-            console.log(val);
             this.getProsList(val);
         }
     },

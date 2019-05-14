@@ -200,7 +200,6 @@ export default {
             };
 
             getRequest('/mode/maintenance/faults',getData).then((res) => {
-                console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;
                     this.totalCount = res.data.data.total;
@@ -216,7 +215,6 @@ export default {
 
         getRecordPerson(rowID){
             getRequest('/mode/maintenance/faults/'+rowID).then( res => {
-                console.log(res);
                 if ( res.data.code === 0) {
                     this.dialogFrom.agentId = res.data.data.agentId;
                     this.dialogFrom.operatorId = res.data.data.operatorId;
@@ -307,7 +305,7 @@ export default {
                 if (valid) {
                     if ( this.flag === 1) {
                         postJsonRequest('/mode/maintenance/faults',this.dialogFrom).then( res => {
-                            console.log(res);
+                            // console.log(res);
                              if ( res.data.code === 0) {
                                 this.getRecordList();
                                 this.dialogTableVisible = false;
@@ -356,7 +354,7 @@ export default {
         },
         getEvaluate(feedbackId){
             getRequest('/mode/maintenance/feedbacks/'+feedbackId).then( res => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code === 0) {
                     this.evaluateFrom.content = res.data.data.content;
                     this.evaluateFrom.level = res.data.data.level;
@@ -367,7 +365,7 @@ export default {
         },
         evaluateSubmit(){
             postJsonRequest('/mode/maintenance/feedbacks',this.evaluateFrom).then( res => {
-                console.log(res);
+                // console.log(res);
                 if ( res.data.code === 0) {
                     this.evaluateVisible = false;
                     this.$message.success('添加成功');
@@ -395,7 +393,6 @@ export default {
             this.dialogFrom.deviceId = val.id;
         },
         childStation(val){
-            console.log(val);
             this.dialogFrom.stationId = val.id;
         },
         // 每页数据条数
