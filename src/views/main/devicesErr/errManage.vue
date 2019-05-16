@@ -51,7 +51,7 @@ export default {
         }
     },
     created(){
-        this.permissionsBox = power(this,'sys:errManage:info','sys:errManage:add','sys:errManage:delete','sys:errManage:update');
+        this.permissionsBox = power(this,'sys:errManage:info','sys:errManage:save','sys:errManage:delete','sys:errManage:update');
     },
     methods:{
         getErrMessgae(){

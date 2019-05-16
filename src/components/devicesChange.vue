@@ -72,7 +72,7 @@ export default {
                 cursor: cursor,
                 limit: limit,
             }
-            getRequest('/test/devices',getData).then( res => {
+            getRequest('/hardware/devices',getData).then( res => {
                 // console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;

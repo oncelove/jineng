@@ -88,7 +88,7 @@ export default {
                 limit:limit,
                 cursor:cursor,
             };
-            getRequest('/test/diagrams/').then( res => {
+            getRequest('/hardware/diagrams/',getData).then( res => {
                 console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.list;
@@ -102,7 +102,7 @@ export default {
 
         },
         getListMsg(id){
-            getRequest(`/test/diagrams/${id}`).then( res => {
+            getRequest(`/hardware/diagrams/${id}`).then( res => {
                 // console.log(res);
                 if ( res.data.code === 0) {
                     this.dialogFrom.id = res.data.data.id;
@@ -138,7 +138,7 @@ export default {
             this.flag = 2;
         },
         deleteClick(index,row){
-            deleteRequest(`/test/diagrams/${row.id}`).then( res => {
+            deleteRequest(`/hardware/diagrams/${row.id}`).then( res => {
                 // console.log(res);
                 if ( res.data.code === 0) {
                     this.$message.success('删除成功！！！');
@@ -152,7 +152,7 @@ export default {
         },
         onSubmit(){
             if ( this.flag === 1) {
-                postJsonRequest('/test/diagrams/',this.dialogFrom).then( res => {
+                postJsonRequest('/hardware/diagrams/',this.dialogFrom).then( res => {
                     if ( res.data.code === 0) {
                         this.dialogTableVisible = false;
                         this.$message.success('添加成功！！！')
@@ -166,7 +166,7 @@ export default {
             }
 
             if ( this.flag === 2 ) {
-                putJsonRequest(`/test/diagrams/${this.dialogFrom.id}`,this.dialogFrom).then( res => {
+                putJsonRequest(`/hardware/diagrams/${this.dialogFrom.id}`,this.dialogFrom).then( res => {
                     if ( res.data.code === 0) {
                         this.dialogTableVisible = false;
                         this.$message.success('修改成功！！！');
@@ -189,7 +189,7 @@ export default {
         },
     },
     created(){
-        this.permissionsBox = power(this,'sys:stationChart:info','sys:stationChart:add','sys:stationChart:delete','sys:stationChart:update');
+        this.permissionsBox = power(this,'sys:stationChart:info','sys:stationChart:save','sys:stationChart:delete','sys:stationChart:update');
         this.getList();
     }
 }

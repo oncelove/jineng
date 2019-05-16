@@ -58,7 +58,7 @@ export default {
         }
     },
     created(){
-        this.permissionsBox = power(this,'sys:rpc:info','sys:rpc:add','sys:rpc:delete','sys:rpc:update');
+        this.permissionsBox = power(this,'sys:rpc:info','sys:rpc:save','sys:rpc:delete','sys:rpc:update');
     },
     methods:{
         changeSelect(val){
@@ -86,7 +86,7 @@ export default {
                 }
             }
 
-            postJsonRequest('/catch/rpc/send', postData).then((res) => {
+            postJsonRequest('/hardware/rpc/send', postData).then((res) => {
                 if ( res.data.code === 0) {
                     this.socket.onclose();
                     this.getWebsocket(res.data.data.messageId);

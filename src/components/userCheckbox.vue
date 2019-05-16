@@ -44,7 +44,7 @@ export default {
             if ( this.$store.state.roleNames ) {
                 this.rolesArray = this.$store.state.roleNames;
             } else {
-                getRequest('/api/roles/select').then( res => {
+                getRequest('/system/roles/select').then( res => {
                     // console.log(res);
                     if (res.data.code === 0) {
                         let rolesArray = [];

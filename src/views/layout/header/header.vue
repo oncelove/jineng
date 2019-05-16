@@ -51,7 +51,8 @@ export default {
         return {
             searchText:'',
             userName:'',
-            socketUrl:'ws://192.168.0.112:8085/websocket/0-11',
+            // socketUrl:'ws://192.168.0.112:8085/websocket/0-11',
+            socketUrl:'ws://impc.aoqikc.com:8085/websocket/0-11',
             socket:null,
             errNumbers:null,
         }
@@ -89,7 +90,7 @@ export default {
 
         getErrNumbers(){
             // console.log(this.$store.state.usersList.userId);
-            getRequest(`/catch/deviceWarning/total?userId=${this.$store.state.usersList.userId}`).then( res => {
+            getRequest(`/hardware/deviceWarning/total?userId=${this.$store.state.usersList.userId}`).then( res => {
                 if ( res.data.code === 0) {
                     this.errNumbers = res.data.data;
                 } else {
@@ -100,7 +101,9 @@ export default {
             })
         },
         goDeviceErrList(){
-            this.$router.push({name:'archideviceserrves'});
+            // this.$router.push({name:'archideviceserrves'});
+            this.$router.push('/deviceserr');
+            
         }
     }
 }

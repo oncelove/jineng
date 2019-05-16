@@ -212,7 +212,7 @@ export default {
         }
     },
     created() {
-        this.permissionsBox = power(this,'sys:equipments:info','sys:equipments:add','sys:equipments:delete','sys:equipments:update');
+        this.permissionsBox = power(this,'sys:equipments:info','sys:equipments:save','sys:equipments:delete','sys:equipments:update');
         this.getEqusList();
         this.rules = rules;
     },
@@ -225,7 +225,7 @@ export default {
                 limit:limit,
                 cursor:cursor,
             };
-            getRequest('/test/devices',getData).then( res => {
+            getRequest('/hardware/devices',getData).then( res => {
                 // console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;
@@ -250,7 +250,7 @@ export default {
         },
 
         getEqusMsg(roleId){
-            getRequest('/test/devices/'+roleId).then( res => {
+            getRequest('/hardware/devices/'+roleId).then( res => {
                 // console.log(res);
                 if (res.data.code === 0) {
                     this.dialogFrom.id = res.data.data.id;
@@ -293,7 +293,7 @@ export default {
 
         // 删除
         remove(index,row){
-            deleteRequest('/test/devices/'+row.id).then( res => {
+            deleteRequest('/hardware/devices/'+row.id).then( res => {
                 if ( res.data.code === 0) {
                     this.$notify.success({
                         message:'删除成功',
@@ -328,7 +328,7 @@ export default {
                 if (valid) {
                     this.dialogTableVisible = false;
                     if ( this.flag === 1) {
-                        postJsonRequest('/test/devices',this.dialogFrom).then( res => {
+                        postJsonRequest('/hardware/devices',this.dialogFrom).then( res => {
                             // console.log(res);
                             if ( res.data.code === 0) {
                                 this.$notify.success({
@@ -344,7 +344,7 @@ export default {
                         })
                         return;
                     }
-                    putJsonRequest('/test/devices/'+this.dialogFrom.id,this.dialogFrom).then( res => {
+                    putJsonRequest('/hardware/devices/'+this.dialogFrom.id,this.dialogFrom).then( res => {
                         if ( res.data.code === 0) {
                             this.$notify.success({
                                 message:'更新成功',

@@ -151,7 +151,7 @@ export default {
         }
     },
     created() {
-        this.permissionsBox = power(this,'sys:Customer:info','sys:Customer:add','sys:Customer:delete','sys:Customer:update');
+        this.permissionsBox = power(this,'sys:customers:info','sys:customers:save','sys:customers:delete','sys:customers:update');
         this.getCustomerList();
         this.rules = rules;
     },
@@ -164,7 +164,7 @@ export default {
                 cursor:cursor,
             }
             // console.log(current,getData)
-            getRequest('/api/customers',getData).then( res => {
+            getRequest('/system/customers',getData).then( res => {
                 // console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.page.list;
@@ -185,7 +185,7 @@ export default {
             this.dialogFrom.customerId = id;
             this.getAgent(agentId);
             
-            getRequest('/api/customers/'+ id).then( res => {
+            getRequest('/system/customers/'+ id).then( res => {
                 // console.log(res);
                 if ( res.data.code === 0 ){
                     this.dialogFrom.customerName = res.data.customer.customerName;
@@ -230,7 +230,7 @@ export default {
             // options
             this.selectedOptions = [];
             this.selectedOptions.push(agentId);
-            getRequest('/api/agent/select').then( res => {
+            getRequest('/system/agent/select').then( res => {
                 // console.log(res);
                 if ( res.data.code === 0) {
                     this.options = res.data.agentList;
@@ -258,7 +258,7 @@ export default {
         },
         // 删除按钮点击
         deleteClick(index,row){
-            deleteRequest('/api/customers/' + row.customerId).then( res => {
+            deleteRequest('/system/customers/' + row.customerId).then( res => {
                 if (res.data.code === 0) {
                     this.$message({
                         message: res.data.msg,
@@ -277,7 +277,7 @@ export default {
             this.$refs[formName].validate( (valid) => {
                 if (valid) {
                     if ( this.source ) {
-                        postJsonRequest('/api/customers',this.dialogFrom).then( res => {
+                        postJsonRequest('/system/customers',this.dialogFrom).then( res => {
                             if (res.data.code === 0) {
                                 this.dialogTableVisible = false;
                                 this.$message({
@@ -292,7 +292,7 @@ export default {
                             this.$message.error(err);
                         })
                     } else {
-                        putJsonRequest('/api/customers/'+ this.dialogFrom.customerId,this.dialogFrom).then( res => {
+                        putJsonRequest('/system/customers/'+ this.dialogFrom.customerId,this.dialogFrom).then( res => {
                             if (res.data.code === 0 ) {
                                 this.dialogTableVisible = false;
                                 this.getCustomerList();

@@ -177,7 +177,7 @@ export default {
         }
     },
     created(){
-        this.permissionsBox = power(this,'sys:record:info','sys:record:add','sys:record:delete','sys:record:update');
+        this.permissionsBox = power(this,'sys:record:info','sys:record:save','sys:record:delete','sys:record:update');
     },
     methods:{
         getRecordList(current,size){
@@ -188,7 +188,7 @@ export default {
                 cursor:cursor,
             };
 
-            getRequest('/mode/maintenance/records',getData).then((res) => {
+            getRequest('/operation/maintenance/records',getData).then((res) => {
                 // console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;
@@ -213,7 +213,7 @@ export default {
         },
 
         getRecordPerson(rowID){
-            getRequest('/mode/maintenance/records/'+rowID, this.dialogFrom).then( res => {
+            getRequest('/operation/maintenance/records/'+rowID, this.dialogFrom).then( res => {
                 // console.log(res);
                 if ( res.data.code === 0) {
                     this.dialogFrom.id = res.data.data.id;
@@ -248,7 +248,7 @@ export default {
             this.getRecordPerson(row.id);
         },
         deleteClick(index, row){
-            deleteRequest('/mode/maintenance/records/'+row.id).then( res => {
+            deleteRequest('/operation/maintenance/records/'+row.id).then( res => {
                 // console.log(res);
                 if ( res.data.code === 0) {
                     this.$message.success('删除成功');
@@ -272,7 +272,7 @@ export default {
                 if (valid) {
                     if ( this.flag === 1) {
                         // console.log(this.dialogFrom);
-                        postJsonRequest('/mode/maintenance/records',this.dialogFrom).then( res => {
+                        postJsonRequest('/operation/maintenance/records',this.dialogFrom).then( res => {
                             this.dialogTableVisible = false;
                             if ( res.data.code === 0) {
                                 this.$message.success('添加成功');
@@ -285,7 +285,7 @@ export default {
                         })
                         return;
                     } else {
-                        putJsonRequest('/mode/maintenance/records/'+this.dialogFrom.id,this.dialogFrom).then( res => {
+                        putJsonRequest('/operation/maintenance/records/'+this.dialogFrom.id,this.dialogFrom).then( res => {
                             this.dialogTableVisible = false;
                             if ( res.data.code === 0) {
                                 this.$message.success('修改成功');
@@ -321,7 +321,7 @@ export default {
             this.getEvaluate(row.feedbackId);
         },
         getEvaluate(feedbackId){
-            getRequest('/mode/maintenance/feedbacks/'+feedbackId).then( res => {
+            getRequest('/operation/maintenance/feedbacks/'+feedbackId).then( res => {
                 // console.log(res);
                 if ( res.data.code === 0) {
                     this.evaluateFrom.content = res.data.data.content;
@@ -332,7 +332,7 @@ export default {
             })
         },
         evaluateSubmit(){
-            postJsonRequest('/mode/maintenance/feedbacks',this.evaluateFrom).then( res => {
+            postJsonRequest('/operation/maintenance/feedbacks',this.evaluateFrom).then( res => {
                 // console.log(res);
                 if ( res.data.code === 0) {
                     this.evaluateVisible = false;

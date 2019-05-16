@@ -205,7 +205,7 @@ export default {
         }
     },
     created() {
-        this.permissionsBox = power(this,'sys:roles:info','sys:roles:add','sys:roles:delete','sys:roles:update');
+        this.permissionsBox = power(this,'sys:role:info','sys:role:save','sys:role:delete','sys:role:update');
         this.getRolesList();
         this.rules = rules;
         let constUserType = this.$store.state.usersList.userType;
@@ -222,7 +222,7 @@ export default {
                 limit:limit,
                 cursor:cursor,
             };
-            getRequest('/api/roles',getData).then( res => {
+            getRequest('/system/roles',getData).then( res => {
                 console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.page.list;
@@ -237,7 +237,7 @@ export default {
         },
 
         getRolesMsg(roleId){
-            getRequest('/api/roles/'+roleId).then( res => {
+            getRequest('/system/roles/'+roleId).then( res => {
                 // console.log(res);
                 if (res.data.code === 0) {
                     this.dialogFrom.roleId = res.data.role.roleId;
@@ -282,7 +282,7 @@ export default {
 
         // 删除
         remove(index,row){
-            deleteRequest('/api/roles/'+row.roleId).then( res => {
+            deleteRequest('/system/roles/'+row.roleId).then( res => {
                 if ( res.data.code === 0) {
                     this.$notify.success({
                         message:'删除成功',
@@ -301,7 +301,7 @@ export default {
         seeMenus(){
             this.dialogMenusVisible = true;
             this.menusData = [];
-            getRequest('/api/menus').then( res => {
+            getRequest('/system/menus').then( res => {
                 // console.log(res);
                 if ( res.data.code == 0) {
                     this.menusData = res.data.menuList;
@@ -354,7 +354,7 @@ export default {
                 if (valid) {
                     this.dialogTableVisible = false;
                     if ( this.flag === 1) {
-                        postJsonRequest('/api/roles',this.dialogFrom).then( res => {
+                        postJsonRequest('/system/roles',this.dialogFrom).then( res => {
                             // console.log(res);
                             if ( res.data.code === 0) {
                                 this.$notify.success({
@@ -370,7 +370,7 @@ export default {
                         })
                         return;
                     }
-                    putJsonRequest('/api/roles/'+this.dialogFrom.roleId,this.dialogFrom).then( res => {
+                    putJsonRequest('/system/roles/'+this.dialogFrom.roleId,this.dialogFrom).then( res => {
                         if ( res.data.code === 0) {
                             this.$notify.success({
                                 message:'更新成功',

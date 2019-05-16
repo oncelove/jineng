@@ -128,12 +128,12 @@ export default {
             ],
             flag:null,
             uploadShow:false,// 文件上传是否可见
-            uploadActionUrl:'/api/sys/oss/upload',
+            uploadActionUrl:'/system/sys/oss/upload',
             permissionsBox:null,
         }
     },
     created() {
-        this.permissionsBox = power(this,'sys:documents:info','sys:documents:add','sys:documents:delete','sys:documents:update');
+        this.permissionsBox = power(this,'sys:documents:info','sys:documents:save','sys:documents:delete','sys:documents:update');
         this.getDocumentsList();
     },
     methods: {
@@ -144,7 +144,7 @@ export default {
                 limit:limit,
                 cursor:cursor,
             };
-            getRequest('/api/documents',getData).then( res => {
+            getRequest('/system/documents',getData).then( res => {
                 // console.log(res);
                 if (res.data.code === 0) {
                     this.tableData = res.data.page.list;
@@ -189,7 +189,7 @@ export default {
             this.getDetails(row);
         },
         deleteClick(index,row){
-            deleteRequest('/api/documents/'+row.documentId).then( res => {
+            deleteRequest('/system/documents/'+row.documentId).then( res => {
                 if ( res.data.code === 0) {
                     this.$message.success('删除成功');
                     this.getDocumentsList();
@@ -222,7 +222,7 @@ export default {
                     });
                 }
                 formData.append("file", e.target.files[0]);
-                uploadPostRequest(`/api/sys/oss/upload`, formData).then(res => {
+                uploadPostRequest(`/system/sys/oss/upload`, formData).then(res => {
                     if ( res.data.code === 0) {
                         this.dialogFrom.ossUrl = res.data.url;
                     } else {
@@ -236,7 +236,7 @@ export default {
             this.$refs[formName].validate( (valid) => {
                 if (valid) {
                     if (this.flag === 1){
-                        postJsonRequest('/api/documents/',this.dialogFrom).then( res => {
+                        postJsonRequest('/system/documents/',this.dialogFrom).then( res => {
                             if (res.data.code === 0) {
                                 this.dialogTableVisible = false;
                                 this.$message.success('添加成功');
@@ -248,7 +248,7 @@ export default {
                     }
 
                     if ( this.flag === 2 ) {
-                        putJsonRequest('/api/documents/'+ this.dialogFrom.documentId, this.dialogFrom).then( res => {
+                        putJsonRequest('/system/documents/'+ this.dialogFrom.documentId, this.dialogFrom).then( res => {
                             if (res.data.code === 0) {
                                 this.dialogTableVisible = false;
                                 this.$message({

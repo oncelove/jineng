@@ -16,6 +16,7 @@
     z-index: 200;
     width: 200px;
     background: $fff;
+    transition: width 0.5s;
     @include boxshadow();
 
     .logo {
@@ -51,7 +52,8 @@
     }
 
     .navigation {
-        position: absolute;
+        position: fixed;
+        // position: absolute;
         left: 200px;
         width: 200px;
         top: 60px;
@@ -59,22 +61,22 @@
         background: $fff;
     }
 
-    li {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        height: 56px;
-        overflow: hidden;
-        color: $color96;
-        font-size: 18px;
+    // li {
+    //     display: flex;
+    //     justify-content: space-around;
+    //     align-items: center;
+    //     height: 56px;
+    //     overflow: hidden;
+    //     color: $color96;
+    //     font-size: 18px;
 
-        &:hover,
-        &.active,
-        &.router-link-exact-active {
-            color: $maincolor;
-            background-color: #e6e6e6;
-        }
-    }
+    //     &:hover,
+    //     &.active,
+    //     &.router-link-exact-active {
+    //         color: $maincolor;
+    //         background-color: #e6e6e6;
+    //     }
+    // }
 }
 
 .wrap-close {

@@ -36,7 +36,7 @@ export default {
         }
     },
     created(){
-        this.permissionsBox = power(this,'sys:onceChart:info','sys:onceChart:add','sys:onceChart:delete','sys:onceChart:update');
+        this.permissionsBox = power(this,'sys:onceChart:info','sys:onceChart:save','sys:onceChart:delete','sys:onceChart:update');
     },
     mounted(){
         this.$nextTick(() => { //使用nextTick为了保证dom元素都已经渲染完毕 

@@ -157,7 +157,7 @@ export default {
         }
     },
     created() {
-        this.permissionsBox = power(this,'sys:products:info','sys:products:add','sys:products:delete','sys:products:update');
+        this.permissionsBox = power(this,'sys:products:info','sys:products:save','sys:products:delete','sys:products:update');
         this.getProsList();
         this.rules = rules;
     },
@@ -173,7 +173,7 @@ export default {
                 limit:limit,
                 cursor:cursor,
             };
-            getRequest('/test/products',getData).then( res => {
+            getRequest('/hardware/products',getData).then( res => {
                 // console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;
@@ -186,7 +186,7 @@ export default {
         },
 
         getProsMsg(roleId){
-            getRequest('/test/products/'+roleId).then( res => {
+            getRequest('/hardware/products/'+roleId).then( res => {
                 // console.log(res);
                 if (res.data.code === 0) {
                     this.dialogFrom.id = res.data.data.id;
@@ -226,7 +226,7 @@ export default {
 
         // 删除
         remove(index,row){
-            deleteRequest('/test/products/'+row.id).then( res => {
+            deleteRequest('/hardware/products/'+row.id).then( res => {
                 if ( res.data.code === 0) {
                     this.$notify.success({
                         message:'删除成功',
@@ -262,7 +262,7 @@ export default {
                 if (valid) {
                     this.dialogTableVisible = false;
                     if ( this.flag === 1) {
-                        postJsonRequest('/test/products',this.dialogFrom).then( res => {
+                        postJsonRequest('/hardware/products',this.dialogFrom).then( res => {
                             if ( res.data.code === 0) {
                                 this.$notify.success({
                                     message:'添加成功',
@@ -277,7 +277,7 @@ export default {
                         })
                         return;
                     }
-                    putJsonRequest('/test/products/'+this.dialogFrom.id,this.dialogFrom).then( res => {
+                    putJsonRequest('/hardware/products/'+this.dialogFrom.id,this.dialogFrom).then( res => {
                         // console.log(res);
                         if ( res.data.code === 0) {
                             this.$notify.success({

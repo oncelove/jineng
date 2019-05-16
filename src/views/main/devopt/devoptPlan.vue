@@ -126,7 +126,7 @@ export default {
         }
     },
     created(){
-        this.permissionsBox = power(this,'sys:devoptPlan:info','sys:devoptPlan:add','sys:devoptPlan:delete','sys:devoptPlan:update');
+        this.permissionsBox = power(this,'sys:devoptPlan:info','sys:devoptPlan:save','sys:devoptPlan:delete','sys:devoptPlan:update');
     },
     methods:{
         getRecordList(current,size){
@@ -137,7 +137,7 @@ export default {
                 cursor:cursor,
             };
 
-            getRequest('/mode/maintenance/plans',getData).then((res) => {
+            getRequest('/operation/maintenance/plans',getData).then((res) => {
                 // console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;
@@ -162,7 +162,7 @@ export default {
         },
 
         getRecordPerson(rowID){
-            getRequest('/mode/maintenance/plans/'+rowID, this.dialogFrom).then( res => {
+            getRequest('/operation/maintenance/plans/'+rowID, this.dialogFrom).then( res => {
                 // console.log(res);
                 if ( res.data.code === 0) {
                     this.dialogFrom.id = res.data.data.id;
@@ -195,7 +195,7 @@ export default {
             this.getRecordPerson(row.id);
         },
         deleteClick(index, row){
-            deleteRequest('/mode/maintenance/plans/'+row.id).then( res => {
+            deleteRequest('/operation/maintenance/plans/'+row.id).then( res => {
                 // console.log(res);
                 if ( res.data.code === 0) {
                     this.$message.success('删除成功');
@@ -218,7 +218,7 @@ export default {
             this.$refs[formName].validate( (valid) => {
                 if (valid) {
                     if ( this.flag === 1) {
-                        postJsonRequest('/mode/maintenance/plans',this.dialogFrom).then( res => {
+                        postJsonRequest('/operation/maintenance/plans',this.dialogFrom).then( res => {
                             this.dialogTableVisible = false;
                             if ( res.data.code === 0) {
                                 this.$message.success('添加成功');
@@ -231,7 +231,7 @@ export default {
                         })
                         return;
                     } else {
-                        putJsonRequest('/mode/maintenance/plans/'+this.dialogFrom.id,this.dialogFrom).then( res => {
+                        putJsonRequest('/operation/maintenance/plans/'+this.dialogFrom.id,this.dialogFrom).then( res => {
                             this.dialogTableVisible = false;
                             if ( res.data.code === 0) {
                                 this.$message.success('修改成功');

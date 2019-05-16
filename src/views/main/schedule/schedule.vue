@@ -76,8 +76,8 @@ export default {
         }
     },
     created() {
-        this.permissionsBox = power(this,'sys:schedule:info','sys:schedule:add','sys:schedule:delete','sys:schedule:update');
-        getRequest('/api/sys/config/list').then( res => {
+        this.permissionsBox = power(this,'sys:schedule:info','sys:schedule:save','sys:schedule:delete','sys:schedule:update');
+        getRequest('/system/sys/config/list').then( res => {
             console.log(res);
             this.tableData = res.data.page.list;
             // console.log( this.tableData);

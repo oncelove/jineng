@@ -134,13 +134,13 @@ export default {
         }
     },
     created() {
-        this.permissionsBox = power(this,'sys:department:info','sys:department:add','sys:department:delete','sys:department:update');
+        this.permissionsBox = power(this,'sys:dept:info','sys:dept:save','sys:dept:delete','sys:dept:update');
         this.rules = rules;
         this.getDepartmentsList();
     },
     methods: {
         getDepartmentsList(){
-            getRequest('/api/departments').then( res => {
+            getRequest('/system/departments').then( res => {
             // console.log(res);
                 this.treeData = res.data.deptList;
                 let departmentArray = [];
@@ -171,7 +171,7 @@ export default {
         onSubmit(formName){
             this.$refs[formName].validate( (valid) => {
                 if (valid) {
-                    postJsonRequest('/api/departments', this.dialogFrom).then( res => {
+                    postJsonRequest('/system/departments', this.dialogFrom).then( res => {
                         console.log(res);
                         if (res.data.code === 0) {
                             this.dialogTableVisible = false;
@@ -226,7 +226,7 @@ export default {
                 if(valid){
                     // 编辑
                     if ( this.flag === 2 ) {
-                        putJsonRequest('/api/departments/'+this.dialogFrom.departmentId,this.dialogFrom).then( res => {
+                        putJsonRequest('/system/departments/'+this.dialogFrom.departmentId,this.dialogFrom).then( res => {
                             this.dialogTableVisible = false;
                             if (res.data.code == 0) {
                                 this.$notify.success({
@@ -243,7 +243,7 @@ export default {
                         return;
                     }
                     // 新增
-                    postJsonRequest('/api/departments',this.dialogFrom).then( res => {
+                    postJsonRequest('/system/departments',this.dialogFrom).then( res => {
                         this.dialogTableVisible = false;
                         if (res.data.code == 0) {
                             this.$notify.success({
@@ -264,7 +264,7 @@ export default {
             })
         },
         remove(node, data) {
-            deleteRequest('/api/departments/'+data.departmentId).then( res => {
+            deleteRequest('/system/departments/'+data.departmentId).then( res => {
                 if (res.data.code == 0) {
                     this.getDepartmentsList();
                     this.$message({

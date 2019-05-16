@@ -156,7 +156,7 @@ export default {
                 limit: limit,
             }
 
-            getRequest('/test/stations',getData).then( res => {
+            getRequest('/hardware/stations',getData).then( res => {
                 // console.log(res);
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;
@@ -172,7 +172,7 @@ export default {
             this.dialogTableVisible = true;
             Object.keys(this.dialogFrom).map(key => this.dialogFrom[key] = '');
             this.getAgentId();
-            getRequest('/test/stations/'+id).then( res => {
+            getRequest('/hardware/stations/'+id).then( res => {
                 if ( res.data.code === 0 ) {
                     this.dialogFrom.id = res.data.data.id;
                     this.dialogFrom.customerId = res.data.data.customerId;
@@ -208,7 +208,7 @@ export default {
             }
         },
         deleteClick(index, row){
-            deleteRequest('/test/stations/'+row.id).then( res => {
+            deleteRequest('/hardware/stations/'+row.id).then( res => {
                 if ( res.data.code === 0) {
                     this.$message.success('删除成功');
                     this.getList();
@@ -235,7 +235,7 @@ export default {
             this.$refs[formName].validate( (valid) => {
                 if (valid) {
                     if ( this.whileAdd ) {
-                        postJsonRequest('/test/stations',this.dialogFrom).then( res => {
+                        postJsonRequest('/hardware/stations',this.dialogFrom).then( res => {
                             // console.log(res);
                             if ( res.data.code === 0) {
                                 this.getList();
@@ -246,7 +246,7 @@ export default {
                             console.log(err);
                         })
                     } else {
-                        putJsonRequest('/test/stations/'+this.editId, this.dialogFrom).then( res => {
+                        putJsonRequest('/hardware/stations/'+this.editId, this.dialogFrom).then( res => {
                             if ( res.data.code === 0) {
                                 this.dialogTableVisible = false;
                             } else {
@@ -288,7 +288,7 @@ export default {
         }
     },
     created() {
-        this.permissionsBox = power(this,'sys:stations:info','sys:stations:add','sys:stations:delete','sys:stations:update');
+        this.permissionsBox = power(this,'sys:stations:info','sys:stations:save','sys:stations:delete','sys:stations:update');
         this.getList();
         this.rules = rules;
     },

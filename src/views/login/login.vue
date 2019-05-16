@@ -80,16 +80,16 @@ export default {
     },
     created:function(){
         this.ruleForm.time = (new Date()).valueOf();
-        this.ruleForm.src = 'http://39.107.89.154:8000/commonservice-system/captcha.jpg?time='+ this.ruleForm.time;
-        // this.ruleForm.src = 'http://192.168.0.112:8080/commonservice-system/captcha.jpg?time='+ this.ruleForm.time;
+        this.ruleForm.src = 'http://39.107.89.154:8000/system/captcha.jpg?time='+ this.ruleForm.time;
+        // this.ruleForm.src = 'http://192.168.0.112:8080/system/captcha.jpg?time='+ this.ruleForm.time;
     },
     methods:{
         ...mapMutations(['changeLogin','changeUsersList']),
         refreshCode(){
             // console.log(this.$GLOBAL);
             this.ruleForm.time = (new Date()).valueOf();
-            this.ruleForm.src = "http://39.107.89.154:8000/commonservice-system/captcha.jpg?time=" + this.ruleForm.time;
-            // this.ruleForm.src = "http://192.168.0.112:8080/commonservice-system/captcha.jpg?time=" + this.ruleForm.time;
+            this.ruleForm.src = "http://39.107.89.154:8000/system/captcha.jpg?time=" + this.ruleForm.time;
+            // this.ruleForm.src = "http://192.168.0.112:8080/system/captcha.jpg?time=" + this.ruleForm.time;
         },
         submitForm() {
             let _this = this;
@@ -113,8 +113,8 @@ export default {
                 'captcha': _this.ruleForm.captcha,
                 'time': _this.ruleForm.time
             }
-            postRequest('/api/sys/login',postData).then( res => {
-                // console.log(res);
+            postRequest('/system/sys/login',postData).then( res => {
+                console.log(res);
                 if( res.data.code === 0){
                     _this.$cookies.set('token',res.data.token);
                     _this.userToken = res.data.token;

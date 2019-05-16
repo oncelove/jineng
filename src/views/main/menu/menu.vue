@@ -154,7 +154,7 @@ export default {
         }
     },
     created() {
-        this.permissionsBox = power(this,'sys:menu:info','sys:menu:add','sys:menu:delete','sys:menu:update');
+        this.permissionsBox = power(this,'sys:menu:info','sys:menu:save','sys:menu:delete','sys:menu:update');
         this.rules = rules;
         this.getMenusList();
     },
@@ -163,7 +163,7 @@ export default {
     },
     methods: {
         getMenusList(){
-            getRequest('/api/menus').then( res => {
+            getRequest('/system/menus').then( res => {
                 // console.log(res);
                 if ( res.data.code == 0) {
                     this.treeData = res.data.menuList;
@@ -231,7 +231,7 @@ export default {
                     
                     // 编辑
                     if ( this.flag === 2 ) {
-                        putJsonRequest('/api/menus/'+this.dialogFrom.menuId,this.dialogFrom).then( res => {
+                        putJsonRequest('/system/menus/'+this.dialogFrom.menuId,this.dialogFrom).then( res => {
                             // console.log(res);
                             this.dialogTableVisible = false;
                             if (res.data.code == 0) {
@@ -250,7 +250,7 @@ export default {
                         return;
                     }
                     // 添加
-                    postJsonRequest('/api/menus',this.dialogFrom).then( res => {
+                    postJsonRequest('/system/menus',this.dialogFrom).then( res => {
                         // console.log(res);
                         this.dialogTableVisible = false;
                         if (res.data.code == 0) {
@@ -271,7 +271,7 @@ export default {
             })
         },
         remove(node, data) {
-            deleteRequest('/api/menus/'+data.menuId).then( res => {
+            deleteRequest('/system/menus/'+data.menuId).then( res => {
                 // console.log(res)
                 if (res.data.code == 0) {
                     this.getMenusList();

@@ -62,7 +62,7 @@ export default {
                 cursor: cursor,
                 limit: limit,
             }
-            getRequest('/test/stations',getData).then( res => {
+            getRequest('/hardware/stations',getData).then( res => {
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;
                     this.totalCount = res.data.data.total;

@@ -54,15 +54,19 @@ const router = new Router({
                 { path: '/sys/fault', name: 'fault', component: (resolve) => require(['@/views/main/devopt/devoptFault.vue'],resolve) },
                 // 运维类型
                 { path: '/sys/devoptType', name: 'devoptType', component: (resolve) => require(['@/views/main/devopt/devoptType.vue'],resolve) },
-                { path: '/111', name: '111', component: (resolve) => require(['@/views/main/stations/stationsChart.vue'],resolve) },
-                { path: '/123', name: '123', component: (resolve) => require(['@/views/main/onceChart/onceChart.vue'],resolve) },
+                // 站点图
+                { path: '/sys/stationsChart', name: 'stationsChart', component: (resolve) => require(['@/views/main/stations/stationsChart.vue'],resolve) },
+                // 一次接线图
+                { path: '/onceChart', name: 'onceChart', component: (resolve) => require(['@/views/main/onceChart/onceChart.vue'],resolve) },
+                { path: '/123', name: '123', component: (resolve) => require(['@/views/main/thridparty/thridparty.vue'],resolve) },
             ]
         },
         {
             path: '/login',
             name: 'login',
             component: (resolve) => require(['./views/login/login.vue'],resolve)
-        }
+        },
+        {path: '*',edirect: '/'}
     ]
 })
 

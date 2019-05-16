@@ -29,14 +29,14 @@ export default {
         }
     },
     created(){
-        this.permissionsBox = power(this,'sys:errList:info','sys:errList:add','sys:errList:delete','sys:errList:update');
+        this.permissionsBox = power(this,'sys:errList:info','sys:errList:save','sys:errList:delete','sys:errList:update');
     },
     mounted(){
         this.getDevicesList();
     },
     methods:{
         getDevicesList(){
-            getRequest('/catch/deviceWarning').then( res => {
+            getRequest('/hardware/deviceWarning').then( res => {
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;
                 } else {

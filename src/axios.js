@@ -42,7 +42,7 @@ axios.interceptors.response.use(response => {
     if (response.status === 200) {
         // console.log(response)
         if (response.data.msg == "成功" && response.data.code === 0) {
-            console.log('成功')
+            // console.log('成功')
             // response.data.data.value = '我是返回成功' // 在请求成功后可以对返回的数据进行处理，再返回到前台
         }
 

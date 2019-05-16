@@ -69,7 +69,7 @@ export default {
                 limit: limit,
                 customerId: this.customerId
             }
-            getRequest('/api/customers?agentId='+this.agentId,getData).then( res => {
+            getRequest('/system/customers?agentId='+this.agentId,getData).then( res => {
                 if ( res.data.code === 0) {
                     this.tableData = res.data.page.list;
                     this.totalCount = res.data.page.totalCount;

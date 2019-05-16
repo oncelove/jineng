@@ -62,7 +62,7 @@ export default {
                 limit: limit,
                 customerId: this.customerId
             }
-            getRequest('/mode/maintenance/operators',getData).then( res => {
+            getRequest('/operation/maintenance/operators',getData).then( res => {
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;
                 } else {

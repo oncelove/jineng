@@ -67,7 +67,7 @@ export default {
                 limit: limit,
                 customerId: this.customerId
             }
-            getRequest('/api/agent/select',getData).then( res => {
+            getRequest('/system/agent/select',getData).then( res => {
                 if ( res.data.code === 0) {
                     this.tableData = res.data.agentList;
                 } else {

@@ -193,7 +193,7 @@ export default {
         }
     },
     created(){
-        this.permissionsBox = power(this,'sys:devoptFault:info','sys:devoptFault:add','sys:devoptFault:delete','sys:devoptFault:update');
+        this.permissionsBox = power(this,'sys:devoptFault:info','sys:devoptFault:save','sys:devoptFault:delete','sys:devoptFault:update');
     },
     methods:{
         getRecordList(current,size){
@@ -204,7 +204,7 @@ export default {
                 cursor:cursor,
             };
 
-            getRequest('/mode/maintenance/faults',getData).then((res) => {
+            getRequest('/operation/maintenance/faults',getData).then((res) => {
                 if ( res.data.code === 0) {
                     this.tableData = res.data.data.records;
                     this.totalCount = res.data.data.total;
@@ -219,7 +219,7 @@ export default {
         },
 
         getRecordPerson(rowID){
-            getRequest('/mode/maintenance/faults/'+rowID).then( res => {
+            getRequest('/operation/maintenance/faults/'+rowID).then( res => {
                 if ( res.data.code === 0) {
                     this.dialogFrom.agentId = res.data.data.agentId;
                     this.dialogFrom.operatorId = res.data.data.operatorId;
@@ -242,7 +242,7 @@ export default {
         },
 
         getTypeGroup(da){
-            getRequest('/mode/maintenance/faults/types').then( res => {
+            getRequest('/operation/maintenance/faults/types').then( res => {
                 if ( res.data.code === 0) {
                     this.dialogFrom.typeGroup = res.data.data;
                     if (da) {
@@ -284,7 +284,7 @@ export default {
         },
 
         deleteClick(index, row){
-            deleteRequest('/mode/maintenance/faults/'+row.id).then( res => {
+            deleteRequest('/operation/maintenance/faults/'+row.id).then( res => {
                 if ( res.data.code === 0) {
                     this.getRecordList();
                     this.$message.success('删除成功！！！')
@@ -309,7 +309,7 @@ export default {
             this.$refs[formName].validate( (valid) => {
                 if (valid) {
                     if ( this.flag === 1) {
-                        postJsonRequest('/mode/maintenance/faults',this.dialogFrom).then( res => {
+                        postJsonRequest('/operation/maintenance/faults',this.dialogFrom).then( res => {
                             // console.log(res);
                              if ( res.data.code === 0) {
                                 this.getRecordList();
@@ -323,7 +323,7 @@ export default {
                         })
                         return;
                     } else {
-                        putJsonRequest('/mode/maintenance/faults/'+this.dialogFrom.operatorId,this.dialogFrom).then( res => {
+                        putJsonRequest('/operation/maintenance/faults/'+this.dialogFrom.operatorId,this.dialogFrom).then( res => {
                             if ( res.data.code === 0) {
                                 this.getRecordList();
                                 this.dialogTableVisible = false;
@@ -358,7 +358,7 @@ export default {
             this.getEvaluate(row.feedbackId);
         },
         getEvaluate(feedbackId){
-            getRequest('/mode/maintenance/feedbacks/'+feedbackId).then( res => {
+            getRequest('/operation/maintenance/feedbacks/'+feedbackId).then( res => {
                 // console.log(res);
                 if ( res.data.code === 0) {
                     this.evaluateFrom.content = res.data.data.content;
@@ -369,7 +369,7 @@ export default {
             })
         },
         evaluateSubmit(){
-            postJsonRequest('/mode/maintenance/feedbacks',this.evaluateFrom).then( res => {
+            postJsonRequest('/operation/maintenance/feedbacks',this.evaluateFrom).then( res => {
                 // console.log(res);
                 if ( res.data.code === 0) {
                     this.evaluateVisible = false;

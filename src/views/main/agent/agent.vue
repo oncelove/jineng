@@ -218,13 +218,13 @@ export default {
         }
     },
     created() {
-        this.permissionsBox = power(this,'sys:agent:info','sys:agent:add','sys:agent:delete','sys:agent:update');
+        this.permissionsBox = power(this,'sys:agent:info','sys:agent:save','sys:agent:delete','sys:agent:update');
         this.getAgentList();
     },
     methods: {
 
         getAgentList(){
-            getRequest('/api/agent').then( res => {
+            getRequest('/system/agent').then( res => {
                 // console.log(res);
                 this.treeData = res.data.agentList;
             }).catch( err => {
@@ -274,7 +274,7 @@ export default {
                 customerId: this.customerId
             }
 
-            getRequest('/api/customers?agentId='+this.defaultAgentId,getData).then( res => {
+            getRequest('/system/customers?agentId='+this.defaultAgentId,getData).then( res => {
                 if ( res.data.code === 0) {
                     this.tableData = res.data.page.list;
                     this.totalCount = res.data.page.totalCount;
@@ -299,7 +299,7 @@ export default {
 
         onSubmit(){
             this.dialogTableVisible = false;
-            postJsonRequest('/api/agent',this.dialogFrom).then( res => {
+            postJsonRequest('/system/agent',this.dialogFrom).then( res => {
                 if (res.data.code === 0) {
                     this.$message.success(res.data.msg);
                     this.getAgentList();
@@ -312,7 +312,7 @@ export default {
         },
 
         remove(node,data){
-            deleteRequest('/api/agent/'+data.agentId).then( res => {
+            deleteRequest('/system/agent/'+data.agentId).then( res => {
                 if (res.data.code === 0) {
                     this.$message.success(res.data.msg);
                     this.getAgentList();
@@ -329,13 +329,13 @@ export default {
             this.transferDisabled = false;
             this.userCheckbox = [];
             // this.transferOptions
-            getRequest('/api/customers?agentId='+data.agentId).then( res => {
+            getRequest('/system/customers?agentId='+data.agentId).then( res => {
                 this.transferOptions = res.data.page.list;
             }).catch( err => {
                 console.log(err);
             });
 
-            getRequest('/api/agent/select').then( res => {
+            getRequest('/system/agent/select').then( res => {
                 if ( res.data.code === 0) {
                     this.options = res.data.agentList;
                 } else {
@@ -358,7 +358,7 @@ export default {
                 agentId: this.selectedOptions[0],
                 roleIds: this.roleIdList
             }
-            postJsonRequest('/api/agent/transfer',postData).then( res => {
+            postJsonRequest('/system/agent/transfer',postData).then( res => {
                 console.log(res);
             }).catch(err => {
                 console.log(err);

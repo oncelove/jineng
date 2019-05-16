@@ -76,8 +76,8 @@ export default {
         }
     },
     created() {
-        this.permissionsBox = power(this,'sys:config:info','sys:config:add','sys:config:delete','sys:config:update');
-        getRequest('/api/sys/config/list').then( res => {
+        this.permissionsBox = power(this,'sys:config:info','sys:config:save','sys:config:delete','sys:config:update');
+        getRequest('/system/sys/config/list').then( res => {
             console.log(res);
             this.tableData = res.data.page.list;
             // console.log( this.tableData);

@@ -197,7 +197,7 @@ export default {
         }
     },
     created() {
-        this.permissionsBox = power(this,'sys:user:info','sys:user:add','sys:user:delete','sys:user:update');
+        this.permissionsBox = power(this,'sys:user:info','sys:user:save','sys:user:delete','sys:user:update');
         this.getUsersList();
         this.rules = rules;
     },
@@ -211,7 +211,7 @@ export default {
                 limit:limit,
                 cursor:cursor,
             }
-            getRequest('/api/users',getData).then( res => {
+            getRequest('/system/users',getData).then( res => {
                 this.tableData = res.data.page.list;
                 this.totalCount = res.data.page.totalCount;
             }).catch( err => {
@@ -236,7 +236,7 @@ export default {
                 this.dialogBtn = false;
             }
             // this.getUserType();
-            getRequest('/api/users/'+ userId).then( res => {
+            getRequest('/system/users/'+ userId).then( res => {
                 // console.log(res);
                 if ( res.data.code === 0 ) {
                     this.dialogFrom.username = res.data.user.username;
@@ -284,7 +284,7 @@ export default {
         },
         // 删除按钮点击
         deleteClick(index,row){
-            deleteRequest('/api/users/' + row.userId).then( res => {
+            deleteRequest('/system/users/' + row.userId).then( res => {
                 if (res.data.code === 0) {
                     this.$message({
                         message: res.data.msg,
@@ -324,7 +324,7 @@ export default {
             this.$refs[formName].validate( (valid) => {
                 if (valid) {
                     if ( this.source ) {
-                        postJsonRequest('/api/users',this.dialogFrom).then( res => {
+                        postJsonRequest('/system/users',this.dialogFrom).then( res => {
                             if (res.data.code === 0) {
                                 this.dialogTableVisible = false;
                                 this.$message({
@@ -339,7 +339,7 @@ export default {
                             this.$message.error(err);
                         })
                     } else {
-                        putJsonRequest('/api/users/'+ this.dialogFrom.userId, this.dialogFrom).then( res => {
+                        putJsonRequest('/system/users/'+ this.dialogFrom.userId, this.dialogFrom).then( res => {
                             if (res.data.code === 0) {
                                 this.dialogTableVisible = false;
                                 this.$message({
